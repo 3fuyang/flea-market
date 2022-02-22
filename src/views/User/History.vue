@@ -10,7 +10,7 @@
   <el-col :span="20">
   <div v-for="(item) in dateArray" :key=item.date>
     <div style="text-align: left;margin-bottom: 10px;">
-    <span style="display: inline-block;font-size= 18px;font-weight: bold;">{{item.date}}</span>
+    <span style="display: inline-block;font-size: 18px;font-weight: bold;">{{item.date}}</span>
     </div>
     <el-row>
     <template v-for="(goodItem) in historyData" :key="goodItem.id">

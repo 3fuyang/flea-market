@@ -22,7 +22,7 @@
         <el-image class="point" :src="goodItem.path" @click="jumpCard(goodItem.id)" fit="scale-down" />
           <span style="display: inline-block;font-size: 13px;color: #808080;margin-top: 3px;">{{goodItem.name}}</span><br/>
           <span style="display: inline-block;font-size: 18px;color: #FF9900;margin-top: 3px;">￥{{goodItem.price}}</span>
-          <span class="el-icon-close point" style="font-size: 20px;display: inline-block;float: right;color: #999999;font-weight: bold;margin-top: 5px;"
+          <span class="el-icon-close point" style="font-size: 20px;display: inline-block;color: #999999;font-weight: bold;margin-top: 5px;"
           @click="deleteFavorite(goodItem.id)"></span>
       </el-card> 
       </template>

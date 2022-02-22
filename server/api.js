@@ -17,7 +17,7 @@ app.use(express.urlencoded({extended:  false}));
 // 接口1 用户登录：传入（账号、密码） 返回（登录结果）
 app.post('/userlogin',(req,res) => {
   var doesExist = false;
-  connection.query("select count(*) as cnt from userAccount where user_id = '" + req.body.id + "' and mypassword = '" + req.body.password + "'", (err,result) => {
+  connection.query("select count(*) as cnt from useraccount where user_id = '" + req.body.id + "' and mypassword = '" + req.body.password + "'", (err,result) => {
     if (err) throw err
     doesExist = (result[0].cnt > 0)?true:false
     res.end(JSON.stringify(doesExist))
@@ -27,7 +27,7 @@ app.post('/userlogin',(req,res) => {
 // 接口2 管理员登录：传入（账号、密码） 返回（登录结果）
 app.post('/adminlogin',(req,res) => {
   var doesExist = false;
-  connection.query("select count(*) as cnt from adminAccount where admin_id = '" + req.body.id + "' and mypassword = '" + req.body.password + "'", (err,result) => {
+  connection.query("select count(*) as cnt from adminaccount where admin_id = '" + req.body.id + "' and mypassword = '" + req.body.password + "'", (err,result) => {
     if (err) throw err;
     doesExist = (result[0].cnt > 0)?true:false;
     res.end(JSON.stringify(doesExist));
@@ -37,7 +37,7 @@ app.post('/adminlogin',(req,res) => {
 // 接口3 校验学号或手机号是否已被注册：传入（学号、手机号） 返回（是否已被注册）
 app.post('/isRepeated',(req,res) => {
   var isRepeated = false;
-  connection.query("select count(*) as cnt from userAccount where user_id = '" + req.body.id + "' or telnum = '" + req.body.telnum + "'", (err,result) => {
+  connection.query("select count(*) as cnt from useraccount where user_id = '" + req.body.id + "' or telnum = '" + req.body.telnum + "'", (err,result) => {
     if (err) throw err;
     isRepeated = (result[0].cnt > 0)?true:false;
     res.end(JSON.stringify(isRepeated));
@@ -47,7 +47,7 @@ app.post('/isRepeated',(req,res) => {
 // 接口4 用户注册：传入（账号、密码、姓名、手机号、性别、学院、生日） 返回（null）
 app.post('/register',(req,res) => {
   let newAccount = [req.body.user_id,req.body.mypassword,req.body.myname,req.body.telnum,req.body.gender,req.body.college,req.body.birthday];
-  connection.query("insert into userAccount(user_id,mypassword,myname,telnum,gender,college,birthday) value(?,?,?,?,?,?,?)",newAccount,(err,result)=>{
+  connection.query("insert into useraccount(user_id,mypassword,myname,telnum,gender,college,birthday) value(?,?,?,?,?,?,?)",newAccount,(err,result)=>{
     if (err) throw err;
     res.end(JSON.stringify(result));
   })
@@ -56,7 +56,7 @@ app.post('/register',(req,res) => {
 // 接口5 校验学号和手机号是否已被注册且匹配：传入（学号、手机号） 返回（是否已被注册且匹配）
 app.post('/',(req,res) => {
   var isCoupled = false;
-  connection.query("select count(*) as cnt from userAccount where user_id = '" + req.body.id + "' and telnum = '" + req.body.telnum + "'", (err,result) => {
+  connection.query("select count(*) as cnt from useraccount where user_id = '" + req.body.id + "' and telnum = '" + req.body.telnum + "'", (err,result) => {
     if (err) throw err;
     isCoupled = (result[0].cnt > 0)?true:false;
     res.end(JSON.stringify(isCoupled));
@@ -65,7 +65,7 @@ app.post('/',(req,res) => {
 
 // 接口6 用户修改密码：传入（ID、新密码） 返回（null）
 app.post('/modifyPassword',(req,res) => {
-  connection.query("update userAccount set mypassword = '" + req.body.newpassword + "' where user_id ='" + req.body.id + "'",(err,result)=>{
+  connection.query("update useraccount set mypassword = '" + req.body.newpassword + "' where user_id ='" + req.body.id + "'",(err,result)=>{
     if (err) throw err;
     res.end(JSON.stringify(result));
   })
@@ -103,7 +103,7 @@ app.get('/goodsBriefInfo/:goods_id',(req,res)=>{
 
 // 接口9 获取绑定手机号: 传入（用户id） 返回（绑定手机号）
 app.get('/usertel/:user_id', (req,res) => {
-  connection.query("select telnum from userAccount where user_id='" + req.params.user_id + "'",(err,result)=>{
+  connection.query("select telnum from useraccount where user_id='" + req.params.user_id + "'",(err,result)=>{
     if (err) throw err
     res.end(JSON.stringify(result[0].telnum));  
   })
@@ -111,7 +111,7 @@ app.get('/usertel/:user_id', (req,res) => {
 
 // 接口10 修改绑定手机：传入（用户ID，新手机号） 返回（null）
 app.post('/modifyTel',(req,res) => {
-  connection.query("update userAccount set telnum = '" + req.body.newtel + "' where user_id ='" + req.body.id + "'",(err,result)=>{
+  connection.query("update useraccount set telnum = '" + req.body.newtel + "' where user_id ='" + req.body.id + "'",(err,result)=>{
     if (err) throw err;
     res.end(JSON.stringify(result));
   })
@@ -185,7 +185,7 @@ app.get('/removeCart/:user_id/:goods_id',(req,res) => {
 
 // 接口18 获取与用户有消息的对象列表：传入（用户ID）  返回（对方用户列表：对方ID）
 app.get('/getChatOponent/:user_id',(req,res) => {
-  connection.query("select distinct user_a_id from chat where user_b_id ='"+ req.params.user_id + "'",(err,result) =>{
+  connection.query("select distinct user_a_id from chatrecord where user_b_id ='"+ req.params.user_id + "'",(err,result) =>{
     if (err) throw err
     res.end(JSON.stringify(result));    
   })
@@ -199,7 +199,7 @@ app.get('/getMessage/:user_a_id/:user_b_id',(req,res) => {
     req.params.user_b_id = req.params.user_a_id;
     req.params.user_a_id = temp;
   }
-  connection.query("select * from chat where user_a_id ='"+ req.params.user_a_id + "' and user_b_id ='" + req.params.user_b_id + "'",(err,result) =>{
+  connection.query("select * from chatrecord where user_a_id ='"+ req.params.user_a_id + "' and user_b_id ='" + req.params.user_b_id + "'",(err,result) =>{
     if (err) throw err
     res.end(JSON.stringify(result));    
   })

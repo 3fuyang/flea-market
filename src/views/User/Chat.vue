@@ -42,7 +42,7 @@
             <div v-show="currOponent!='我的聊天'">           
               <div style="background: #F5F5F5;border: 1px solid #fff;width: 100%;height: 340px;">
                 <div v-for="(item) in messageData" :key="item.day_time">
-                    <el-tag size="small" style="margiin: 15px 0px;">
+                    <el-tag size="small" style="margin: 15px 0px;">
                       {{item.day_time}}
                     </el-tag>
                     <div v-if="item.speaker==0">

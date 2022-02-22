@@ -363,7 +363,7 @@ export default {
         password: this.loginForm.password,
       }
       // 调用接口：传入账号密码，返回是否正确、用户ID      
-      this.axios.post('/api/userlogin/',id_pwd).then((is_e)=>{
+      this.axios.post('/api/userlogin',id_pwd).then((is_e)=>{
         if(is_e.data){
           ElMessage.success('用户登录成功！')
           uid=this.loginForm.IDNumber;
@@ -383,7 +383,7 @@ export default {
         password: this.loginForm.password,
       }
       // 调用接口：传入账号密码，返回是否正确、用户ID      
-      this.axios.post('/api/adminlogin/',id_pwd).then((is_e)=>{
+      this.axios.post('/api/adminlogin',id_pwd).then((is_e)=>{
         if(is_e.data){
           ElMessage.success('管理员登录成功！')
           uid=this.loginForm.IDNumber;

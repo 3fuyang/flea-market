@@ -35,7 +35,7 @@
             <el-menu-item index="/stream">流水统计</el-menu-item>
             <el-menu-item index="/chat">我的消息</el-menu-item>
         </el-sub-menu>        
-        <el-menu-item @click="logOut">注销</el-menu-item>       
+        <el-menu-item :route="{ path: $route.path}" @click="logOut()">注销</el-menu-item>       
       </el-menu>
       <!--管理员登录状态的导航栏-->
       <el-menu v-else :default-active="$route.path" mode="horizontal" background-color="#3399CC"
@@ -46,7 +46,7 @@
           <el-menu-item index="/admin/examine">审核</el-menu-item>
           <el-menu-item index="/admin/report">受理举报</el-menu-item>
         </el-sub-menu>
-      <el-menu-item @click="logOut">注销</el-menu-item>       
+      <el-menu-item @click="logOut()">注销</el-menu-item>       
       </el-menu>
       </el-col>
     </el-row>

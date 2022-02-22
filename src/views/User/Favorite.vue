@@ -2,14 +2,14 @@
 <div id="name">
   <span style="display: inline-block;color: #000000;margin: 20px 0px 0px 20px;font-size: 24px;font-weight: bold;">我的收藏</span><br/>
   <div style="text-align: right;margin-bottom: 10px;">     
-  <el-button v-show="searching === 1" class="el-icon-arrow-left" type="text" size="medium" round style="margin-right: 800px;"
-  @click="cancelSearch()">Cancel</el-button>  
+  <el-button v-show="searching === 1" type="text" size="medium" round style="margin-right: 800px;"
+  @click="cancelSearch()"><el-icon :size="18"><arrow-left/></el-icon>Cancel</el-button>  
   <el-input v-model.trim="keyWord" placeholder="Search in collections." style="width: 250px;margin-right: 240px;" @keyup.enter="searchFavorite()">
     <template #prefix>
-      <i class="el-icon-search" style="width:20px;"></i>
+      <el-icon :size="18" style="margin-top: 5px;"><search/></el-icon>
     </template>
     <template #suffix>
-      <el-button plain type="primary" size="small" round @click="searchFavorite()">搜索</el-button>         
+      <el-button plain type="primary" size="small" round style="margin-top: 4px;" @click="searchFavorite()">搜索</el-button>         
     </template>        
   </el-input>  
   </div> 
@@ -22,8 +22,8 @@
         <el-image class="point" :src="goodItem.path" @click="jumpCard(goodItem.id)" fit="scale-down" />
           <span style="display: inline-block;font-size: 13px;color: #808080;margin-top: 3px;">{{goodItem.name}}</span><br/>
           <span style="display: inline-block;font-size: 18px;color: #FF9900;margin-top: 3px;">￥{{goodItem.price}}</span>
-          <span class="el-icon-close point" style="font-size: 20px;display: inline-block;color: #999999;font-weight: bold;margin-top: 5px;"
-          @click="deleteFavorite(goodItem.id)"></span>
+          <el-icon class="point" style="font-size: 20px;color: #999999;font-weight: bold;margin-top: 5px;float: right;"
+          @click="deleteFavorite(goodItem.id)"><close/></el-icon>
       </el-card> 
       </template>
       <br/>
@@ -35,9 +35,10 @@
 
 <script>
 import {ElMessage, ElMessageBox} from 'element-plus'
+import { ArrowLeft, Search, Close } from "@element-plus/icons-vue";
 export default {
   components:{
-      
+      ArrowLeft, Search, Close
   },
 
   created(){

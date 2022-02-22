@@ -8,18 +8,20 @@
         <el-row>
           <el-col :span="6">
             <div style="background: #EDEAE8;height: 500px;">
-              <span class="el-icon-s-promotion" style="display: inline-block;font-size: 14px;margin: 14px 0px;">&nbsp;消息列表</span>
+              <span><el-icon :size="20"><promotion/></el-icon></span>
+              <span style="display: inline-block;font-size: 14px;margin: 14px 0px;">&nbsp;消息列表</span>
               <el-divider style="padding: 0px;margin: 0px;"/>
               <div class="oponentBlockList">
                 <div class="point" v-for="(item) in oponentList" :key="item.uid" style="margin-top: 5px;" @click="changeOponent(item.uid,item.uname)">
                   <el-row>
                     <el-col :span="1"></el-col>
-                    <el-col :span="5">
-                      <el-avatar shape="square" icon="el-icon-user" style="background-color: aliceblue;color: #336699;margin-top: 2px;"></el-avatar>
+                    <el-col :span="7">
+                      <el-avatar shape="square" :src="squareUrl" :size="51" style="background-color: aliceblue;color: #336699;margin-top: 2px;">
+                      </el-avatar>
                     </el-col>
-                    <el-col :span="18">
+                    <el-col :span="14">
                       <div style="text-align: left;">
-                        <span style="display: inline-block;font-size: 14px;margin-top: 12px;margin-left: 10px;">{{item.uid}}&nbsp;&nbsp;{{item.uname}}</span>
+                        <span style="display: inline-block;font-size: 14px;margin-top: 17px;margin-left: 5px;">{{item.uid}}&nbsp;&nbsp;{{item.uname}}</span>
                       </div>
                     </el-col>
                   </el-row>
@@ -32,12 +34,15 @@
               <span style="display: inline-block;font-size: 24px;font-weight: bold;margin-top: 5px;margin-bottom: 5px;margin-left: 30px;">
                 {{currOponent}}&nbsp;&nbsp;&nbsp;{{currOponengName}}
               </span>
-              <span v-show="currOponent!='我的聊天'" class="el-icon-close point" style="font-size: 18px;float: right;margin-top: 12px;margin-right: 5px;" @click="closeChat()">
-              </span>
+              <el-icon v-show="currOponent!='我的聊天'" class="point" style="font-size: 18px;float: right;margin-top: 12px;margin-right: 5px;" @click="closeChat()">
+                <close/>
+              </el-icon>
               <el-divider style="padding: 0px;margin: 0px;"/>
             </div>
             <div v-show="currOponent==='我的聊天'" style="background: #F5F5F5;border: 1px solid #fff;width: 100%;height: 455px;">
-              <span class="el-icon-chat-dot-round" style="display: inline-block;color: #EBEBEB;font-size: 100px;font-weight: bold;margin-top: 140px;"></span>
+              <el-icon style="display: inline-block;color: #EBEBEB;font-size: 100px;font-weight: bold;margin-top: 140px;">
+                <chat-dot-round/>
+              </el-icon>
             </div> 
             <div v-show="currOponent!='我的聊天'">           
               <div style="background: #F5F5F5;border: 1px solid #fff;width: 100%;height: 340px;">
@@ -89,10 +94,10 @@
 </template>
 
 <script>
-
+import { Promotion, Close, ChatDotRound } from "@element-plus/icons-vue";
 export default {
   components:{
-      
+      Promotion, Close, ChatDotRound
   },
 
   created(){
@@ -120,6 +125,7 @@ export default {
       chatListTimer: '',  // 聊天对象列表定时器
       chatTimer: '',  // 聊天消息定时器
       textarea: '', // 输入框文本
+      squareUrl: 'https://cube.elemecdn.com/9/c2/f0ee8a3c7c9638a54940382568c9dpng.png',  // 头像图片 url
     }
   },
 

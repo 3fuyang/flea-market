@@ -27,9 +27,9 @@
       <el-tab-pane label="Modify Password">
         Modify Password
         <el-steps :space="200" :active="activePwd" process-status="finish" finish-status="success" simple style="margin-top: 15px;">
-          <el-step title="1. 身份验证" icon="el-icon-message"></el-step>
-          <el-step title="2. 设置新密码" icon="el-icon-edit"></el-step>
-          <el-step title="3. 完成修改" icon="el-icon-circle-check"></el-step>
+          <el-step title="1. 身份验证" :icon="Message"></el-step>
+          <el-step title="2. 设置新密码" :icon="Edit"></el-step>
+          <el-step title="3. 完成修改" :icon="CircleCheck"></el-step>
         </el-steps>
         <el-card v-if="activePwd===0" :body-style="{padding: '0px 0px 0px 0px', backgroundColor: '#F5F5F5',}" 
           style="margin: 5px 5px;height: 300px;">
@@ -73,11 +73,11 @@
       <!--修改手机-->
       <el-tab-pane label="Modify TEL">
         Modify TEL
-        <el-steps :space="200" :active="activePwd" process-status="finish" finish-status="success" simple style="margin-top: 15px;">
-          <el-step title="1. 设置新手机号码" icon="el-icon-message"></el-step>
-          <el-step title="2. 完成修改" icon="el-icon-circle-check"></el-step>
+        <el-steps :space="200" :active="activeTel" process-status="finish" finish-status="success" simple style="margin-top: 15px;">
+          <el-step title="1. 设置新手机号码" :icon="Message"></el-step>
+          <el-step title="2. 完成修改" :icon="CircleCheck"></el-step>
         </el-steps>
-        <el-card v-if="activePwd === 0" :body-style="{padding: '0px 0px 0px 0px', backgroundColor: '#F5F5F5',}" 
+        <el-card v-if="activeTel === 0" :body-style="{padding: '0px 0px 0px 0px', backgroundColor: '#F5F5F5',}" 
           style="margin: 5px 5px;height: 300px;">
           <div style="text-align: left;">
             <span style="display: inline-block;color: #191970;margin: 20px 0px 5px 20px;font-size: 14px;">
@@ -93,7 +93,7 @@
           </div><br/>
           <span><el-button type="primary" plain size="small" @click="identifyAndModify(inputCAPTCHA_)" style="margin-bottom: 120px;">验证</el-button></span>
         </el-card>
-        <el-card v-if="activePwd===1" :body-style="{padding: '0px 0px 0px 0px', backgroundColor: '#F5F5F5',}" 
+        <el-card v-if="activeTel===1" :body-style="{padding: '0px 0px 0px 0px', backgroundColor: '#F5F5F5',}" 
           style="margin: 5px 5px;height: 300px;">
           <span style="display: inline-block;color: #191970;margin: 20px 0px 15px 20px;font-size: 15px;">
             修改成功,您的账号现在绑定的手机号码为: +86 {{newTel.substr(0,3)}} **** {{newTel.substr(9,12)}} 
@@ -111,7 +111,11 @@
 
 <script>
 import { ElMessage } from 'element-plus';
+import { Message, Edit, CircleCheck } from '@element-plus/icons-vue'
 export default {
+    setup(){
+      return { Message, Edit, CircleCheck };  // Compostion API 语法，使得 el-step 能正常使用 icon 组件
+    },
     created(){
       //调用接口: 传入（用户id） 返回（绑定手机号）
       this.axios.get('/api/usertel/'+this.userID).then((response) => {
@@ -159,7 +163,7 @@ export default {
           ElMessage.error('手机号码应为11位');          
         }else if(input.length===6){
           if(input===this.CAPTCHA){
-            this.activePwd++;
+            this.activeTel++;
             //调用接口：传入（用户ID，新手机号码) 返回(success)
             let id_tel = {
               id: this.userID,

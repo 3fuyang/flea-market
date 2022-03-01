@@ -4,13 +4,16 @@
   <el-row>
     <el-col :span="2"></el-col>
     <el-col :span="20">
-      <OrderListTable :orderList="orderList" @show-modal="showReportModal"/>
+      <OrderListTable :orderList="orderList" @show-report-modal="showReportModal" @show-evaluate-modal="showEvaluateModal"/>
     </el-col>
     <el-col :span="2"></el-col>
   </el-row>
   <Teleport to="main">
-    <ReportModal :show="showModal" :currOrderId="currentOrderId" @close="showModal = false"/>
+    <ReportModal :show="showReport" :currOrderId="currentOrderId" @close="showReport = false"/>
   </Teleport>
+  <Teleport to="main">
+    <EvaluateModal :show="showEvaluate" :currOrderId="currentOrderId" :currOrderStatus="currentOrderStatus" @close="showEvaluate = false"/>
+  </Teleport>  
 </div>
 </template>
 
@@ -18,9 +21,12 @@
 import {ref, onMounted,} from 'vue'
 import OrderListTable from '../../components/OrderListTable.vue';
 import ReportModal from '../../components/ReportModal.vue';
+import EvaluateModal from '../../components/EvaluateModal.vue';
 const orderList = ref([]);  // 订单原始数据
-let showModal = ref(false); // 举报窗口开关
-let currentOrderId = ref(''); // 当前处理订单的ID
+const showReport = ref(false); // 举报窗口开关
+const showEvaluate = ref(false);  // 评价窗口开关
+const currentOrderId = ref(''); // 当前处理订单的ID
+const currentOrderStatus = ref(''); // 当前处理订单的状态
 
 onMounted(()=>{
   // 调用接口：传入（用户ID） 返回（订单列表：订单ID，订单时间，商品名称，金额，卖家ID，订单状态，订单评价）
@@ -64,7 +70,7 @@ onMounted(()=>{
     goodName: "混合商品",
     image: require("@/assets/pen.png"),
     time: "2022-01-01 09:25",
-    status: '已完成',
+    status: '待确定',
     isCompleted: true,
     commentStars: 5,
     price: 3999,
@@ -81,7 +87,7 @@ onMounted(()=>{
     goodName: "混合商品",
     image: require("@/assets/philips.png"),
     time: "2022-01-01 09:25",
-    status: '已完成',
+    status: '待评价',
     isCompleted: true,
     commentStars: 5,
     price: 120,
@@ -97,7 +103,14 @@ onMounted(()=>{
 function showReportModal(oid){
   currentOrderId.value = oid;
   console.log(currentOrderId.value);
-  showModal.value = true;
+  showReport.value = true;
+}
+
+function showEvaluateModal(oid, ost){
+  currentOrderId.value = oid;
+  currentOrderStatus.value = ost;
+  console.log(currentOrderId.value, currentOrderStatus.value);
+  showEvaluate.value = true;  
 }
 </script>
 

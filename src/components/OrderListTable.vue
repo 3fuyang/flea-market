@@ -1,35 +1,37 @@
 <template>
-<div class="TableNav">
-  <el-row>
-    <el-col :span="24/columns.length" v-for="(column,index) of columns" :key="index">
-      <span class="NavFont">{{column}}</span>
-    </el-col>    
-  </el-row>
-</div>
-<div class="Card" v-for="order of orderList" :key="order.orderId">
-  <div class="CardNav">
+<div class="RootDiv">
+  <div class="TableNav">
     <el-row>
-      <el-col :span="4">
-        <span class="ShallowFont">{{order.time}}</span>
-      </el-col>
-      <el-col :span="4">
-        <span class="ShallowFont">订单号:&nbsp;&nbsp;</span>
-        <span class="DarkFont">{{order.orderId}}</span>
-      </el-col>
-      <el-col :span="12"></el-col>      
-      <el-col :span="4">
-        <span class="ShallowFont point">
-        <el-icon :size="20" class="Icon" @click="deleteOrder(order.orderId)"><DeleteFilled/></el-icon>
-        </span>
-      </el-col>
+      <el-col :span="24/columns.length" v-for="(column,index) of columns" :key="index">
+        <span class="NavFont">{{column}}</span>
+      </el-col>    
     </el-row>
   </div>
-  <div class="CardBody">
-    <el-row>
-      <el-col :span="4">
-        <el-image class="Image" :src="order.image"></el-image>
-      </el-col>
-    </el-row>
+  <div class="Card" v-for="order of orderList" :key="order.orderId">
+    <div class="CardNav">
+      <el-row>
+        <el-col :span="4">
+          <span class="ShallowFont">{{order.time}}</span>
+        </el-col>
+        <el-col :span="4">
+          <span class="ShallowFont">订单号:&nbsp;&nbsp;</span>
+          <span class="DarkFont">{{order.orderId}}</span>
+        </el-col>
+        <el-col :span="12"></el-col>      
+        <el-col :span="4">
+          <span class="ShallowFont point">
+          <el-icon :size="20" class="Icon" @click="deleteOrder(order.orderId)"><DeleteFilled/></el-icon>
+          </span>
+        </el-col>
+      </el-row>
+    </div>
+    <div class="CardBody">
+      <el-row>
+        <el-col :span="4">
+          <el-image class="Image" :src="order.image"></el-image>
+        </el-col>
+      </el-row>
+    </div>
   </div>
 </div>
 </template>
@@ -96,5 +98,6 @@ function deleteOrder(orderId){
   height: 90px;
   width: auto;
   border: 2px solid #E0E0E0;
+  alt: 'Goods Thumbnail';
 }
 </style>

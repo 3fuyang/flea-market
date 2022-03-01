@@ -46,7 +46,7 @@
 </template>
 
 <script setup>
-import { ref, computed, defineProps, defineEmits, onMounted } from 'vue';
+import { ref, computed, defineProps, defineEmits, onMounted, onBeforeUpdate } from 'vue';
 import { ElMessage } from 'element-plus';
 const props = defineProps({
   show: Boolean,  // 是否显示对话框
@@ -60,11 +60,24 @@ const submitted = computed(()=>{
   return props.currOrderStatus === '已完成'?true:false;
 })  // 是否已提交过评价
 
+// 每次渲染时，重新计算 textarea 的文本值
 onMounted(()=>{
-  if(!submitted.value){
+  console.log(submitted.value);
+  if(submitted.value){
     // 调用接口：传入(订单ID) 返回（评价文本）
-    evaluation.value = '已提交的评价'
+    evaluation.value = '已提交的评价';
+  }else{
+    evaluation.value = '';
   }
+})
+
+onBeforeUpdate(()=>{
+  if(submitted.value){
+    // 调用接口：传入(订单ID) 返回（评价文本）
+    evaluation.value = '已提交的评价';
+  }else{
+    evaluation.value = '';
+  }  
 })
 
 // 提交评价

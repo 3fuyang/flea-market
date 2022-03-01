@@ -37,7 +37,7 @@
           <span class="Quantity">×1</span>
         </el-col>
         <el-col :span="3">
-          <span class="Consult point" @click="$emit('show-modal', order.orderId)">
+          <span class="Consult point" @click="$emit('show-report-modal', order.orderId)">
             <el-icon :size="16" class="Icon"><Service/></el-icon>
             申请售后
           </span>
@@ -53,14 +53,30 @@
           </span>
         </el-col>
         <el-col :span="4">
-            <span class="Contact point">
+            <span class="Contact point" @click="contactSeller">
               <el-icon :size="13" class="Icon"><ChatDotRound/></el-icon>
               联系卖家
             </span><br/>
-            <span class="Score point">
+            <span v-if="order.status === '待评价'" class="Option point"
+            @click="$emit('show-evaluate-modal', order.orderId, order.status)">
               <el-icon :size="13" class="Icon"><Edit/></el-icon>
               评价交易
             </span>
+            <span v-else-if="order.status === '已完成'" class="Option point"
+            @click="$emit('show-evaluate-modal', order.orderId, order.status)">
+              <el-icon :size="13" class="Icon"><Edit/></el-icon>
+              查看评价
+            </span>            
+            <span v-else-if="order.status === '待付款'" class="Option point"
+            @click="toPayPage(order.orderId)">
+              <el-icon :size="13" class="Icon"><Wallet/></el-icon>
+              去付款
+            </span>  
+            <span v-else-if="order.status === '待确定'" class="Option point"
+            @click="confirmReceipt(order.orderId)">
+              <el-icon :size="13" class="Icon"><CircleCheck/></el-icon>
+              确认收货
+            </span>                             
         </el-col>
       </el-row>
     </div>
@@ -69,20 +85,27 @@
 </template>
 
 <script setup>
+// 在<script setup>中，this.$router 不能使用
+// 需要引入 useRouter()，生成 router 实例
+import { useRouter } from 'vue-router';
 import { defineProps, defineEmits, ref } from 'vue';
 import { ElMessage, ElMessageBox } from "element-plus";
-import { Delete, Service, ChatDotRound, Edit } from '@element-plus/icons-vue';
+import { Delete, Service, ChatDotRound, Edit, Wallet, CircleCheck } from '@element-plus/icons-vue';
 
 const props = defineProps({
   orderList: Array, // 订单原始数据
 })
+
 const columns = ['','订单详情','', '金额', '状态', '操作']; // 表头
 const orderListView = ref(props.orderList); // 订单视图
+const router = useRouter();
 
 defineEmits({
-  'show-modal': null,
+  'show-report-modal': null,  // 举报窗口展示
+  'show-evaluate-modal': null,  // 评价窗口展示
 });
 
+// 删除订单
 function deleteOrder(orderId){
   // 显示确认对话框
   ElMessageBox.confirm(
@@ -106,6 +129,18 @@ function deleteOrder(orderId){
     // 取消删除
   })  
 }
+
+// 联系买家
+function contactSeller(){
+  // 调用接口 将买家上升到用户消息列表的首位：传入（用户ID，买家ID）返回（无）
+ 
+  // 在新窗口打开聊天页面。
+  let routeUrl = router.resolve({
+    path:'/chat'
+  });
+  window.open(routeUrl .href, '_blank');
+}
+
 </script>
 
 <style scoped>
@@ -213,13 +248,13 @@ function deleteOrder(orderId){
 .Contact:hover{
   color: #66CCFF;
 }
-.Score{
+.Option{
   display: inline-block;
   margin: 0px;
   font-size: 13px;
   color: #808080;
 }
-.Score:hover{
+.Option:hover{
   color: #66CCFF;
 }
 </style>

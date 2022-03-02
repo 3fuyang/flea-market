@@ -141,6 +141,44 @@ function contactSeller(){
   window.open(routeUrl .href, '_blank');
 }
 
+// 进入付款页面
+function toPayPage(oid){
+  router.push({
+    path:'/pay',
+    params:{orderId: oid}
+  })
+}
+
+// 确认收货
+function confirmReceipt(oid){
+  ElMessageBox.confirm(
+    '请确保已收到并检验过货物，是否确定完成订单?',
+    '提示',
+    {
+      confirmButtonText:'确定',
+      cancelButtonText:'取消',
+      type:'warning',
+    }
+  ).then(()=>{
+    // 调用接口：传入（订单ID）返回（确定结果）
+
+    // 从视图中修改订单状态
+    for(let item of orderListView.value){
+      if (item.orderId === oid){
+        item.status = '已完成';
+        break;
+      }else{
+        continue;
+      }
+    }
+    ElMessage({
+      type:'success',
+      message:'感谢您的购物!',
+    });
+  }).catch(()=>{
+    // 取消删除
+  })  
+}
 </script>
 
 <style scoped>

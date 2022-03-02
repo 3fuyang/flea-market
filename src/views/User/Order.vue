@@ -20,9 +20,9 @@
 
 <script setup>
 import {ref, onMounted,} from 'vue'
-import OrderListTable from '../../components/OrderListTable.vue';
-import ReportModal from '../../components/ReportModal.vue';
-import EvaluateModal from '../../components/EvaluateModal.vue';
+import OrderListTable from '../../components/Order/OrderListTable.vue';
+import ReportModal from '../../components/Order/ReportModal.vue';
+import EvaluateModal from '../../components/Order/EvaluateModal.vue';
 const orderList = ref([]);  // 订单原始数据
 const showReport = ref(false); // 举报窗口开关
 const showEvaluate = ref(false);  // 评价窗口开关

@@ -158,7 +158,7 @@ function deleteOrder(orderId){
     // 调用接口：传入（订单ID）返回（删除结果）
 
     // 从视图中删除订单
-    this.orderListView = this.orderListView.filter((item)=>{return item.orderId !== orderId});
+    rawOrderList.value = rawOrderList.value.filter((item)=>{return item.orderId !== orderId});
     ElMessage({
       type:'success',
       message:'删除成功!',

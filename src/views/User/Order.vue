@@ -12,7 +12,8 @@
     <ReportModal :show="showReport" :currOrderId="currentOrderId" @close="showReport = false"/>
   </Teleport>
   <Teleport to="main">
-    <EvaluateModal :show="showEvaluate" :currOrderId="currentOrderId" :currOrderStatus="currentOrderStatus" @close="showEvaluate = false"/>
+    <EvaluateModal :show="showEvaluate" :currOrderId="currentOrderId" :currOrderStatus="currentOrderStatus" 
+      @close="showEvaluate = false"/>
   </Teleport>  
 </div>
 </template>

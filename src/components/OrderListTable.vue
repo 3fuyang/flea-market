@@ -2,9 +2,36 @@
 <div class="RootDiv">
   <div class="TableNav">
     <el-row>
-      <el-col :span="24/columns.length" v-for="(column,index) of columns" :key="index">
+<!--       <el-col :span="24/columns.length" v-for="(column,index) of columns" :key="index">
         <span class="NavFont">{{column}}</span>
-      </el-col>    
+      </el-col> -->   
+      <el-col :span="4">       
+      </el-col>       
+      <el-col :span="4">
+        <span class="NavFont">{{columns[1]}}</span>        
+      </el-col> 
+      <el-col :span="4">       
+      </el-col>     
+      <el-col :span="4">
+        <span class="NavFont">{{columns[3]}}</span>        
+      </el-col>        
+      <el-col :span="4">
+        <div class="nav-select">
+          <el-select 
+            v-model="category" 
+            placeholder="Select">
+            <el-option
+              v-for="item in categories"
+              :key="item.index"
+              :value="item"
+            >
+            </el-option>
+          </el-select>          
+        </div>        
+      </el-col>   
+      <el-col :span="4">
+        <span class="NavFont">{{columns[5]}}</span>        
+      </el-col>           
     </el-row>
   </div>
   <div class="Card" v-for="order of orderListView" :key="order.orderId">
@@ -88,7 +115,7 @@
 // 在<script setup>中，this.$router 不能使用
 // 需要引入 useRouter()，生成 router 实例
 import { useRouter } from 'vue-router';
-import { defineProps, defineEmits, ref } from 'vue';
+import { defineProps, defineEmits, ref, computed } from 'vue';
 import { ElMessage, ElMessageBox } from "element-plus";
 import { Delete, Service, ChatDotRound, Edit, Wallet, CircleCheck } from '@element-plus/icons-vue';
 
@@ -96,8 +123,19 @@ const props = defineProps({
   orderList: Array, // 订单原始数据
 })
 
+const categories = ['全部订单', '待付款', '待确定', '待评价', '已完成']; // 订单状态
+const category = ref('全部订单'); // 当前订单分类
 const columns = ['','订单详情','', '金额', '状态', '操作']; // 表头
-const orderListView = ref(props.orderList); // 订单视图
+const rawOrderList = ref(props.orderList);
+const orderListView = computed(()=>{
+  if(category.value === '全部订单'){
+    return rawOrderList.value;
+  }else{
+    return rawOrderList.value.filter((item)=>{
+      return item.status === category.value;
+    })
+  }
+}); // 订单视图
 const router = useRouter();
 
 defineEmits({
@@ -197,6 +235,10 @@ function confirmReceipt(oid){
 .NavFont{
   display: inline-block;
   margin: 8px 0px 8px 0px;
+}
+.nav-select{
+  text-align: center;
+  padding: 5px 30px;
 }
 .Card{
   margin-bottom: 20px;

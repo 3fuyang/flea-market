@@ -7,6 +7,16 @@
           订单评价
         </span>
         <br/>
+        <span class="rate-wrapper">
+          <el-rate
+            v-model="grade"
+            :texts="['oops', 'disappointed', 'normal', 'good', 'great']"
+            show-score
+            size="large"
+            :disabled="submitted"
+          >
+          </el-rate>
+        </span>
         <div class="modal-input">
           <el-input 
             :readonly="submitted"
@@ -53,8 +63,9 @@ const props = defineProps({
   currOrderId: String,  // 当前订单 ID
   currOrderStatus: String, // 当前订单状态
 });
-const emits = defineEmits(['close']);
+const emits = defineEmits(['close', 'order-done']);
 
+const grade = ref(null); // 评分
 const evaluation = ref(''); // 评价文本
 const submitted = computed(()=>{
   return props.currOrderStatus === '已完成'?true:false;
@@ -73,10 +84,12 @@ onMounted(()=>{
 
 onBeforeUpdate(()=>{
   if(submitted.value){
-    // 调用接口：传入(订单ID) 返回（评价文本）
+    // 调用接口：传入(订单ID) 返回（评价文本，评价星级）
     evaluation.value = '已提交的评价';
+    grade.value = 3;
   }else{
     evaluation.value = '';
+    grade.value = null;
   }  
 })
 
@@ -87,9 +100,18 @@ function submitEvaluation(){
       type: 'error',
       message: '请输入您的评价！'
     })
-  }else{
+  }else if(grade.value === null){
+    ElMessage({
+      type: 'error',
+      message: '请为本次交易评分(0~5)！'
+    })    
+  }
+  else{
     // 调用接口：传入（订单ID，用户评价）返回（无）
 
+    // 触发事件，修改视图中订单状态为'已完成'
+    emits('order-done', props.currOrderId);
+    
     ElMessage({
       type: 'success',
       message: '谢谢您的评价！'
@@ -131,6 +153,14 @@ function submitEvaluation(){
   float: left;
   font-size: 22px;
   font-weight: bold;
+}
+.rate-wrapper{
+  float: left;
+}
+/* el-rate 的icon和font尺寸 */
+.el-rate{
+--el-rate-icon-size: 26px !important;
+--el-rate-font-size: 20px !important;
 }
 .modal-input{
   margin-bottom: 15px;

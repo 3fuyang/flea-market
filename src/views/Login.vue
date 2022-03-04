@@ -262,7 +262,7 @@ export default {
     };
     return{
       bg:{  // 登录页面的背景样式
-        backgroundImage:"url(" + require("../assets/lib.jpg") + ")",
+        backgroundImage:"url(" + ("/src/assets/lib.jpg") + ")",
         backgroundRepeat:"no-repeat",
         backgroundSize:"100% 100%",
         height:"700px",

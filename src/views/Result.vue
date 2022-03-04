@@ -177,7 +177,7 @@ export default {
             maxPrice: 1000,
             searchedGoods:[{
                     id: 0,
-                    images: [require("../assets/physics.png"), require("../assets/ipad.png"), require("../assets/pen.png")],
+                    images: [("/src/assets/physics.png"), ("/src/assets/ipad.png"), ("/src/assets/pen.png")],
                     title: "挥泪大甩卖，清仓特惠，快来抢购吧1",
                     price: 200,
                     seller: "https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png",
@@ -187,7 +187,7 @@ export default {
                     time: "2021-10-05 20:41",
                 },{
                     id: 0,
-                    images: [require("../assets/physics.png"), require("../assets/ipad.png"), require("../assets/pen.png")],
+                    images: [("/src/assets/physics.png"), ("/src/assets/ipad.png"), ("/src/assets/pen.png")],
                     title: "挥泪大甩卖，清仓特惠，快来抢购吧2",
                     price: 201,
                     seller: "https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png",
@@ -197,7 +197,7 @@ export default {
                     time: "2021-12-25 20:42",
                 },{
                     id: 0,
-                    images: [require("../assets/physics.png"), require("../assets/ipad.png"), require("../assets/pen.png")],
+                    images: [("/src/assets/physics.png"), ("/src/assets/ipad.png"), ("/src/assets/pen.png")],
                     title: "挥泪大甩卖，清仓特惠，快来抢购吧3",
                     price: 202,
                     seller: "https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png",
@@ -207,7 +207,7 @@ export default {
                     time: "2022-01-02 20:43",
                 },{
                     id: 0,
-                    images: [require("../assets/physics.png"), require("../assets/ipad.png"), require("../assets/pen.png")],
+                    images: [("/src/assets/physics.png"), ("/src/assets/ipad.png"), ("/src/assets/pen.png")],
                     title: "挥泪大甩卖，清仓特惠，快来抢购吧4",
                     price: 203,
                     seller: "https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png",

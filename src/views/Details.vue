@@ -130,7 +130,7 @@ export default {
       // 调用接口：传入（商品ID） 返回（商品详情：标题、名称、价格、说明、卖家ID）
       this.axios.get('/api/getGoods/'+ gid).then((response) => {
         let info =response.data[0];    
-        this.images = [require("../assets/"+info.url)];
+        this.images = [("/src/assets/"+info.url)];
         this.goodName = info.goods_name;
         this.title = info.goods_title;
         this.price=info.price;
@@ -158,7 +158,7 @@ export default {
             buyerCommentList: [{
                 rate:3.5,
             }],
-            images: [require("../assets/physics.png"), require("../assets/ipad.png")],
+            images: [("/src/assets/physics.png"), ("/src/assets/ipad.png")],
             goodName: "一个普通的商品",
             title: "打折促销，先到先得，错过后悔一整年。",
             price: 500,

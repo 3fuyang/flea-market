@@ -55,11 +55,11 @@ export default {
       }
     }) */
     this.historyData=[
-      { id:'0',name:'大学物理学 (附)网络课程&配套习题',price:'15.00',path: require("../../assets/physics.png"),date: '2021年1月1日'},
-      { id:'1',name:'Apple iPad Pro 11英寸平板电脑',price:'3499.00',path: require("../../assets/ipad.png"),date: '2021年1月1日'},
-      { id:'2',name:'派克威雅XL系列 樱花粉特别款礼盒',price:'198.00',path: require("../../assets/pen.png"),date: '2021年12月31日'},
-      { id:'3',name:'Ecovas智能家用空气净化器 机器智能',price:'3399.00',path: require("../../assets/philips.png"),date: '2021年12月31日'},
-      { id:'4',name:'传奇武夷山 大红袍茶叶',price:'149.00',path: require("../../assets/tea.png"),date: '2021年12月25日'},
+      { id:'0',name:'大学物理学 (附)网络课程&配套习题',price:'15.00',path: ("/src/assets/physics.png"),date: '2021年1月1日'},
+      { id:'1',name:'Apple iPad Pro 11英寸平板电脑',price:'3499.00',path: ("/src/assets/ipad.png"),date: '2021年1月1日'},
+      { id:'2',name:'派克威雅XL系列 樱花粉特别款礼盒',price:'198.00',path: ("/src/assets/pen.png"),date: '2021年12月31日'},
+      { id:'3',name:'Ecovas智能家用空气净化器 机器智能',price:'3399.00',path: ("/src/assets/philips.png"),date: '2021年12月31日'},
+      { id:'4',name:'传奇武夷山 大红袍茶叶',price:'149.00',path: ("/src/assets/tea.png"),date: '2021年12月25日'},
     ];
     for(let item of this.historyData){
       if(this.dateArray===[]){

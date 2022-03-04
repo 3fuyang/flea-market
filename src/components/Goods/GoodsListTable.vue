@@ -77,21 +77,21 @@ onMounted(()=>{
       price:'15.00',
       browsed: 798,
       likes: 909,
-      image: require("../../assets/physics.png")},{ 
+      image: ("/src/assets/physics.png")},{ 
       id:'1',
       name:'Apple iPad Pro 11英寸平板电脑',
       status: '上架中',    
       price:'3499.00',
       browsed: 1006,
       likes: 66,
-      image: require("../../assets/ipad.png")},{ 
+      image: ("/src/assets/ipad.png")},{ 
       id:'3',
       name:'Ecovas智能家用空气净化器 机器智能',
       status: '上架中',    
       price:'3399.00',
       browsed: 377,
       likes: 100,
-      image: require("../../assets/philips.png")}
+      image: ("/src/assets/philips.png")}
     ]);    
   }else if(props.goodsStatus === 'soldOut'){
     // 调用接口：传入（用户ID） 返回（已售出商品列表）
@@ -102,14 +102,14 @@ onMounted(()=>{
       price:'198.00',
       browsed: 2667,
       likes: 420,
-      image: require("../../assets/pen.png")},{
+      image: ("/src/assets/pen.png")},{
       id:'4',
       name:'传奇武夷山 大红袍茶叶',
       status: '已售出',    
       price:'149.00',
       browsed: 177,
       likes: 66,
-      image: require("../../assets/tea.png")}
+      image: ("/src/assets/tea.png")}
     ]);    
   }
 })

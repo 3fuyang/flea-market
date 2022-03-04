@@ -313,10 +313,10 @@ export default {
     created(){
       //为图片列表赋值
       this.imageList=[
-        { no:'1',path: require("../assets/1.jpg")},
-        { no:'2',path: require("../assets/2.png")},
-        { no:'3',path: require("../assets/3.jpg")},
-        { no:'4',path: require("../assets/4.png")},
+        { no:'1',path: ("/src/assets/1.jpg")},
+        { no:'2',path: ("/src/assets/2.png")},
+        { no:'3',path: ("/src/assets/3.jpg")},
+        { no:'4',path: ("/src/assets/4.png")},
       ];
       let IDArray = ['000001','000002','000003','000004','000005'];
       for(let item of IDArray){
@@ -326,16 +326,16 @@ export default {
             id: item,
             name: response.data[0].goods_title,
             price: response.data[0].price,
-            path: require("../assets/"+response.data[0].url),
+            path: ("/src/assets/"+response.data[0].url),
           });       
         })
       }      
       /* this.goodsList=[     
-        { id:'0',name:'大学物理学 (附)网络课程&配套习题',price:'15.00',path: require("../assets/physics.png")},
-        { id:'1',name:'Apple iPad Pro 11英寸平板电脑',price:'3499.00',path: require("../assets/ipad.png")},
-        { id:'2',name:'派克威雅XL系列 樱花粉特别款礼盒',price:'198.00',path: require("../assets/pen.png")},
-        { id:'3',name:'Ecovas智能家用空气净化器 机器智能',price:'3399.00',path: require("../assets/philips.png")},
-        { id:'4',name:'传奇武夷山 大红袍茶叶',price:'149.00',path: require("../assets/tea.png")},  
+        { id:'0',name:'大学物理学 (附)网络课程&配套习题',price:'15.00',path: ("/src/assets/physics.png")},
+        { id:'1',name:'Apple iPad Pro 11英寸平板电脑',price:'3499.00',path: ("/src/assets/ipad.png")},
+        { id:'2',name:'派克威雅XL系列 樱花粉特别款礼盒',price:'198.00',path: ("/src/assets/pen.png")},
+        { id:'3',name:'Ecovas智能家用空气净化器 机器智能',price:'3399.00',path: ("/src/assets/philips.png")},
+        { id:'4',name:'传奇武夷山 大红袍茶叶',price:'149.00',path: ("/src/assets/tea.png")},  
       ] */
       //获取用户ID
       this.userID=window.sessionStorage.getItem('uid');
@@ -352,7 +352,7 @@ export default {
     data(){
         return{
           bg: {   //背景样式
-            backgroundImage: "url(" + require("../assets/winter.jpg") + ")",
+            backgroundImage: "url(" + ("/src/assets/winter.jpg") + ")",
             backgroundRepeat: "no-repeat",
             backgroundSize: "100% 100%",
             opacity: 0.8,
@@ -362,13 +362,13 @@ export default {
             opacity: 0.9,
           },
           profile:{ //用户卡片样式
-            backgroundImage: "url(" + require("../assets/profile.png") + ")",
+            backgroundImage: "url(" + ("/src/assets/profile.png") + ")",
             backgroundRepeat: "no-repeat",
             backgroundSize: "100% 100%",
             opacity: 0.9,
           },
           pn:{ //功能面板卡片样式
-            backgroundImage: "url(" + require("../assets/panel.png") + ")",
+            backgroundImage: "url(" + ("/src/assets/panel.png") + ")",
             backgroundRepeat: "no-repeat",
             backgroundSize: "100% 100%",
             opacity: 0.9,
@@ -376,12 +376,12 @@ export default {
           keyWord:'', //搜索关键字
           imagelist: [],  //走马灯1图片
           goodsList: [],  //走马灯2图片  
-          avatorSrc:  require('../assets/avator.png'), //头像图片 
+          avatorSrc:  ('/src/assets/avator.png'), //头像图片 
           userID:'',  //用户ID       
           shoppingCartNum:'', //购物车数量
           notPayNum:'', //待付款数量
           notEvaluateNum:'',  //待评价数量
-          winterSale: require('../assets/winter.jpg'),  //冬季会场图片
+          winterSale: ('/src/assets/winter.jpg'),  //冬季会场图片
         }
     },
     methods:{

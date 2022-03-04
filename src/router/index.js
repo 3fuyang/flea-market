@@ -1,24 +1,24 @@
 import { createRouter, createWebHistory } from 'vue-router'
 
-import Home from '../views/Home'
-import Result from '../views/Result'
-import Login from '../views/Login'
-import Details from '../views/Details'
-import Report from '../views/Report'
+import Home from '../views/Home.vue'
+import Result from '../views/Result.vue'
+import Login from '../views/Login.vue'
+import Details from '../views/Details.vue'
+import Report from '../views/Report.vue'
 
-import Information from "../views/User/Info"
-import History from "../views/User/History"
-import Favorite from "../views/User/Favorite"
-import Goods from "../views/User/Goods"
-import Order from "../views/User/Order"
-import Chat from "../views/User/Chat"
-import Confirm from "../views/User/Confirm"
-import Security from "../views/User/Security"
-import ShoppingCart from "../views/User/ShoppingCart"
-import Stream from "../views/User/Stream"
-import Upload from "../views/User/Upload"
+import Information from "../views/User/Info.vue"
+import History from "../views/User/History.vue"
+import Favorite from "../views/User/Favorite.vue"
+import Goods from "../views/User/Goods.vue"
+import Order from "../views/User/Order.vue"
+import Chat from "../views/User/Chat.vue"
+import Confirm from "../views/User/Confirm.vue"
+import Security from "../views/User/Security.vue"
+import ShoppingCart from "../views/User/ShoppingCart.vue"
+import Stream from "../views/User/Stream.vue"
+import Upload from "../views/User/Upload.vue"
 
-import AdminReport from "../views/Administrator/HandlingReports"
+import AdminReport from "../views/Administrator/HandlingReports.vue"
 
 const routes = [
 	//侧导航栏和顶部导航栏
@@ -47,7 +47,7 @@ const routes = [
 ]
 
 const router = createRouter({
-  history: createWebHistory(process.env.BASE_URL),
+  history: createWebHistory(import.meta.env.BASE_URL,),
   routes
 })
 

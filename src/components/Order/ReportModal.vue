@@ -1,5 +1,5 @@
 <template>
-<Transition name="modal">
+<Transition name="modal" mode="out-in">
   <div v-if="show" class="modal-mask">
     <div class="modal-wrapper">
       <div class="modal-container">
@@ -53,7 +53,7 @@ function reportOrder(){
   if(reasonView.value === ''){
     ElMessage({
       type: 'error',
-      message: '请输入举报理由！'
+      message: '举报理由不能为空！'
     })
   }else{
     // 调用接口：传入（订单ID，举报理由）
@@ -115,15 +115,11 @@ function reportOrder(){
  * You can easily play with the modal transition by editing
  * these styles.
  */
-.modal-enter-from {
-  opacity: 0;
-}
-.modal-leave-to {
+.modal-enter-from, .modal-leave-to {
   opacity: 0;
 }
 .modal-enter-from .modal-container,
 .modal-leave-to .modal-container {
-  -webkit-transform: scale(1.1);
-  transform: scale(1.1);
+  transition: opacity 0.8s ease;
 }
 </style>

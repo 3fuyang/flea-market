@@ -45,7 +45,7 @@
             <el-button plain color="#0099CC" class="button"
               @click="checkDetailCard">查看详情</el-button><br/>
             <el-button plain color="#626aef" class="button"
-              @click="pullOffGood">下架商品</el-button>
+              @click="pullOffGood(good.id)">下架商品</el-button>
           </div>
          </el-col>
        </el-row>
@@ -58,6 +58,7 @@
 import { defineProps, ref, onMounted } from 'vue';
 import { StarFilled, Avatar } from '@element-plus/icons-vue';
 import { useRouter } from 'vue-router';
+import { ElMessageBox, ElMessage } from 'element-plus';
 const props = defineProps({
   userId: String,
   goodsStatus: String,
@@ -120,6 +121,32 @@ function jumpToDetail(goodId){
     query:{
       gid: goodId,
     }
+  })
+}
+
+// 下架商品
+function pullOffGood(goodId){
+  // 显示确认对话框
+  ElMessageBox.confirm(
+    '您确定要下架该商品吗?',
+    '系统不会保存该商品的信息。',
+    '提示',
+    {
+      confirmButtonText:'确定',
+      cancelButtonText:'取消',
+      type:'warning',
+    }
+  ).then(()=>{
+    // 调用接口：传入（商品ID）返回（下架结果）
+
+    // 从视图中删除商品
+    goodsListView.value = goodsListView.value.filter((item)=>{return item.id !== goodId});
+    ElMessage({
+      type:'success',
+      message:'下架成功!',
+    });
+  }).catch(()=>{
+    // 取消下架
   })
 }
 </script>

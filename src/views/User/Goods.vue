@@ -13,7 +13,7 @@
             <GoodsListTable v-if="currentTab === 'soldOut'" :userId="uid" :goodsStatus="currentTab"/>
           </el-tab-pane>
           <el-tab-pane label="新添闲置" name="uploadGood">
-
+            <UploadGoodModal v-if="currentTab === 'uploadGood'" :userId="uid"/>
           </el-tab-pane>
         </el-tabs>
       </div>
@@ -26,6 +26,7 @@
 <script setup>
 import { onMounted, ref } from 'vue';
 import GoodsListTable from '../../components/Goods/GoodsListTable.vue';
+import UploadGoodModal from '../../components/Goods/UploadGoodModal.vue';
 const currentTab = ref('onShelf');
 const uid = ref(null);
 

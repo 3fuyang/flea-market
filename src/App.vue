@@ -24,6 +24,7 @@
 	-webkit-font-smoothing: antialiased;
 	text-align: center;
 	color: #2c3e50;
+  min-width: 1500px;  /* 设置页面最小宽度，防止布局被浏览器的尺寸打乱。 */
 }
 ::-webkit-scrollbar {
   width: 0 !important;

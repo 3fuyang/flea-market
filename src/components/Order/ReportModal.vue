@@ -8,9 +8,10 @@
             举报
           </span>
         </div>     
-        <span class="reported">
-          <FolderChecked class="icon" />
-          您的举报已收悉，工作人员将在三个工作日内给予回复。
+        <span>
+          <el-tag class="reported" type="warning" effect="light">
+            您的举报已收悉，工作人员将在三个工作日内给予回复。
+          </el-tag>
         </span><br/>
         <div class="modal-input">
           <el-input 
@@ -48,7 +49,6 @@
 <script setup>
 import { ref, defineProps, defineEmits, onMounted } from 'vue';
 import { ElMessage } from 'element-plus';
-import { FolderChecked } from '@element-plus/icons-vue'
 defineProps({
   show: Boolean,  // 是否显示对话框
   currOrderId: String,  // 当前订单 ID
@@ -121,15 +121,7 @@ function reportOrder(){
   margin-bottom: 5px;
 }
 .reported{
-  float: left;
-  font-size: 14px;
-  color: silver;
-}
-.icon{
-  color: dodgerblue;
-  height: 20px;
-  width: 20px;
-  padding: 0px 3px;
+  font-size: 13px;
 }
 .modal-input{
   margin-top: 10px;

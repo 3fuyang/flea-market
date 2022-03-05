@@ -140,8 +140,8 @@ import { ElNotification,ElMessage } from 'element-plus';
 export default {
   created(){
     ElNotification({
-      title: '测试规范',
-      message: h('i', { style: 'color: teal' }, '普通用户账号长7位,密码包含字母和数字、8-20位即可;管理员账号长4位,密码同上即可;手机号码长11位,验证码长6位即可。'),
+      title: '测试账号',
+      message: h('i', { style: 'color: teal' }, '普通账号: 1951001, 密码: qwe12345; 管理员账号: 0001, 密码同上。'),
     })
   },
   data(){

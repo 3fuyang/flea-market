@@ -1,10 +1,13 @@
 <template>
 <div class="modal-mask" v-if="show">
-  <el-card class="contentCard">
+  <el-card class="contentCard" :body-style="{ padding: '20px' }">
+    <span class="modal-title">
+      商品详情
+    </span>
     <span class="close-button" @click="$emit('close')">
       <Close class="close-icon"/>
     </span>    
-    <el-steps :space="200" :active="active" process-status="finish" finish-status="success" align-center>
+    <el-steps class="steps" :space="200" :active="active" process-status="finish" finish-status="success" align-center>
       <el-step title="基本信息"></el-step>
       <el-step title="简介和图片"></el-step>
       <el-step title="交易信息"></el-step>
@@ -13,25 +16,47 @@
     <div v-if="active==0">
       <div>
         标题:
-        <el-input v-model="goodInfo.title" placeholder="为你的商品起一个响亮的标题" class="titleInput"/>
+        <el-input 
+          v-model="goodInfo.title" 
+          placeholder="为你的商品起一个响亮的标题" 
+          class="titleInput" 
+          :readonly="status === 'soldOut'"/>
       </div>
       <div>
         商品类型:     
-        <el-select v-model="goodInfo.type" placeholder="选择商品类型" size="large" class="typeSelect">
+        <el-select 
+          v-model="goodInfo.type" 
+          placeholder="选择商品类型" 
+          size="large" 
+          class="typeSelect" 
+          :readonly="status === 'soldOut'">
           <el-option v-for="item in typeOptions" :key="item" :label="item" :value="item"/>
         </el-select>
       </div>
       <div>
         商品名称:
-        <el-input v-model="goodInfo.name" placeholder="你想出售的商品是什么" class="nameInput"/>
+        <el-input 
+          v-model="goodInfo.name" 
+          placeholder="你想出售的商品是什么" 
+          class="nameInput" 
+          :readonly="status === 'soldOut'"/>
       </div>
       <div>
         关键词:     
-        <el-input v-model="goodInfo.keywords" placeholder="输入搜索关键词，用分号分隔" class="keywordsInput"/>
+        <el-input 
+          v-model="goodInfo.keywords" 
+          placeholder="输入搜索关键词，用分号分隔" 
+          class="keywordsInput" 
+          :readonly="status === 'soldOut'"/>
       </div>
       <div>
         校区:     
-        <el-select v-model="goodInfo.campus" placeholder="选择发布校区" size="large" class="campusSelect">
+        <el-select 
+          v-model="goodInfo.campus" 
+          placeholder="选择发布校区" 
+          size="large" 
+          class="campusSelect" 
+          :readonly="status === 'soldOut'">
           <el-option v-for="item in campusOptions" :key="item" :label="item" :value="item"/>
         </el-select>
       </div>
@@ -39,7 +64,13 @@
     <div v-if="active === 1">
       <div>
         <span class="introTitle">简介:</span><br/>
-        <el-input v-model="goodInfo.intro" placeholder="快来简单介绍一下你的商品吧" :rows="3" type="textarea" class="introductionInput"/>
+        <el-input 
+          v-model="goodInfo.intro" 
+          placeholder="快来简单介绍一下你的商品吧" 
+          :rows="3" 
+          type="textarea" 
+          class="introductionInput" 
+          :readonly="status === 'soldOut'"/>
       </div>
       <div>
         <div class="imgTitle">商品实物图:</div>
@@ -47,6 +78,7 @@
         <el-upload
           ref="upload"
           class="uploadImg" 
+          :disabled="status === 'soldOut'"
           action="/api/uploadimage"
           :auto-upload="false"
           :before-upload="handleBeforeUpload"
@@ -102,17 +134,19 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue';
+import { ref, computed, onMounted, onUpdated, watch } from 'vue';
 import { useRouter } from 'vue-router';
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { Close } from '@element-plus/icons-vue'
 defineProps({
-  goodId: String,
-  show: Boolean,
+  goodId: String, // 商品ID
+  show: Boolean,  // 组件渲染条件
+  status: String, // 当前商品的状态: 'onShelf' 或 'soldOut'
 })
 const emits = defineEmits([
   'close',
 ])
+
 const goodInfo = ref({
   title: '', // 标题
   type: '',  // 类型
@@ -122,12 +156,22 @@ const goodInfo = ref({
   intro: '', // 简介(包含交易要求)
   price: '',  // 价格
   detail: '',  // 交易细节
-})
+})  // 商品信息
 const typeOptions = ["图书音像", "电子产品", "美妆个护", "运动户外", "生活电器", "其他"];
 const campusOptions = ["四平路校区", "嘉定校区", "沪西校区", "沪北校区"];
-onMounted(()=>{
+function getGoodInfo(){
   // 调用接口：传入（商品ID）返回（商品详细信息）
-  goodInfo.value={
+  goodPreInfo.value = {
+    title: '原标题',
+    type: '原类型',
+    name: '原名称',
+    keywords: '原关键词',
+    campus: '原校区',
+    intro: '原简介',
+    price: 4000.00,
+    detail: '原交易细节',  
+  };
+  goodInfo.value = {
     title: '原标题',
     type: '原类型',
     name: '原名称',
@@ -136,11 +180,42 @@ onMounted(()=>{
     intro: '原简介',
     price: 4000.00,
     detail: '原交易细节',    
+  };  
+  imgLocalUrl.value = '#';
+  imgServerUrl.value = '#';
+};
+onMounted(()=>{
+  getGoodInfo();
+});
+onUpdated(()=>{
+  getGoodInfo();
+});
+
+const edited = ref(false);  // 信息编辑标志
+// 检查商品信息是否有修改
+const goodPreInfo = ref(null);  // 商品原信息副本
+watch(goodInfo, ()=>{
+  for(const property in goodInfo.value){
+    if(goodInfo.value[property] !== goodPreInfo.value[property]){
+      edited.value = true;
+      break;
+    }else{
+      continue;
+    }
   }
-})
+}, { deep: true });
+
 const active = ref(0);  // 步骤条激活标号
 const buttonInfo = computed(()=>{
-  return active.value < 3 ? "下一条" : "确定修改";
+  switch(active.value){
+    case 0:
+    case 1:
+      return '下一条';
+    case 2:
+      return '提交审核'
+    default:
+      return '提交修改'
+  }
 }); // 'nextStep'按钮的显示文本
 // 上一步
 function preStep(){
@@ -151,64 +226,72 @@ function preStep(){
 }
 // 下一步
 function nextStep(){
-  /* switch(active.value){
+  switch(active.value){
     case 0:
       if(goodInfo.value.title == ""){
         ElMessage.error('标题不可为空!');
+        break;
       }else if(goodInfo.value.type == ""){
         ElMessage.error('商品类型不可为空!');
+        break;
       }else if(goodInfo.value.name == ""){
         ElMessage.error('商品名称不可为空');
+        break;
       }else if(goodInfo.value.keywords == ""){
         ElMessage.error('关键词不可为空!');
+        break;
       }else if(goodInfo.value.campus == ""){
         ElMessage.error('校区不可为空!');
+        break;
       }else{
         ++active.value;
+        break;
       }
-      break;
     case 1:
       if(goodInfo.value.intro == ""){
         ElMessage.error('商品简介不可为空!');
+        break;
       }else if(imgServerUrl.value === ''){
         ElMessage.error('请为商品上传实物图!');
+        break;
       }else{
         ++active.value;
+        break;
       }
-      break;
     case 2:
       if(goodInfo.value.price === 0){
         ElMessage.error('商品价格不能为零!');
+        break;
       }else if(goodInfo.value.detail === ''){
         ElMessage.error('请指定商品交易细节!');
+        break;
       }else{
-        ++active.value;
+        if(edited.value){
+          ++active.value;
+          break;
+        }else{
+          ElMessage.warning('没有需要提交的修改！');
+          break;
+        }
       }
-      break;
     case 3:
-      if(已修改){
-        ElMessageBox.confirm('确认要修改商品信息吗？','提示')
-        .then(() => {
-          // 调用接口-添加商品：传入（商品信息） 返回（商品ID）
-          emits('close')
-          ElMessage({
-              type: 'success',
-              message: '修改成功'
-          });
-          // 刷新当前页面
-          const router = useRouter();
-          router.go(0);
-        })
-        .catch(() => {});
-        break;
-      }else{
-        ElMessage.error('没有需要提交的修改！');
-        break;
-      }
-  } */  
-  if(active.value < 3){
-    ++active.value;
-  }
+      ElMessageBox.confirm('确认要修改商品信息吗？','提示')
+      .then(() => {
+        // 调用接口-添加商品：传入（商品信息） 返回（商品ID）
+        emits('close')
+        ElMessage({
+            type: 'success',
+            message: '修改成功'
+        });
+        // 刷新当前页面
+        const router = useRouter();
+        router.go(0);
+      })
+      .catch(() => {
+        ElMessage.error('修改失败!');
+      });
+      break;
+  } 
 }
 
 const upload = ref(null); // 使用ref获取el-upload元素
@@ -258,6 +341,16 @@ function handleOnError(err){
   height: 100%;
   background-color: rgba(204, 199, 199, 0.5);
   transition: opacity 0.3s ease;
+}
+.modal-title{
+  display: inline-box;
+  margin-bottom: 5px;
+  float: left;
+  font-size: 20px;
+  font-weight: bold;
+}
+.steps{
+  clear: both;
 }
 .contentCard{
   background-color: #f5f5f5;

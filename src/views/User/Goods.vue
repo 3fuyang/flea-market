@@ -10,7 +10,7 @@
             <GoodsListTable v-if="currentTab === 'onShelf'" :userId="uid" :goodsStatus="currentTab" @check-info="checkGoodInfo"/>
           </el-tab-pane>
           <el-tab-pane label="已售出" name="soldOut">
-            <GoodsListTable v-if="currentTab === 'soldOut'" :userId="uid" :goodsStatus="currentTab"/>
+            <GoodsListTable v-if="currentTab === 'soldOut'" :userId="uid" :goodsStatus="currentTab" @check-info="checkGoodInfo"/>
           </el-tab-pane>
           <el-tab-pane label="新添闲置" name="uploadGood">
             <UploadGoodModal v-if="currentTab === 'uploadGood'" :userId="uid"/>
@@ -21,7 +21,7 @@
     <el-col :span="6"></el-col>
   </el-row>
   <Teleport to="main">
-    <GoodsInfoModal :show="showInfoModal" :goodId="currentGoodId" @close="closeGoodInfo"/>
+    <GoodsInfoModal :show="showInfoModal" :goodId="currentGoodId" :status="currentTab" @close="closeGoodInfo"/>
   </Teleport>
 </div>
 </template>

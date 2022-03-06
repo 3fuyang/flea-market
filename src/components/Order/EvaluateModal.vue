@@ -56,7 +56,7 @@
 </template>
 
 <script setup>
-import { ref, computed, defineProps, defineEmits, onMounted, onBeforeUpdate } from 'vue';
+import { ref, computed, onMounted, onBeforeUpdate } from 'vue';
 import { ElMessage } from 'element-plus';
 const props = defineProps({
   show: Boolean,  // 是否显示对话框

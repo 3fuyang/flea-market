@@ -1,6 +1,15 @@
 <template>
 <div class="modal-mask" v-if="show">
   <el-card class="contentCard" :body-style="{ padding: '20px' }">
+    <el-alert
+      v-if="status === 'soldOut'"
+      title="注意：已经出售的商品无法再修改其信息。"
+      type="warning"
+      effect="light"
+      close-text="了解"
+      show-icon
+      center>
+    </el-alert>
     <span class="modal-title">
       商品详情
     </span>

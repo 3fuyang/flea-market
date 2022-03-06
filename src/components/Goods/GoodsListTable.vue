@@ -44,8 +44,13 @@
           <div class="options-wrapper">
             <el-button plain color="#0099CC" class="button"
               @click="$emit('check-info', good.id)">查看详情</el-button><br/>
-            <el-button plain color="#626aef" class="button"
-              @click="pullOffGood(good.id)">下架商品</el-button>
+            <el-tooltip v-if="goodsStatus === 'soldOut'" content="已售出的商品不能被下架。" placement="right" effect="light">
+              <el-button plain color="#626aef" class="button">
+                下架商品
+              </el-button>
+            </el-tooltip>
+            <el-button v-else plain color="#626aef" class="button"
+              @click="pullOffGood(good.id)">下架商品</el-button>            
           </div>
          </el-col>
        </el-row>

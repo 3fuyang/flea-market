@@ -213,7 +213,7 @@ export default {
 </script>
 
 <style scoped>
-.input >>> .el-input__inner {
+.input :deep() .el-input__inner {
     width: 150px;
     border-top-width: 0px;
     border-left-width: 0px;

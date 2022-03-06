@@ -1,11 +1,360 @@
 <template>
-<div class="rootWrapper">
-  
+<div class="modal-mask" v-if="show">
+  <el-card class="contentCard">
+    <span class="close-button" @click="$emit('close')">
+      <Close class="close-icon"/>
+    </span>    
+    <el-steps :space="200" :active="active" process-status="finish" finish-status="success" align-center>
+      <el-step title="基本信息"></el-step>
+      <el-step title="简介和图片"></el-step>
+      <el-step title="交易信息"></el-step>
+      <el-step title="内容审核"></el-step>
+    </el-steps>  
+    <div v-if="active==0">
+      <div>
+        标题:
+        <el-input v-model="goodInfo.title" placeholder="为你的商品起一个响亮的标题" class="titleInput"/>
+      </div>
+      <div>
+        商品类型:     
+        <el-select v-model="goodInfo.type" placeholder="选择商品类型" size="large" class="typeSelect">
+          <el-option v-for="item in typeOptions" :key="item" :label="item" :value="item"/>
+        </el-select>
+      </div>
+      <div>
+        商品名称:
+        <el-input v-model="goodInfo.name" placeholder="你想出售的商品是什么" class="nameInput"/>
+      </div>
+      <div>
+        关键词:     
+        <el-input v-model="goodInfo.keywords" placeholder="输入搜索关键词，用分号分隔" class="keywordsInput"/>
+      </div>
+      <div>
+        校区:     
+        <el-select v-model="goodInfo.campus" placeholder="选择发布校区" size="large" class="campusSelect">
+          <el-option v-for="item in campusOptions" :key="item" :label="item" :value="item"/>
+        </el-select>
+      </div>
+    </div>
+    <div v-if="active === 1">
+      <div>
+        <span class="introTitle">简介:</span><br/>
+        <el-input v-model="goodInfo.intro" placeholder="快来简单介绍一下你的商品吧" :rows="3" type="textarea" class="introductionInput"/>
+      </div>
+      <div>
+        <div class="imgTitle">商品实物图:</div>
+        <!-- 图片上传组件 -->
+        <el-upload
+          ref="upload"
+          class="uploadImg" 
+          action="/api/uploadimage"
+          :auto-upload="false"
+          :before-upload="handleBeforeUpload"
+          :on-success="handleOnSuccess"
+          :on-error="handleOnError"
+          :limit="1"
+          :on-exceed="handleExceed">
+          <span v-if="imgLocalUrl" class="avatarWrapper">
+            <img :src="imgLocalUrl" class="avatar"/>
+          </span>
+            <template #tip>
+              <div class="el-upload__tip">
+                limit 1 jpg/png file with a size of 220*190.
+              </div>
+            </template>          
+            <template #trigger>
+              <el-button type="primary">
+                选择文件
+              </el-button>
+            </template>
+            <el-button 
+              class="buttonGutter" 
+              type="success"
+              @click="submitUpload">
+                确定上传
+            </el-button>
+        </el-upload>
+      </div>
+    </div>
+    <div v-if="active === 2">
+      <span class="priceTitle">
+        价格(CNY):
+      </span><br/>
+      <el-input-number v-model="goodInfo.price" :min="0" class="priceInput"/><br/>
+      <span class="detailTitle">
+        交易信息:
+      </span>
+      <el-input v-model="goodInfo.detail" placeholder="你期望的交易时间、地点以及其他细节。" :rows="4" class="detailInput" type="textarea"></el-input>
+    </div>
+    <div v-if="active === 3">
+      <el-result
+        icon="success"
+        title="审核通过"
+        sub-title="点击确定按钮即可完成修改！"
+      />
+    </div>
+    <div v-if="active < 4" class="controlButton">
+      <el-button @click="preStep" type="primary">上一条</el-button>
+      <el-button @click="nextStep" type="primary">{{buttonInfo}}</el-button>
+    </div>     
+  </el-card>  
 </div>
 </template>
 
 <script setup>
+import { ref, computed, onMounted } from 'vue';
+import { useRouter } from 'vue-router';
+import { ElMessage, ElMessageBox } from 'element-plus'
+import { Close } from '@element-plus/icons-vue'
+defineProps({
+  goodId: String,
+  show: Boolean,
+})
+const emits = defineEmits([
+  'close',
+])
+const goodInfo = ref({
+  title: '', // 标题
+  type: '',  // 类型
+  name: '',  // 名称
+  keywords: '',  // 关键词
+  campus: '',  // 校区
+  intro: '', // 简介(包含交易要求)
+  price: '',  // 价格
+  detail: '',  // 交易细节
+})
+const typeOptions = ["图书音像", "电子产品", "美妆个护", "运动户外", "生活电器", "其他"];
+const campusOptions = ["四平路校区", "嘉定校区", "沪西校区", "沪北校区"];
+onMounted(()=>{
+  // 调用接口：传入（商品ID）返回（商品详细信息）
+  goodInfo.value={
+    title: '原标题',
+    type: '原类型',
+    name: '原名称',
+    keywords: '原关键词',
+    campus: '原校区',
+    intro: '原简介',
+    price: 4000.00,
+    detail: '原交易细节',    
+  }
+})
+const active = ref(0);  // 步骤条激活标号
+const buttonInfo = computed(()=>{
+  return active.value < 3 ? "下一条" : "确定修改";
+}); // 'nextStep'按钮的显示文本
+// 上一步
+function preStep(){
+  if(active.value > 0){
+    --active.value;
+    return;
+  }
+}
+// 下一步
+function nextStep(){
+  /* switch(active.value){
+    case 0:
+      if(goodInfo.value.title == ""){
+        ElMessage.error('标题不可为空!');
+      }else if(goodInfo.value.type == ""){
+        ElMessage.error('商品类型不可为空!');
+      }else if(goodInfo.value.name == ""){
+        ElMessage.error('商品名称不可为空');
+      }else if(goodInfo.value.keywords == ""){
+        ElMessage.error('关键词不可为空!');
+      }else if(goodInfo.value.campus == ""){
+        ElMessage.error('校区不可为空!');
+      }else{
+        ++active.value;
+      }
+      break;
+    case 1:
+      if(goodInfo.value.intro == ""){
+        ElMessage.error('商品简介不可为空!');
+      }else if(imgServerUrl.value === ''){
+        ElMessage.error('请为商品上传实物图!');
+      }else{
+        ++active.value;
+      }
+      break;
+    case 2:
+      if(goodInfo.value.price === 0){
+        ElMessage.error('商品价格不能为零!');
+      }else if(goodInfo.value.detail === ''){
+        ElMessage.error('请指定商品交易细节!');
+      }else{
+        ++active.value;
+      }
+      break;
+    case 3:
+      if(已修改){
+        ElMessageBox.confirm('确认要修改商品信息吗？','提示')
+        .then(() => {
+          // 调用接口-添加商品：传入（商品信息） 返回（商品ID）
+          emits('close')
+          ElMessage({
+              type: 'success',
+              message: '修改成功'
+          });
+          // 刷新当前页面
+          const router = useRouter();
+          router.go(0);
+        })
+        .catch(() => {});
+        break;
+      }else{
+        ElMessage.error('没有需要提交的修改！');
+        break;
+      }
+  } */  
+  if(active.value < 3){
+    ++active.value;
+  }
+}
+
+const upload = ref(null); // 使用ref获取el-upload元素
+// 注意：不需要额外添加头部声明content-type, 否则会引发后端报错: 
+// Error: Multipart: Boundary not found
+//const headers = {'content-type': 'multipart/form-data'}; // 请求头, 固定数据类型
+const imgLocalUrl = ref(''); // 上传图片后返回的本地 url
+const imgServerUrl = ref(''); // 上传图片后返回的服务端 url(只取名称)
+const limitMax = 2200*1900; // 允许上传的最大尺寸
+// on-exceed hook
+function handleExceed(){
+  ElMessage.warning('只能为商品上传一张图片!');
+  return false;
+}
+// before-upload hook
+function handleBeforeUpload(file){
+  if(file.size > limitMax){
+    ElMessage.error('大小超出限制');
+    return false;
+  }
+}
+// 手动上传文件
+function submitUpload(){
+  upload.value.submit();
+}
+// on-success hook
+function handleOnSuccess(res, file){
+  imgLocalUrl.value = URL.createObjectURL(file.raw);
+  imgServerUrl.value = res.data.path.split('/')[3];
+  // 前端访问图片时，使用node.js配置公共资源
+  // 注意：图片统一存储在服务器 ./pulic/image 目录下，用名称区分
+  console.log(imgServerUrl.value);
+}
+// on-error hook
+function handleOnError(err){
+  console.log(err);
+}
 </script>
 
 <style scoped>
+.modal-mask{
+  position: fixed;
+  z-index: 1000;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(204, 199, 199, 0.5);
+  transition: opacity 0.3s ease;
+}
+.contentCard{
+  background-color: #f5f5f5;
+  width: 40%;
+  position: absolute;
+  top: 20%;
+  left: 30%;
+}
+.close-button{
+  cursor: pointer;
+  float: right;
+  color: #c0c0c0;
+}
+.close-icon{
+  width: 25px;
+  height: 25px;
+}
+.titleInput{
+  width: 300px;
+  margin-left:10px;
+  margin-top: 16px;
+}
+.nameInput{
+  width: 200px;
+  margin-left:10px;
+  margin-top: 16px;
+  margin-right:132px;
+}
+.typeSelect{
+  width:150px;
+  margin-left:10px;
+  margin-right:182px;
+  margin-top: 20px;
+}
+.keywordsInput{
+  width:300px;
+  margin-left:10px;
+  margin-right:16px;
+  margin-top: 20px;
+}
+.campusSelect{
+  width:150px;
+  margin-left:10px;
+  margin-right:150px;
+  margin-top: 20px;
+}
+.introTitle{
+  float: left;
+  font-weight: bold;
+}
+.introductionInput {
+  margin: 10px 28px 0px 0px;
+}
+.imgTitle{
+  font-weight: bold;
+  float: left;
+  margin-top: 10px;
+}
+.uploadImg{
+  clear: both;
+}
+.avatarWrapper{
+  display: block;
+  margin: 5px auto;
+}
+.avatar{
+  width: 220px;
+  height: 190px;
+  padding: 1px;
+  border: 1px solid #f5f5f5;
+}
+.el-upload__tip{
+  color: red;
+}
+.buttonGutter{
+  margin-left: 10px;
+}
+.priceTitle{
+  font-weight: bold;
+  float: left;
+}
+.priceInput{
+  clear: both;
+  margin-right: 70px;
+}
+.detailTitle{
+  font-weight: bold;
+  margin-bottom: 5px;
+  float: left;
+  padding-right: 100px;
+}
+.detailInput{
+  clear: both;
+  width: 90%;
+  margin: 0px 0px 0px 1px;
+}
+.controlButton{
+  margin-top: 10px;
+}
 </style>

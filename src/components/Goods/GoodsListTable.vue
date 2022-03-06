@@ -43,7 +43,7 @@
           <span class="price">￥{{good.price}}</span><br/>
           <div class="options-wrapper">
             <el-button plain color="#0099CC" class="button"
-              @click="checkDetailCard">查看详情</el-button><br/>
+              @click="$emit('check-info', good.id)">查看详情</el-button><br/>
             <el-button plain color="#626aef" class="button"
               @click="pullOffGood(good.id)">下架商品</el-button>
           </div>
@@ -63,6 +63,9 @@ const props = defineProps({
   userId: String,
   goodsStatus: String,
 })
+defineEmits([
+  'check-info',
+])
 const goodsListView = ref([]);
 const router = useRouter();
 

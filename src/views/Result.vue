@@ -6,24 +6,24 @@
             <i class="el-icon-search" style="width:20px;"></i>
         </template>
         <template #suffix>
-            <el-button plain type="primary" size="small" round @click="searchKeyWord()">搜索</el-button>
+            <el-button plain type="primary" size="small" round @click="searchKeyWord()" style="margin-top: 5px;">搜索</el-button>
         </template>        
         </el-input>
     </div>
     <div class="resultControl">
             <el-card :body-style="{ padding: '0px' }">
             校区:
-            <el-select v-model="campus" class="selector" size="mini">
+            <el-select v-model="campus" class="selector" size="small">
                 <el-option v-for="option in campusOptions" :key="option" :label="option" :value="option"/>
             </el-select>
             <el-divider direction="vertical"/>
             商品类型:
-            <el-select v-model="goodType" class="selector" size="mini">
+            <el-select v-model="goodType" class="selector" size="small">
                 <el-option v-for="option in goodTypeOptions" :key="option" :label="option" :value="option"/>
             </el-select>
             <el-divider direction="vertical"/>
             上架时间:
-            <el-select v-model="timeLimit" class="selector" size="mini">
+            <el-select v-model="timeLimit" class="selector" size="small">
                 <el-option v-for="option in timeLimitOptions" :key="option" :label="option" :value="option"/>
             </el-select>
         </el-card>
@@ -34,7 +34,7 @@
             <el-input-number v-model="maxPrice" :min="minPrice" size="small" controls-position="right"/>
             <el-divider direction="vertical"/>
             排序方式:
-            <el-select v-model="sortType" class="selector" size="mini" @change="sortTypeChange">
+            <el-select v-model="sortType" class="selector" size="small" @change="sortTypeChange">
                 <el-option v-for="option in sortTypeOptions" :key="option" :label="option" :value="option"/>
             </el-select>
         </el-card>

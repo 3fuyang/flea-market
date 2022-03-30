@@ -2,7 +2,7 @@
 <div id="name">
   <span style="display: inline-block;color: #000000;margin: 20px 0px 0px 20px;font-size: 24px;font-weight: bold;">浏览记录</span><br/>
   <div style="text-align: right;">
-  <el-button type="info" size="medium" style="width: 110px;margin-right: 200px;"
+  <el-button type="info"  style="width: 110px;margin-right: 200px;"
   @click="clearHistory()"><el-icon :size="17"><delete/></el-icon>&nbsp;清空记录</el-button>
   </div>
   <el-row>

@@ -2,7 +2,7 @@
 <div id="name">
   <span style="display: inline-block;color: #000000;margin: 20px 0px 0px 20px;font-size: 24px;font-weight: bold;">我的收藏</span><br/>
   <div style="text-align: right;margin-bottom: 10px;">     
-  <el-button v-show="searching === 1" type="text" size="medium" round style="margin-right: 800px;"
+  <el-button v-show="searching === 1" type="text"  round style="margin-right: 800px;"
   @click="cancelSearch()"><el-icon :size="18"><arrow-left/></el-icon>Cancel</el-button>  
   <el-input v-model.trim="keyWord" placeholder="Search in collections." style="width: 250px;margin-right: 240px;" @keyup.enter="searchFavorite()">
     <template #prefix>

@@ -9,7 +9,7 @@
           <el-col :span="6">
             <div style="background: #EDEAE8;height: 500px;">
               <span><el-icon :size="20"><promotion/></el-icon></span>
-              <span style="display: inline-block;font-size: 14px;margin: 14px 0px;">&nbsp;消息列表</span>
+              <span style="display: inline-block;font-size: 14px;margin: 14px 0px 4px 0px;">&nbsp;消息列表</span>
               <el-divider style="padding: 0px;margin: 0px;"/>
               <div class="oponentBlockList">
                 <div class="point" v-for="(item) in oponentList" :key="item.uid" style="margin-top: 5px;" @click="changeOponent(item.uid,item.uname)">

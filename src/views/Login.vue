@@ -18,7 +18,7 @@
       </el-form-item>
       <el-form-item label="密码" prop="password" style="text-align:left;">
         <el-input v-model="loginForm.password" show-password style="width: 200px;padding: 0px;margin-right: 10px;"></el-input>
-        <el-button v-if="loginForm.type==='用户'" type="text" size="medium" @click="startFindPassword()" style="color:#4169E1;">忘记密码?</el-button>
+        <el-button v-if="loginForm.type==='用户'" type="text"  @click="startFindPassword()" style="color:#4169E1;">忘记密码?</el-button>
       </el-form-item>
       <el-form-item style="text-align:left;">
         <el-button type="primary" @click="startRegister" style="width: 32%">注册</el-button>

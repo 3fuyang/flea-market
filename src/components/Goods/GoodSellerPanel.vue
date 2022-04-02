@@ -16,7 +16,8 @@
       <el-button
         type="primary"
         plain
-        size="small">
+        size="small"
+        @click="concactSeller">
         <el-icon>
           <chat-dot-round/>
         </el-icon>
@@ -39,9 +40,17 @@
   <hr class="divider"/>
   <div class="trend-container">
     <span class="trend-label">为您推荐</span>
-    <el-icon class="refresh-btn" :size="18"><refresh-left/></el-icon>
+    <el-icon 
+      class="refresh-btn" 
+      :size="18"
+      @click="getTrends">
+      <refresh-left/>
+    </el-icon>
     <div class="trend-img-box">
-      <div class="trend-card" v-for="(item, index) of trendGoods">
+      <div 
+        class="trend-card" 
+        v-for="(item, index) of trendGoods"
+        @click="goToDetail(item.goodID)">
         <el-tooltip
           :content="item.goodTitle" 
           :placement="getPlacement(index)" 
@@ -60,6 +69,7 @@
 <script setup>
 import { ref, onBeforeMount } from 'vue'
 import { ChatDotRound, RefreshLeft } from "@element-plus/icons-vue"
+import { useRouter } from 'vue-router'
 defineProps({
   sellerID: String
 })
@@ -76,6 +86,29 @@ onBeforeMount(() => {
 
   getTrends()
 })
+
+const router = useRouter()
+// 联系买家
+const concactSeller = () => {
+  // 调用接口 将买家上升到用户消息列表的首位：传入（用户ID，买家ID）返回（无）
+ 
+  // 在新窗口打开聊天页面。
+  const routeUrl = router.resolve({
+    path:'/chat'
+  })
+  window.open(routeUrl .href, '_blank')
+}
+
+// 前往趋势商品详情页
+const goToDetail= (id) => {
+  router.push({
+    path: '/details',
+    query: {
+      gid: id
+    }
+  })
+}
+
 // 趋势商品
 const trendGoods = ref([])
 // 计算tip位置
@@ -93,7 +126,7 @@ const getPlacement = index => {
 }
 // 获取趋势商品
 const getTrends = () => {
-  // 调用接口： 传入（null） 返回（四个商品的简要信息：ID、名称、价格、图片URL）
+  // 调用接口： 传入（null） 返回（随机四个商品的简要信息：ID、名称、价格、图片URL）
   trendGoods.value = [
     {
       goodID: '1',

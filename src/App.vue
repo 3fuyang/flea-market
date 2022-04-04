@@ -4,7 +4,7 @@
     <el-header v-if="$route.path!='/login'" style="padding: 0">
       <top-nav />
     </el-header>
-		<el-main style="padding: 0;overflow-y: hidden;height: 100%;">
+		<el-main style="padding: 0;overflow-y: hidden;min-height: 78vh;">
 			<router-view/>
 		</el-main>
     <el-footer v-if="$route.path!='/login'" style="background-color: #F0F8FF; height:100%">

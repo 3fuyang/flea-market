@@ -231,7 +231,7 @@ export default {
           this.$router.push({
             path:'/confirm',
             query:{
-              goodsIDArray,
+              gid: goodsIDArray,
             },
           })
         }else{

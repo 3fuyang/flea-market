@@ -6,20 +6,27 @@
 					<div class="big-image-container">
 						<el-image
 							:src="currImageURL"
-							alt="Big Big Image"
 							:preview-src-list="imageCollection"
 							class="big-image">
+							<template #placeholder>
+								<div class="loading-container">
+									<div class="line"></div>
+									<div class="line"></div>
+									<div class="line"></div>
+									<div class="line"></div>
+								</div>								
+							</template>								
 							<template #error>
-							<el-image 
-								:src="polyfillImageURL"/>
+								<p class="placeholder">Error !</p>							
 							</template>						
 						</el-image>
 					</div>
 					<div class="sub-images-container">
-						<el-image
+						<img
 							class="sub-image"
-							v-for="image of imageCollection"
-							:src="image"/>
+							v-for="(image, index) of imageCollection"
+							:src="image"
+							:id="index"/>
 					</div>
 						<p class="declaration">商品类型：{{goodInfo.type}}</p>
 				</div>
@@ -31,8 +38,13 @@
 							</p>
 						</el-col>
 						<el-col :span="3">
-							<el-icon class="star" :size="'2em'" color="orange">
-								<star-filled/>
+							<el-icon 
+								class="star" 
+								:size="'2em'" 
+								color="orange"
+								@click="changeLike">
+								<star-filled v-if="liked"/>
+								<star v-else />
 							</el-icon><br/>
 							<p class="likes">({{goodInfo.likes}})</p>
 						</el-col>					
@@ -71,13 +83,17 @@
 					<div class="button-container">
 						<el-row justify="space-around">
 							<el-col :span="10">
-								<button class="buy-it-now">
+								<button 
+									class="buy-it-now"
+									@click="goConfirm">
 									立即购买
 								</button>
 							</el-col>
 							<el-col :span="10">
-								<button class="add-to-cart">
-									加入购物车
+								<button 
+									class="add-to-cart"
+									@click="addToCart">
+									{{inCart ? '已加入购物车' :'加入购物车'}}
 								</button>							
 							</el-col>							
 						</el-row>
@@ -94,23 +110,29 @@
 </template>
 
 <script setup>
-import { computed, onBeforeMount, ref } from 'vue'
+import { computed, onBeforeMount, onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import GoodSellerPanel from '../components/Goods/GoodSellerPanel.vue'
-import { StarFilled } from "@element-plus/icons-vue"
+import { StarFilled, Star } from "@element-plus/icons-vue"
+import { ElMessage } from 'element-plus'
+
 const goodID = ref('')	// 商品ID
+let userID = ''	// 用户ID
 const router = useRouter()
 const goodInfo = ref(null)	// 商品详情
-// 加载失败时的图片
-const polyfillImageURL = '/src/assets/physics.png'
+
 // 当前展示的大号图片序号
 const currImageIndex = ref(0)
+
 // 展示大图的URL
 const currImageURL = computed(() => {
 	return imageCollection.value[currImageIndex.value]
 })
+
 // 底部盒子中的缩略图
 const imageCollection = ref([])
+
+// 挂载前，初始化数据
 onBeforeMount(() => {
 	// 从queryString获取商品ID
 	goodID.value = router.resolve(router.currentRoute.value).query.gid
@@ -139,6 +161,94 @@ onBeforeMount(() => {
 	// 初始化当前展示大图为第一张图片
 	currImageIndex.value = 0
 })
+
+// 由于要监听多个元素的同一事件，需手写一个含有全局计时器的防抖函数
+let globalTimer = { timer: null }
+const debounce = (fn, delay) => {
+	return (...args) => {
+		globalTimer.timer = setTimeout(() => {
+			fn(...args)
+			clearTimeout(globalTimer.timer)
+			globalTimer.timer = null
+		}, delay)
+	}
+}
+
+// 鼠标悬浮到小图时，显示大图
+const showBigImg = (id) => {
+	currImageIndex.value = id
+}
+
+const debounceShowBigImg = debounce(showBigImg, 500)
+// 是否已收藏
+const liked = ref(false)
+// 是否加入购物车
+const inCart = ref(false)
+// 挂载后，为DOM添加事件监听
+onMounted(() => {
+	// 从SessionStorage获取用户ID
+	userID = window.sessionStorage.getItem('uid')
+	// 对于用户账号
+	if(userID.length === 7){
+		// 调用接口：传入（用户ID）	返回（用户是否将该商品收藏、加入购物车）
+		liked.value = false
+		inCart.value = false
+	}
+
+	// 为缩略图添加鼠标事件监听器
+	const subImages = document.getElementsByClassName('sub-image')
+	Array.from(subImages).forEach((subImg) => {
+		subImg.addEventListener('mouseenter', (e) => {
+			// 加上防抖
+			debounceShowBigImg(Number.parseInt(e.target.id))
+		})
+	})
+})
+
+// 收藏或取消收藏
+const changeLike = () => {
+	if(userID.length !== 4 && userID.length !== 7){
+		// 未登录，跳转到登录页面
+		router.push('/login')
+	}else{
+		// 调用接口：传入（用户ID，商品ID） 返回（收藏结果）
+		liked.value = !liked.value
+	}
+}
+
+// 跳转到付款页面
+const goConfirm = () => {
+	router.push({
+		path: '/confirm',
+		query:{
+			gid: goodID.value,
+		},		
+	})
+}
+
+// 加入购物车
+const addToCart = () => {
+	// 用户未登录
+	if(userID === '0'){
+		// 跳转到登录页面
+		router.push('/login')
+	}
+	// 管理员账号
+	else if(userID.length === 4){
+		ElMessage.warning('请登录普通用户账号进行该操作！')
+	}
+	// 普通用户
+	else if(userID.length === 7){
+		if(!inCart.value){
+			// 调用接口-加入购物车：传入（用户ID，商品ID） 返回（添加结果）
+
+			inCart.value = true
+		}else{
+			// 已在购物车中，跳转到购物车页面
+			router.push('/shoppingcart')
+		}
+	}
+}
 </script>
 
 <style scoped>
@@ -165,12 +275,50 @@ onBeforeMount(() => {
 	width: 15em;
 }
 .big-image-container{
-	max-height: 20em;
-	max-width: 15em;
+	height: 12.2em;
+	width: 15em;
+	display: flex;
+	justify-content: center;
+	align-items: center;	
 }
 .big-image{
 	object-fit: scale-down;
 	border: 1px solid #E0E0E0;
+}
+.loading-container{
+	position: relative;
+	display: inline-block;
+	box-sizing: border-box;
+	padding: 30px;
+	width: 25%;
+	height: 140px;
+}
+.line{
+  position: absolute;
+  top: 50%;
+  margin-left: 10px;
+  width: 60px;
+  height: 4px;
+  background: #FFF;
+  animation: spin 1.5s infinite ease;
+}
+.line:nth-of-type(2) { 
+	animation-delay: 0.1s; 
+}  
+.line:nth-of-type(3) { 
+	animation-delay: 0.2s; 
+}
+.line:nth-of-type(4) { 
+	animation-delay: 0.3s; 
+}
+@keyframes spin { 
+  100% { 
+    transform: rotate(360deg); 
+  } 
+} 
+.placeholder{
+	color: #08C;
+	font-size: 1.5em;
 }
 .sub-images-container{
 	white-space: nowrap;

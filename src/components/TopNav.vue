@@ -97,7 +97,7 @@ export default {
 
     getLoginStatus() {
       let status = window.sessionStorage.getItem('uid')
-      console.log(status);
+      //console.log(status);
       switch (status) {
         case null:
           window.sessionStorage.setItem('uid', '0')

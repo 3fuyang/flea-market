@@ -93,7 +93,7 @@
 								<button 
 									class="add-to-cart"
 									@click="addToCart">
-									{{inCart ? '已加入购物车' :'加入购物车'}}
+									{{ inCart ? '已加入购物车' :'加入购物车' }}
 								</button>							
 							</el-col>							
 						</el-row>
@@ -107,13 +107,27 @@
 			</div>
 		</el-col>
 	</el-row>
+	<div class="bottom-box">
+		<div class="comment-container">
+			<p class="seller-comment-title">
+				<el-icon :size="20" color="#1C93F5" class="shop-icon">
+					<shop/>
+				</el-icon>
+				卖家评论
+			</p>
+			<div class="comments">
+				<comments  :user-i-d="goodInfo.sellerID"/>
+			</div>	
+		</div>
+	</div>
 </template>
 
 <script setup>
 import { computed, onBeforeMount, onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import GoodSellerPanel from '../components/Goods/GoodSellerPanel.vue'
-import { StarFilled, Star } from "@element-plus/icons-vue"
+import Comments from '../components/Goods/Comments.vue'
+import { StarFilled, Star, Shop } from "@element-plus/icons-vue"
 import { ElMessage } from 'element-plus'
 
 const goodID = ref('')	// 商品ID
@@ -253,7 +267,7 @@ const addToCart = () => {
 
 <style scoped>
 .root-container{
-	margin: .8em 0;
+	margin: .8em 0 .4em 0;
 	overflow: auto;
 }
 .good-container{
@@ -453,5 +467,31 @@ const addToCart = () => {
 	border-color: #ff6f00;
 	background: #ff6f00;
 }
-
+.bottom-box{
+	display: flex;
+	justify-content: center;
+}
+.seller-comment-title{
+	margin: 0;
+	float: left;
+	padding-left: 1em;
+	color: #6c6c6c;
+	font-size: 1.2em;
+	font-weight: 600;
+	display: flex;
+	align-items: center;
+}
+.shop-icon{
+	padding: .1em;
+}
+.comment-container{
+	flex: 0 0 55.5rem;
+	background-color: #FFF;
+	border: .08em solid #e8e8e8;
+	padding: .8em;
+	box-sizing: border-box;
+}
+.comments{
+	padding: 0 10em;
+}
 </style>

@@ -391,7 +391,7 @@ export default {
           this.$router.push({
             path:'/result',
             query:{
-              name:this.keyWord,
+              keywords:this.keyWord,
             },
           });
         }else{
@@ -403,7 +403,7 @@ export default {
         this.$router.push({
           path:'/result',
           query:{
-            name:givenWord,
+            keywords:givenWord,
           },
         });
       },

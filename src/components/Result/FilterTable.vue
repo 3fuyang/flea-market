@@ -56,7 +56,15 @@
   </div>      
   <span class="label4">价格区间</span>
   <div class="filter4">
-
+    <div class="price-wrapper">
+      ￥
+      <input v-model="minPrice" class="price-input" type="number" min="0" max="9999"/>
+      <em>&nbsp; - </em>
+      ￥
+      <input v-model="maxPrice" class="price-input" type="number" min="0" max="9999"/>
+      <button class="grey-btn" @click="applyPriceFilter">确定</button>
+      <button class="grey-btn" @click="removePriceFilter">清空</button>
+    </div>
   </div>      
   <span class="label5">卖家评价</span>
   <div class="filter5">
@@ -80,7 +88,7 @@
 </template>
 
 <script setup>
-import { onBeforeMount, ref } from 'vue'
+import { onBeforeMount, onMounted, ref } from 'vue'
 import { onBeforeRouteUpdate, useRouter } from 'vue-router'
 
 const router = useRouter()
@@ -92,13 +100,45 @@ const filters = ref({
   campus: [],
   catalog: [],
   onShelfTime: '',
+  minPrice: undefined,
+  maxPrice: undefined,
   score: []
 })
+// 价格上、下限
+const minPrice = ref(undefined)
+const maxPrice = ref(undefined)
 
 onBeforeMount(() => {
   console.log('调用 beforeMount')  
   // 挂载组件前
   getAndParseQuery()
+})
+
+// 防抖
+const debounce = (fn, delay) => {
+  let timer
+	return (...args) => {
+		timer = setTimeout(() => {
+			fn(...args)
+			clearTimeout(timer)
+			timer = null
+		}, delay)
+	}
+}
+const debounceInput = debounce((e) => {
+  const pattern = /\-/g
+  if(pattern.test(e.target.value)){
+    e.target.value = undefined
+  }
+}, 500)
+
+onMounted(() => {
+  const inputs = document.getElementsByClassName('price-input')
+  for(let input of inputs){
+    input.addEventListener('keyup', (e) => {
+      debounceInput(e)
+    })
+  }
 })
 
 onBeforeRouteUpdate((to) => {
@@ -114,7 +154,7 @@ function getAndParseQuery(...args) {
   if(args.length){
     // 在beforeRouteUpdate中调用
     query = args[0]
-    console.log(query)
+    //console.log(query)
   }else{
     // 在beforeMount中调用
     query = router.currentRoute.value.query
@@ -143,6 +183,8 @@ function getAndParseQuery(...args) {
       }
     }
   }
+  minPrice.value = filters.value.minPrice ? filters.value.minPrice : undefined
+  maxPrice.value = filters.value.maxPrice ? filters.value.maxPrice : undefined
 }
 
 // 启用筛选函数
@@ -189,6 +231,36 @@ function removeFilter(key, value) {
     path: '/newresult',
     query: query
   })  
+}
+
+// 应用价格区间函数
+function applyPriceFilter(){
+  if(minPrice.value > maxPrice.value){
+    [minPrice.value, maxPrice.value] = [maxPrice.value, minPrice.value]
+  }
+  filters.value.maxPrice = maxPrice.value
+  filters.value.minPrice = minPrice.value
+  router.push({
+    path: '/newresult',
+    query: {
+      keywords: keywords.value,
+      filters: JSON.stringify(filters.value)
+    }
+  })
+}
+
+// 取消价格区间函数
+function removePriceFilter(){
+  filters.value.minPrice = undefined
+  filters.value.maxPrice = undefined
+  let query = {
+    keywords: keywords.value,
+    filters: JSON.stringify(filters.value)
+  }
+  router.push({
+    path: '/newresult',
+    query: query
+  })    
 }
 
 // 筛选条件
@@ -304,7 +376,7 @@ const filterTable = ref({
         value: 'OverFour',
         selected: false  
       }
-    ],    
+    ],
 })
 </script>
 
@@ -407,6 +479,31 @@ const filterTable = ref({
 .filter4{
   grid-area: filter4;
   border-bottom: 1px solid #DDD;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+.price-wrapper{
+  width: 44%;
+}
+.price-input{
+  outline: none;
+  border: 1px solid #CCC;
+}
+.grey-btn{
+  outline: none;
+  font-size: .8em;
+  margin: 0 2em;
+  background-color: #eee;
+  border: 1px solid #ccc;
+  cursor: pointer;
+}
+.grey-btn:last-child{
+  margin-left: 0em;
+}
+.grey-btn:hover{
+  background-color: #ddd;
+  box-shadow: inset .1em .1em .3em #ccc;
 }
 .filter5{
   grid-area: filter5;

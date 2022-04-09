@@ -35,13 +35,20 @@
 
 <script setup>
 import { ElMessage } from 'element-plus'
-import { ref } from 'vue'
-import { useRouter } from 'vue-router'
+import { onMounted, ref } from 'vue'
+import { onBeforeRouteUpdate, useRouter } from 'vue-router'
 import FilterTable from '../components/Result/FilterTable.vue'
 
 const router = useRouter()
 // 用户输入的搜索关键字
 const keywords = ref('')
+onMounted(() => {
+  let queryValue = router.currentRoute.value.query.keywords
+  keywords.value = queryValue ? queryValue : ''
+})
+onBeforeRouteUpdate((to) => {
+  keywords.value = to.query.keywords
+})
 // 流行的关键词列表
 const popularKeywords = [
   '高数第七版',
@@ -53,7 +60,16 @@ const popularKeywords = [
   '机械键盘'
 ]
 // 使用关键词搜索
-function queryByKeywords() {
+function queryByKeywords(popular = null) {
+  if(popular){
+    router.push({
+      path: '/result',
+      query: {
+        keywords: popular
+      }
+    })
+    return    
+  }
   if(!keywords.value.length) {
     ElMessage.warning('亲，请输入关键词哦。')
     return false

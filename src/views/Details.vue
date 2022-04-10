@@ -28,7 +28,7 @@
 							:src="image"
 							:id="index"/>
 					</div>
-						<p class="declaration">商品类型：{{goodInfo.type}}</p>
+					<p class="declaration">商品类型：{{goodInfo.type}}</p>
 				</div>
 				<div class="right-flex-item">
 					<el-row>

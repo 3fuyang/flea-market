@@ -27,8 +27,12 @@
   </div>
   <FilterTable/>
   <div class="goods-wrapper">
-    <div class="recommend-wrapper">推荐</div>
-    <div class="result-wrapper">搜索结果</div>
+    <div class="recommend-wrapper">
+      <RecommendList/>
+    </div>
+    <div class="result-wrapper">
+      <ResultList/>
+    </div>
   </div>
 </div>
 </template>
@@ -38,6 +42,8 @@ import { ElMessage } from 'element-plus'
 import { onMounted, ref } from 'vue'
 import { onBeforeRouteUpdate, useRouter } from 'vue-router'
 import FilterTable from '../components/Result/FilterTable.vue'
+import RecommendList from '../components/Result/RecommendList.vue'
+import ResultList from '../components/Result/ResultList.vue'
 
 const router = useRouter()
 // 用户输入的搜索关键字
@@ -147,11 +153,13 @@ function queryByKeywords(popular = null) {
 .goods-wrapper{
   display: flex;
   flex-direction: row;
+  width: 74rem;
+  margin: .8em auto;
 }
 .recommend-wrapper {
-  flex: 0 1 auto;
+  flex: 0 1 15%;
 }
 .result-wrapper{
-  flex: 1 0 auto;
+  flex: 1 0 85%;
 }
 </style>

@@ -181,6 +181,6 @@ function navigateDetails() {
   cursor: pointer;
 }
 .good-title:hover{
-  color: red;
+  color: #3399CC;
 }
 </style>

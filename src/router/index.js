@@ -17,7 +17,6 @@ const Confirm = () => import("../views/User/Confirm.vue")
 const Security = () => import("../views/User/Security.vue")
 const ShoppingCart = () => import("../views/User/ShoppingCart.vue")
 const Stream = () => import("../views/User/Stream.vue")
-const Upload = () => import("../views/User/Upload.vue")
 
 const AdminReport = () => import("../views/Administrator/HandlingReports.vue")
 
@@ -42,7 +41,6 @@ const routes = [
 	{ path: '/security',	component: Security},
   { path: '/shoppingcart',component: ShoppingCart},
   { path: '/stream',		component: Stream},
-  { path: '/upload',		component: Upload},
 
 	{ path: '/admin/report', component: AdminReport },
 

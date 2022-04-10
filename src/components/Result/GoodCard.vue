@@ -4,7 +4,7 @@
     <el-image
       :src="currImageURL"
       class="big-image"
-      @click="navigateDetails">												
+      @click="navigateDetails">
     </el-image>
   </div>
   <div class="sub-images-container">
@@ -113,6 +113,14 @@ function navigateDetails() {
   box-sizing: border-box;
   border: 1px solid transparent;
   width: 15em;
+  margin-right: .8em;
+  margin-bottom: 1.5em;
+}
+.gl-item-card:nth-child(4n){
+  margin-right: 0;
+}
+.gl-item-card:nth-child(4n+1){
+  margin-left: .3em;
 }
 .gl-item-card:hover{
   border: 1px solid #E9E9E9;

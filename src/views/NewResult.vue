@@ -158,6 +158,7 @@ function queryByKeywords(popular = null) {
 }
 .recommend-wrapper {
   flex: 0 1 15%;
+  padding: .3rem;
 }
 .result-wrapper{
   flex: 1 0 85%;

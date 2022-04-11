@@ -14,6 +14,7 @@ const Goods = () => import("../views/User/Goods.vue")
 const Order = () => import("../views/User/Order.vue")
 const Chat = () => import("../views/User/Chat.vue")
 const Confirm = () => import("../views/User/Confirm.vue")
+const NewConfirm = () => import("../views/User/NewConfirm.vue")
 const Security = () => import("../views/User/Security.vue")
 const ShoppingCart = () => import("../views/User/ShoppingCart.vue")
 const Stream = () => import("../views/User/Stream.vue")
@@ -37,7 +38,7 @@ const routes = [
   { path: '/goods',		component: Goods},
 	{ path: '/order', 		component: Order },
   { path: '/chat',		component: Chat},
-  { path: '/confirm',		component: Confirm},
+  { path: '/confirm',		component: NewConfirm},
 	{ path: '/security',	component: Security},
   { path: '/shoppingcart',component: ShoppingCart},
   { path: '/stream',		component: Stream},

@@ -74,7 +74,7 @@ export default {
             time: '',
             id: 0,
             price: 20,
-            paymentImage: require("../../assets/payment.jpg"),
+            paymentImage: "../../assets/payment.jpg",
             paymentDialog: false,
         }
     },

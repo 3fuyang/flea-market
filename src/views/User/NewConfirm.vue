@@ -28,6 +28,7 @@
 </template>
 
 <script setup>
+import { ElMessage } from 'element-plus';
 import { onBeforeMount, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import GoodMediaObject from '../../components/Confirm/GoodMediaObject.vue'
@@ -45,7 +46,7 @@ const router = useRouter()
 onBeforeMount(() => {
   // 从query中提取要购买的商品ID
   let query = router.currentRoute.value.query.gid
-  goodsID.value= query.split('-')
+  goodsID.value = query.split('-')
   // 调用接口：传入（商品ID） 返回（总金额）
   totalPrice.value = 1000.55
   // 调用接口：传入（用户ID） 返回（用户昵称，绑定手机）
@@ -60,6 +61,8 @@ function payBill() {
     // 调用接口：传入（用户ID，商品ID，下单时间） 返回（null）
     gid
   }
+  ElMessage.success('提交成功，即将为您跳转到订单页！')
+  window.setTimeout(() => router.push('/order'), 500)
 }
 </script>
 

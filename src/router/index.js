@@ -20,6 +20,7 @@ const ShoppingCart = () => import("../views/User/ShoppingCart.vue")
 const Stream = () => import("../views/User/Stream.vue")
 
 const AdminReport = () => import("../views/Administrator/HandlingReports.vue")
+const DealReport = () => import("../views/Administrator/DealingReports.vue")
 
 const routes = [
 	//侧导航栏和顶部导航栏
@@ -43,7 +44,7 @@ const routes = [
   { path: '/shoppingcart',component: ShoppingCart},
   { path: '/stream',		component: Stream},
 
-	{ path: '/admin/report', component: AdminReport },
+	{ path: '/admin/report', component: DealReport },
 
 ]
 

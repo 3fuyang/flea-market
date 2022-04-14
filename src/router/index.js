@@ -1,7 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router'
 
 const Home = () => import('../views/Home.vue')
-const Result = () => import('../views/Result.vue')
+//const Result = () => import('../views/Result.vue')
 const NewResult = () => import('../views/NewResult.vue')
 const Login = () => import('../views/Login.vue')
 const Details = () => import('../views/Details.vue')
@@ -13,22 +13,21 @@ const Favorite = () => import("../views/User/Favorite.vue")
 const Goods = () => import("../views/User/Goods.vue")
 const Order = () => import("../views/User/Order.vue")
 const Chat = () => import("../views/User/Chat.vue")
-const Confirm = () => import("../views/User/Confirm.vue")
+//const Confirm = () => import("../views/User/Confirm.vue")
 const NewConfirm = () => import("../views/User/NewConfirm.vue")
 const Security = () => import("../views/User/Security.vue")
 const ShoppingCart = () => import("../views/User/ShoppingCart.vue")
 const Stream = () => import("../views/User/Stream.vue")
 
-const AdminReport = () => import("../views/Administrator/HandlingReports.vue")
+//const AdminReport = () => import("../views/Administrator/HandlingReports.vue")
 const DealReport = () => import("../views/Administrator/DealingReports.vue")
 
 const routes = [
 	//侧导航栏和顶部导航栏
 	{ path: '/', 			redirect: '/home' }, // 重定向到首页
 	{ path: '/home', 		component: Home },
-	{ path: '/result',		redirect: '/newresult'},
+	{ path: '/result',		component: NewResult},
 	{ path: '/login', 		component: Login },
-	{ path: '/newresult',  component: NewResult},
 	//{ path: '/logout', 		redirect: '/home' },
 	{ path: '/details',		component: Details},
   { path: '/report',		component: Report},

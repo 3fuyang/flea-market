@@ -60,10 +60,11 @@ const createColumns = () => [
       {
         size: 18,
         color: '#666'
-      },
-      h(
+      },{
+        default: () => h(
         Create
       )
+      }
     ),
     expandable: () => true,
     renderExpand: (rowData) => {

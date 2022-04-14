@@ -84,7 +84,7 @@ const createColumns = () => [
               style: {
                 margin: '1em',
                 marginTop: '.6em',
-                width: '92%'
+                width: '92%',
               }
             },
             [
@@ -231,5 +231,4 @@ onBeforeMount(() => {
   display: flex;
   width: 60vw;
 }
-
 </style>

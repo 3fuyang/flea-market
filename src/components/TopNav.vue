@@ -46,7 +46,7 @@
           <el-menu-item index="/admin/examine">审核</el-menu-item>
           <el-menu-item index="/admin/report">受理举报</el-menu-item>
         </el-sub-menu>
-      <el-menu-item @click="logOut()">注销</el-menu-item>       
+      <el-menu-item @click="logOut()" :route="{ path: $route.path}">注销</el-menu-item>       
       </el-menu>
       </el-col>
     </el-row>

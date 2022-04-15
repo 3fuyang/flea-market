@@ -18,7 +18,7 @@
     <el-col :span="20">
       <el-row>
       <template v-for="(goodItem) in showData" :key="goodItem.id">
-      <el-card :body-style="{ padding: '0px' }" style="width: 220px;height: 240px;margin: 0px 5px 10px 5px;" >
+      <el-card :body-style="{ padding: '0px' }" style="width: 220px;height: 250px;margin: 0px 5px 10px 5px;" >
         <el-image class="point" :src="goodItem.path" @click="jumpCard(goodItem.id)" fit="scale-down" />
           <span style="display: inline-block;font-size: 13px;color: #808080;margin-top: 3px;">{{goodItem.name}}</span><br/>
           <span style="display: inline-block;font-size: 18px;color: #FF9900;margin-top: 3px;">￥{{goodItem.price}}</span>

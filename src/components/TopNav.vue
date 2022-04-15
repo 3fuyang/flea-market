@@ -32,7 +32,7 @@
             <template #title>我的交易</template>
               <el-menu-item index="/order">订单管理</el-menu-item>
               <el-menu-item index="/goods">商品管理</el-menu-item>
-              <el-menu-item index="/stream">流水统计</el-menu-item>
+              <el-menu-item index="/trade">卖出闲置</el-menu-item>
               <el-menu-item index="/chat">我的消息</el-menu-item>
           </el-sub-menu>        
           <el-menu-item :route="{ path: $route.path}" @click="logOut()">注销</el-menu-item>       

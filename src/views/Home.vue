@@ -4,7 +4,9 @@
     <el-row>
     <el-input v-model.trim="keyWord" placeholder="Type to Search." style="width: 500px;" @keyup.enter="searchKeyWord()">
       <template #prefix>
-        <i class="el-icon-search" style="width:20px;"></i>
+        <el-icon :size="20" style="margin-top: 6px;margin-right: 2px">
+          <Search/>
+        </el-icon>
       </template>
       <template #suffix>
         <el-button plain type="primary" size="small" round style="margin-top: 5px;"  @click="searchKeyWord()">搜索</el-button>
@@ -305,10 +307,10 @@
 
 <script>
 import { ElMessage } from 'element-plus'
-import { Reading, Monitor, MagicStick, Bicycle, Odometer, Position, Food, OfficeBuilding, FirstAidKit, Suitcase, Star, Clock, User, CirclePlus, Lock, PieChart, Files, Message, Help } from '@element-plus/icons-vue'
+import { Search, Reading, Monitor, MagicStick, Bicycle, Odometer, Position, Food, OfficeBuilding, FirstAidKit, Suitcase, Star, Clock, User, CirclePlus, Lock, PieChart, Files, Message, Help } from '@element-plus/icons-vue'
 export default {
     components:{
-      Reading, Monitor, MagicStick, Bicycle, Odometer, Position, Food, OfficeBuilding, FirstAidKit, Suitcase, Star, Clock, User, CirclePlus, Lock, PieChart, Files, Message, Help
+      Search, Reading, Monitor, MagicStick, Bicycle, Odometer, Position, Food, OfficeBuilding, FirstAidKit, Suitcase, Star, Clock, User, CirclePlus, Lock, PieChart, Files, Message, Help
     },
     created(){
       //为图片列表赋值

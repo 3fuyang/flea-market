@@ -96,7 +96,7 @@
       <el-card :body-style="{ padding: '0px' }" style="width: 220px;height: 240px;" @click="jumpCard(item.id)">
         <el-image :src="item.path" fit="scale-down" />
           <span style="display: inline-block;font-size: 13px;color: #808080;margin-top: 3px;">{{item.name}}</span><br/>
-          <span style="display: inline-block;font-size: 18px;color: #FF9900;margin-top: 3px;">￥{{item.price}}</span>
+          <span style="display: inline-block;font-size: 18px;color: #FF9900;margin-top: 0px;">￥{{item.price}}</span>
       </el-card>
     </el-carousel-item>
   </el-carousel>

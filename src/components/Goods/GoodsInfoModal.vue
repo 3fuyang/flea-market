@@ -192,7 +192,7 @@ function getGoodInfo(){
   };  
   imgLocalUrl.value = '#';
   imgServerUrl.value = '#';
-};
+}
 onMounted(()=>{
   getGoodInfo();
 });

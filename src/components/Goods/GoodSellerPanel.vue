@@ -50,6 +50,7 @@
       <div 
         class="trend-card" 
         v-for="(item, index) of trendGoods"
+        :key="index"
         @click="goToDetail(item.goodID)">
         <el-tooltip
           :content="item.goodTitle" 

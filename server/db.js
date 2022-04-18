@@ -4,7 +4,7 @@ var mysql = {
   port: '3306',
   user: 'root',
   password: '12345',
-  database: 'se',
+  database: 'flea',
   multipleStatements: true
 }
 

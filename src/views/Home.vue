@@ -240,13 +240,13 @@
       </el-row>
     </el-card>
     <el-card class="point" :body-style="{padding: '0px 0px 0px 0px', backgroundColor: '#99CCFF', opacity: 0.7}" shadow="hover"
-      style="width: 84px;height: 33px;margin-left: 24px;margin-top: 20px;" @click="$router.push('/stream')">
+      style="width: 84px;height: 33px;margin-left: 24px;margin-top: 20px;" @click="$router.push('/trade')">
       <el-row>
         <el-col :span="4">
           <el-icon :size="18" color="#ffffff" style="margin: 6px 0px 0px 3px;"><pie-chart/></el-icon>
         </el-col>
         <el-col :span="20">
-          <span style="display: inline-block;font-size: 13px;color: #ffffff;margin-top: 8px;margin-bottom: 9px;">流水统计</span>
+          <span style="display: inline-block;font-size: 13px;color: #ffffff;margin-top: 8px;margin-bottom: 9px;">卖出商品</span>
         </el-col>
       </el-row>      
     </el-card>

@@ -203,13 +203,17 @@ onMounted(() => {
 	userID = window.sessionStorage.getItem('uid')
 	// 对于用户账号
 	if(userID.length === 7){
-		// 调用接口：传入（用户ID，商品ID，当前时间） 返回（null）
+		// 调用接口，加入浏览记录：传入（用户ID，商品ID，当前时间） 返回（null）
 		axios.post('/api/addTrack', {
 			userID,
 			goodID: goodID.value,
 			time: new Date().toISOString().slice(0, 19).replace('T', ' ')
 		})
-		// 调用接口：传入（用户ID）	返回（用户是否将该商品收藏、加入购物车）
+		// 调用接口：传入（用户ID）	返回（用户是否将该商品收藏、加入购物车)
+		axios.post(`/api/checkCollected`, {userID: userID, goodID: goodID.value})
+			.then(res => {
+				liked.value = res.data
+			})
 		liked.value = false
 		inCart.value = false
 	}
@@ -238,8 +242,23 @@ const changeLike = () => {
 		// 未登录，跳转到登录页面
 		router.push('/login')
 	}else{
+		const data = {
+			userID,
+			goodID: goodID.value,
+			time: new Date().toISOString().slice(0, 19).replace('T', ' ')
+		}
 		// 调用接口：传入（用户ID，商品ID） 返回（收藏结果）
-		liked.value = !liked.value
+		if(!liked.value){
+			axios.post('/api/collectGood', data)
+				.then(() => {
+					liked.value = !liked.value
+				})
+		}else{
+			axios.post('/api/cancelCollection', {userID: data.userID, goodID: data.goodID})
+				.then(() => {
+					liked.value = !liked.value
+				})			
+		}
 	}
 }
 

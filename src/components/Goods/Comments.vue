@@ -56,7 +56,7 @@
 import { ref, computed, onBeforeMount } from 'vue'
 import '@/assets/fonts/font.css'
 
-defineProps({
+const props = defineProps({
   userID: String
 })
 

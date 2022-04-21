@@ -504,7 +504,7 @@ export default {
             telnum: this.findForm.telNum
           }
           // 调用接口： 传入（学号、手机号） 返回（学号或手机号是否已被注册）
-          this.axios.post('/api/isCoupled/',id_tel).then((is_c)=>{
+          this.axios.post('/api/idcoupletel/',id_tel).then((is_c)=>{
             if(is_c.data){
               this.nextPwd=true;        
             }else{

@@ -326,9 +326,9 @@ export default {
         this.axios.get('/api/goodsBriefInfo/'+ item).then((response) => {
           this.goodsList.push({
             id: item,
-            name: response.data[0].goods_title,
+            name: response.data[0].title,
             price: response.data[0].price,
-            path: ("/src/assets/"+response.data[0].url),
+            path: `http://127.0.0.1:8082/public/images/${response.data[0].images.split(';')[0]}.png`,
           });       
         })
       }      
@@ -343,13 +343,14 @@ export default {
       this.userID=window.sessionStorage.getItem('uid');
       if(this.userID === null){
         this.userID='0';
+      }else{
+        //调用接口：传入（用户ID） 返回（用户购物车数量，待付款数量，待评价数量）
+        this.axios.get('/api/homeinfo/'+this.userID).then((response) => {
+          this.shoppingCartNum=response.data.shoppingCartNum;
+          this.notPayNum=response.data.notPaidNum;
+          this.notEvaluateNum=response.data.notEvaluateNum;        
+        }) 
       }
-      //调用接口：传入（用户ID） 返回（用户购物车数量，待付款数量，待评价数量）
-      this.axios.get('/api/homeinfo/'+this.userID).then((response) => {
-        this.shoppingCartNum=response.data.shoppingCartNum;
-        this.notPayNum=response.data.notPaidNum;
-        this.notEvaluateNum=response.data.notEvaluateNum;        
-      })      
     },
     data(){
         return{

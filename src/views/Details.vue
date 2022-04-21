@@ -103,7 +103,7 @@
 		</el-col>
 		<el-col :span="4">
 		  <div class="seller-container">
-				<good-seller-panel :sellerID="goodInfo.sellerID"/>
+				<good-seller-panel v-if="goodInfo.sellerID" :sellerID="goodInfo.sellerID"/>
 			</div>
 		</el-col>
 	</el-row>
@@ -116,24 +116,25 @@
 				卖家评论
 			</p>
 			<div class="comments">
-				<comments  :user-i-d="goodInfo.sellerID"/>
+				<comments v-if="goodInfo.sellerID"  :user-i-d="goodInfo.sellerID"/>
 			</div>	
 		</div>
 	</div>
 </template>
 
 <script setup>
-import { computed, onBeforeMount, onMounted, ref } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import GoodSellerPanel from '../components/Goods/GoodSellerPanel.vue'
 import Comments from '../components/Goods/Comments.vue'
 import { StarFilled, Star, Shop } from "@element-plus/icons-vue"
 import { ElMessage } from 'element-plus'
+import axios from 'axios'
 
 const goodID = ref('')	// 商品ID
 let userID = ''	// 用户ID
 const router = useRouter()
-const goodInfo = ref(null)	// 商品详情
+const goodInfo = ref({sellerID: ''})	// 商品详情
 
 // 当前展示的大号图片序号
 const currImageIndex = ref(0)
@@ -147,34 +148,32 @@ const currImageURL = computed(() => {
 const imageCollection = ref([])
 
 // 挂载前，初始化数据
-onBeforeMount(() => {
-	// 从queryString获取商品ID
-	goodID.value = router.resolve(router.currentRoute.value).query.gid
-	// 调用接口：传入（商品ID）返回（商品详情：卖家ID、卖家昵称、商品标题、商品类型、上架时间、收藏数、商品图片URL、价格、地址、简介）
-	goodInfo.value = {
-		goodTitle: '商品标题，粗体，顶部，一般较长，自动换行，最大行数2',
-		onshelfTime: '2020-12-32',
-		sellerID: '1952525',
-		likes: 1000,
-		type: '电子产品',
-		campus: '嘉定校区',
-		images: [
-			// 一件商品允许最少一张、最多三张图片
-			// 后端只返回图片名称，URL在前端编码
-			'philips',
-			'pen',
-			'tea',
-		],
-		price: 99999.99,
-		intro: '一段关于该商品的文字，一般是对交易所做的限定，或者对商品优点的介绍。'
-	}
-	// 获取图片数组
-	imageCollection.value = goodInfo.value.images.map((name) => {
-		return `/src/assets/${name}.png`
+// 从queryString获取商品ID
+goodID.value = router.resolve(router.currentRoute.value).query.gid
+// 调用接口：传入（商品ID）返回（商品详情：卖家ID、卖家昵称、商品标题、商品类型、上架时间、收藏数、商品图片URL、价格、地址、简介）
+axios.get(`/api/getGoods/${goodID.value}`)
+	.then(response => {
+		goodInfo.value = {
+			goodTitle: response.data[0].title,
+			onshelfTime: response.data[0].onshelf_time.substr(0, 19).replace('T', ' '),
+			sellerID: response.data[0].seller_id,
+			likes: 1000,	// 对接收藏夹接口后，需要重写接口适配收藏数
+			type: response.data[0].category,
+			campus: response.data[0].campus,
+			images: 
+				// 一件商品允许最少一张、最多三张图片
+				// 后端只返回图片名称，URL在前端编码
+				response.data[0].images.split(';')
+			,
+			price: Number.parseFloat(response.data[0].price).toFixed(2),
+			intro: response.data[0].intro
+		}
+		// 获取图片数组
+		imageCollection.value = goodInfo.value.images.map((name) => `http://127.0.0.1:8082/public/images/${name}.png`)
+		//console.log(imageCollection.value)
+		// 初始化当前展示大图为第一张图片
+		currImageIndex.value = 0			
 	})
-	// 初始化当前展示大图为第一张图片
-	currImageIndex.value = 0
-})
 
 // 由于要监听多个元素的同一事件，需手写一个含有全局计时器的防抖函数
 let globalTimer = { timer: null }
@@ -204,19 +203,33 @@ onMounted(() => {
 	userID = window.sessionStorage.getItem('uid')
 	// 对于用户账号
 	if(userID.length === 7){
+		// 调用接口：传入（用户ID，商品ID，当前时间） 返回（null）
+		axios.post('/api/addTrack', {
+			userID,
+			goodID: goodID.value,
+			time: new Date().toISOString().slice(0, 19).replace('T', ' ')
+		})
 		// 调用接口：传入（用户ID）	返回（用户是否将该商品收藏、加入购物车）
 		liked.value = false
 		inCart.value = false
 	}
+	// 对于管理员账号
+	else{
+		ElMessage.warning('请使用普通账号收藏商品。')
+	}
 
 	// 为缩略图添加鼠标事件监听器
 	const subImages = document.getElementsByClassName('sub-image')
-	Array.from(subImages).forEach((subImg) => {
-		subImg.addEventListener('mouseenter', (e) => {
-			// 加上防抖
-			debounceShowBigImg(Number.parseInt(e.target.id))
+	// 注意：由于Vue的mounted钩子不会承诺所有的子组件一起被挂载
+	// setTimeout生成一个宏任务，保证获取完整的DOM结构
+	window.setTimeout(() => {
+		Array.from(subImages).forEach((subImg) => {
+			subImg.addEventListener('mouseenter', (e) => {
+				// 加上防抖
+				debounceShowBigImg(Number.parseInt(e.target.id))
+			})
 		})
-	})
+	}, 0)
 })
 
 // 收藏或取消收藏
@@ -287,15 +300,21 @@ const addToCart = () => {
 .left-flex-item{
 	margin-top: 1em;
 	width: 15em;
+	flex-grow: 0;
+	overflow: auto;
 }
 .big-image-container{
+	padding: 0 .5em;
+	padding-top: .1em;
 	height: 12.2em;
-	width: 15em;
+	width: 13.5em;
 	display: flex;
 	justify-content: center;
-	align-items: center;	
+	align-items: center;
 }
 .big-image{
+	width: 100%;
+	height: 100%;
 	object-fit: scale-down;
 	border: 1px solid #E0E0E0;
 }

@@ -59,7 +59,7 @@
           :show-arrow="false"
           :show-after="500"
           :offset="0">
-          <el-image class="img" :src="`/src/assets/${item.imgName}.png`"></el-image>          
+          <el-image class="img" :src="item.imgUrl"></el-image>          
         </el-tooltip>
         <p class="good-price">￥{{item.price}}</p>
       </div>
@@ -71,19 +71,23 @@
 import { ref, onBeforeMount } from 'vue'
 import { ChatDotRound, RefreshLeft } from "@element-plus/icons-vue"
 import { useRouter } from 'vue-router'
-defineProps({
+import axios from 'axios'
+const props = defineProps({
   sellerID: String
 })
 
 const sellerInfo = ref({}) // 卖家信息
 onBeforeMount(() => {
   // 调用接口：传入（卖家ID） 返回（卖家信息：卖家昵称、信誉、头像URL）
-  sellerInfo.value = {
-    sellerName: '卖家昵称，较短，一行',
-    avatarUrl: 'https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png',
-    reputation: '良好/中等/较差',
-    score: 4.7,
-  }
+  axios.get(`/api/getSellerInfo/${props.sellerID}`)
+    .then((res) => {     
+      sellerInfo.value = {
+        sellerName: res.data.nickname,
+        avatarUrl: `http://127.0.0.1:8082/public/avatars/${res.data.avatar}.png`,
+        reputation: res.data.reputation,
+        score: Number.parseFloat(res.data.score).toFixed(1)
+      }
+    })
 
   getTrends()
 })
@@ -128,32 +132,21 @@ const getPlacement = index => {
 // 获取趋势商品
 const getTrends = () => {
   // 调用接口： 传入（null） 返回（随机四个商品的简要信息：ID、名称、价格、图片URL）
-  trendGoods.value = [
-    {
-      goodID: '1',
-      goodTitle: '商品1',
-      price: 100,
-      imgName: 'physics'
-    },
-    {
-      goodID: '2',
-      goodTitle: '商品2',
-      price: 200,
-      imgName: 'pen'
-    },
-    {
-      goodID: '3',
-      goodTitle: '商品3',
-      price: 300,
-      imgName: 'tea'
-    },
-    {
-      goodID: '4',
-      goodTitle: '商品4',
-      price: 400,
-      imgName: 'philips'
-    }    
-  ]
+  trendGoods.value = []
+  for(let i of [1, 2, 3, 4]){
+    axios.get(`/api/getGoods/${i}`)
+      .then((res) => {
+        console.log(res)
+        trendGoods.value.push(
+          {
+            goodID: res.data[0].good_id,
+            goodTitle: res.data[0].title,
+            price: Number.parseFloat(res.data[0].price).toFixed(2),
+            imgUrl: `http://127.0.0.1:8082/public/images/${res.data[0].images.split(';')[0]}.png`
+          }
+        )
+      })
+  }
 }
 </script>
 
@@ -187,7 +180,8 @@ const getTrends = () => {
   float: left;
 	font-size: .7em;
 	color: #888;
-  margin: .8em 0;  
+  margin: .8em 0;
+  clear: left;
 }
 .concact-label{
 	margin: 0 0 .8em;
@@ -253,7 +247,7 @@ const getTrends = () => {
 .img{
   height: 4.5em;
   width: 4.5em;
-  border: 1px solid #5E3F82;
+  border: 1px solid #AAA;
   display: block;
 }
 .img:hover{

@@ -1,8 +1,8 @@
 {
-  "name": "flea_market_back_end",
+  "name": "flea-server",
   "version": "1.0.0",
   "description": "",
-  "main": "main.js",
+  "main": "app.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },

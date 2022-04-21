@@ -1,0 +1,32 @@
+// Security页面的接口
+const express = require('express')
+const app = express()
+
+const connection = require('../../database/db')
+
+app.use(express.json())
+app.use(express.urlencoded({extended:  false}))
+
+// 接口9 获取绑定手机号: 传入（用户id） 返回（绑定手机号）
+app.get('/usertel/:user_id', (req, res) => {
+    connection.query(
+      "select telnum from useraccount where user_id='" + req.params.user_id + "'",
+      (err, result) => {
+        if (err) throw err
+        res.end(JSON.stringify(result[0].telnum))  
+      }
+  )
+})
+
+// 接口10 修改绑定手机：传入（用户ID，新手机号） 返回（null）
+app.post('/modifytel',(req,res) => {
+  connection.query(
+    "update useraccount set telnum = '" + req.body.newtel + "' where user_id ='" + req.body.id + "'",
+    (err, result) => {
+      if (err) throw err
+      res.end(JSON.stringify(result))
+    }
+  )
+})
+
+module.exports = app

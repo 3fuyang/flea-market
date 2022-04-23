@@ -1,264 +1,380 @@
 <template>
-<div id="name">
-<el-scrollbar>
-  <el-row>
-    <el-col :span="5"></el-col>
-    <el-col :span="14">
-      <el-card style="width: 100%;margin: 5px 0px;" body-style="background-color: #fff;height:500px;padding:0px">
-        <el-row>
-          <el-col :span="6">
-            <div style="background: #EDEAE8;height: 500px;">
-              <span><el-icon :size="20"><promotion/></el-icon></span>
-              <span style="display: inline-block;font-size: 14px;margin: 14px 0px 4px 0px;">&nbsp;消息列表</span>
-              <el-divider style="padding: 0px;margin: 0px;"/>
-              <div class="oponentBlockList">
-                <div class="point" v-for="(item) in oponentList" :key="item.uid" style="margin-top: 5px;" @click="changeOponent(item.uid,item.uname)">
-                  <el-row>
-                    <el-col :span="1"></el-col>
-                    <el-col :span="7">
-                      <el-avatar shape="square" :src="squareUrl" :size="51" style="background-color: aliceblue;color: #336699;margin-top: 2px;">
-                      </el-avatar>
-                    </el-col>
-                    <el-col :span="14">
-                      <div style="text-align: left;">
-                        <span style="display: inline-block;font-size: 14px;margin-top: 17px;margin-left: 5px;">{{item.uid}}&nbsp;&nbsp;{{item.uname}}</span>
-                      </div>
-                    </el-col>
-                  </el-row>
-                </div>
-              </div>
+<div class="root">
+  <div class="chat-wrapper">
+    <div class="left-sider">
+      <n-scrollbar max-height="48em">
+        <p class="message-title">
+          <NIcon :size="18">
+            <Promotion/>
+          </NIcon>
+          消息列表
+        </p>
+        <div 
+          class="oponent-card"
+          :class="item.uid === currOponent ? 'oponent-card-selected' : null"
+          v-for="(item) in oponentList"
+          :key="item.uid"
+          @click="changeOponent(item.uid, item.uname)">
+          <n-avatar
+            round
+            :size="58"
+            :src="item.avatar"
+            fallback-src="http://127.0.0.1:8082/public/avatars/default.png"/>
+          <div class="oponent-info">
+            <p class="uname">{{item.uid}}&nbsp;{{item.uname}}</p>
+          </div>
+        </div>
+      </n-scrollbar>
+    </div>
+    <div v-if="currOponentName !== ''" class="right-sider">
+      <div class="right-bar">
+        <p class="oponent-name">
+          {{currOponent}} {{currOponentName}}
+        </p>
+        <NIcon 
+          class="close-tag"
+          :size="24"
+          @click="closeChat">
+          <close/>
+        </NIcon>
+      </div>
+      <div class="message-wrapper">
+        <n-scrollbar class="message-box" max-height="33em">
+          <div
+            class="message-template" 
+            v-for="item in messageData"
+            :key="item.day_time">
+            <n-tag
+              class="time-tag" 
+              size="small"
+              type="info">
+              {{item.day_time}}
+            </n-tag>
+            <div
+              :class="item.speaker === 0 ? 'oponentBubble' : 'selfBubble'">
+              {{item.details}}
             </div>
-          </el-col>
-          <el-col :span="18">
-            <div style="text-align: left;background: #F5F5F5;">
-              <span style="display: inline-block;font-size: 24px;font-weight: bold;margin-top: 5px;margin-bottom: 5px;margin-left: 30px;">
-                {{currOponent}}&nbsp;&nbsp;&nbsp;{{currOponengName}}
-              </span>
-              <el-icon v-show="currOponent!='我的聊天'" class="point" style="font-size: 18px;float: right;margin-top: 12px;margin-right: 5px;" @click="closeChat()">
-                <close/>
-              </el-icon>
-              <el-divider style="padding: 0px;margin: 0px;"/>
-            </div>
-            <div v-show="currOponent==='我的聊天'" style="background: #F5F5F5;border: 1px solid #fff;width: 100%;height: 455px;">
-              <el-icon style="display: inline-block;color: #EBEBEB;font-size: 100px;font-weight: bold;margin-top: 140px;">
-                <chat-dot-round/>
-              </el-icon>
-            </div> 
-            <div v-show="currOponent!='我的聊天'">           
-              <div style="background: #F5F5F5;border: 1px solid #fff;width: 100%;height: 340px;overflow: auto;">
-                <div v-for="(item) in messageData" :key="item.day_time">
-                    <el-tag size="small" style="margin: 15px 0px;">
-                      {{item.day_time}}
-                    </el-tag>
-                    <div v-if="item.speaker == 0">
-                      <el-row>
-                        <div class="contentOponent">
-                          <span style="line-height: 23px;text-align: left;margin-left: 6px;">{{item.details}}</span>
-                        </div>
-                      </el-row>
-                    </div>
-                    <div v-else>
-                      <el-row>
-                        <el-col :span="12"></el-col>
-                        <el-col :span="12">
-                          <el-row justify="end">
-                            <div class="contentSelf">
-                              <span style="line-height: 23px;text-align: left;margin-left: 60px;">{{item.details}}</span>                            
-                            </div>
-                          </el-row>
-                        </el-col>
-                      </el-row>
-                    </div>
-                </div>
-              </div>
-              <div style="background: #fff;border: 1px solid #F5F5F5;width: 100%;height: 120px;">
-                <el-input
-                  type="textarea"
-                  placeholder="Please input and send message with enter."
-                  style="width: 660px;"
-                  rows="5"
-                  resize="none"
-                  v-model="textarea"
-                  maxlength="200"
-                  show-word-limit
-                  @keyup.enter="handleSendMessage" />
-              </div>
-            </div>
-          </el-col>
-        </el-row>
-      </el-card>      
-    </el-col>
-  </el-row>
-</el-scrollbar>
+          </div>
+        </n-scrollbar>
+      </div>
+      <div class="input-textarea">
+        <n-input
+          v-model:value="textarea"
+          type="textarea"
+          maxlength="200" 
+          show-count
+          rows="4"
+          autofocus/>
+      </div>
+      <NButton
+        class="button"
+        type="info"
+        size="small"
+        @click="handleSendMessage">
+        发送
+      </NButton>
+    </div>
+    <div v-else class="right-sider">
+      <div class="right-bar">
+        <p class="oponent-name">
+          {{currOponent}} {{currOponentName}}
+        </p>
+      </div>
+      <div class="empty-wrapper">
+        <img src="http://127.0.0.1:8082/public/images/quin.jpg"/>
+        <p class="dog">幸福往往是摸得透彻，而敬业的心却常常隐藏。</p>
+      </div>
+    </div> 
+  </div>
 </div>
 </template>
 
-<script>
-import { Promotion, Close, ChatDotRound } from "@element-plus/icons-vue";
-export default {
-  components:{
-      Promotion, Close, ChatDotRound
-  },
+<script setup>
+import { NScrollbar, NIcon, NAvatar, NTag, NInput, NButton } from "naive-ui"
+import { Promotion, Close, ChatDotRound } from "@element-plus/icons-vue"
+import { ref, onBeforeMount, onUnmounted } from "vue"
+import { useRoute } from 'vue-router'
+import axios from "axios"
 
-  created(){
-    let newOponent = this.$route?.query
-    this.getChatList(newOponent.oponentID, newOponent.oponentName);
-    // 设置定时器
-    //this.chatListTimer = setInterval(this.getChatList, 2000);
-    this.chatTimer = setInterval(this.getMessage, 2000);
-  },
+const route = useRoute()
+let chatTimer
+onBeforeMount(() => {
+  let newOponent = route.query
+  console.log(newOponent)
+  getChatList(newOponent.oponentID, newOponent.oponentName, newOponent.avatar)
+  // 设置定时器
+  //chatListTimer = setInterval(getChatList, 2000)
+  chatTimer = setInterval(getMessage, 2000)
+})
 
-  beforeRouteLeave(){
-    // 清除定时器
-    clearInterval(this.chatListTimer);
-    this.chatListTimer = null;
-    clearInterval(this.chatTimer);
-    this.chatTimer = null;
-  },
+onUnmounted(() => {
+  // 清除定时器
+  clearInterval(chatTimer)
+  chatTimer = null
+})
 
-  data(){
-    return{
-      userID: window.sessionStorage.getItem('uid'), // 用户ID
-      oponentList: [], // 聊天对象列表
-      currOponent: '我的聊天',  // 当前聊天对象ID
-      currOponengName: '',  // 当前聊天对象名称
-      messageData: [],  // 当前聊天消息列表
-      chatListTimer: '',  // 聊天对象列表定时器
-      chatTimer: '',  // 聊天消息定时器
-      textarea: '', // 输入框文本
-      squareUrl: 'https://cube.elemecdn.com/9/c2/f0ee8a3c7c9638a54940382568c9dpng.png',  // 头像图片 url
-    }
-  },
+const userID = window.sessionStorage.getItem('uid')
+const oponentList = ref([])
+const currOponent = ref('我的聊天')
+const currOponentName = ref('')
+const messageData = ref([])
+const textarea = ref('')
 
-  methods:{
-    // 切换聊天对象
-    changeOponent(oponentID,oponentName){
-      this.currOponent = oponentID;
-      this.currOponengName = oponentName;
-      this.getMessage(true);
-    },
-    // 关闭聊天窗口
-    closeChat(){
-      this.currOponent='我的聊天';
-      this.currOponengName='';
-    },
-    // 获取聊天对象列表
-    getChatList(newOponentID = null, newOponentName = null){
-      // 调用接口：传入（用户ID，聊天对象ID） 返回（聊天对象列表：ID，名称）
-      const newList = []
-      this.axios.get(`/api/getChatOponent/${this.userID}`)
-        .then(res => {
-          res.data.forEach((item) => {
-            newList.push({
-              uid: item.user_id,
-              uname: item.nickname
-            })
-          })
+// 切换聊天对象
+function changeOponent(oponentID,oponentName){
+  currOponent.value = oponentID
+  currOponentName.value = oponentName
+  getMessage(true)
+}
+// 关闭聊天窗口
+function closeChat(){
+  currOponent.value = '我的聊天'
+  currOponentName.value = ''
+}
+// 获取聊天对象列表
+function getChatList(newOponentID = null, newOponentName = null, newOponentAvatar = null){
+  // 调用接口：传入（用户ID，聊天对象ID） 返回（聊天对象列表：ID，名称）
+  const newList = []
+  axios.get(`/api/getChatOponent/${userID}`)
+    .then(res => {
+      res.data.forEach((item) => {
+        newList.push({
+          uid: item.user_id,
+          uname: item.nickname,
+          avatar: `http://127.0.0.1:8082/public/avatars/${item.avatar}.png`
         })
-        .then(() => {
-          if(newList.length !== this.oponentList.length){
-            this.oponentList = newList
-          }
-          if(newOponentID){
-            let index = this.oponentList.findIndex(item => item.uid === newOponentID)
-            if(index >= 0){
-              this.oponentList.splice(index, 1)
-            }
-            this.oponentList.unshift({
-              uid: newOponentID,
-              uname: newOponentName                
-            })            
-          }          
+      })
+    })
+    .then(() => {
+      if(newList.length !== oponentList.value.length){
+        oponentList.value = newList
+      }
+      if(newOponentID){
+        let index = oponentList.value.findIndex(item => item.uid === newOponentID)
+        if(index >= 0){
+          oponentList.value.splice(index, 1)
+        }
+        oponentList.value.unshift({
+          uid: newOponentID,
+          uname: newOponentName,
+          avatar: newOponentAvatar          
         })
-    },
-    // 获取消息列表
-    getMessage(oponentChanged = false){
-      if(oponentChanged){
-        this.messageData = []
-      }
-      let newMessage = []
-      // 调用接口：传入（用户ID，聊天对象ID） 返回（两人消息列表：时间、说话方、内容）
-      let a_user_id = this.userID, b_user_id = this.currOponent
-      if(a_user_id > b_user_id){
-        [a_user_id, b_user_id] = [b_user_id, a_user_id]
-      }
-      this.axios.get(`/api/getMessage/${a_user_id}/${b_user_id}`)
-        .then((res) => {
-          let isSelfA = a_user_id === this.userID
-          res.data.forEach((item) => {
-            newMessage.push({
-              day_time: item.date_time.substr(0, 19).replace('T', ' '),
-              // 0 表示对方，1 表示该用户
-              speaker: isSelfA ? (item.speaker === 0 ? 1 : 0) : (item.speaker === 1 ? 1: 0),
-              details: item.details
-            })
-          })
+        currOponent.value = newOponentID
+        currOponentName.value = newOponentName 
+      }          
+    })
+}
+// 获取消息列表
+function getMessage(oponentChanged = false){
+  if(oponentChanged){
+    messageData.value = []
+  }
+  let newMessage = []
+  // 调用接口：传入（用户ID，聊天对象ID） 返回（两人消息列表：时间、说话方、内容）
+  let a_user_id = userID, b_user_id = currOponent.value
+  if(a_user_id > b_user_id){
+    [a_user_id, b_user_id] = [b_user_id, a_user_id]
+  }
+  axios.get(`/api/getMessage/${a_user_id}/${b_user_id}`)
+    .then((res) => {
+      let isSelfA = a_user_id === userID
+      res.data.forEach((item) => {
+        newMessage.push({
+          day_time: item.date_time.substr(0, 19).replace('T', ' '),
+          // 0 表示对方，1 表示该用户
+          speaker: isSelfA ? (item.speaker === 0 ? 1 : 0) : (item.speaker === 1 ? 1: 0),
+          details: item.details
         })
-        .then(() => {
-          if(oponentChanged || newMessage.length !== this.messageData.length){
-            this.messageData = newMessage
-          }
-        })
-    },
-    // 发送消息
-    handleSendMessage(){
-      let a_user_id = this.userID, b_user_id = this.currOponent
-      if(a_user_id > b_user_id){
-        [a_user_id, b_user_id] = [b_user_id, a_user_id]
+      })
+    })
+    .then(() => {
+      if(oponentChanged || newMessage.length !== messageData.value.length){
+        messageData.value = newMessage
       }
-      const date = new Date(+ new Date() + 8 * 3600 * 1000).toISOString().slice(0, 19).replace('T', ' ')
-      let message = {
-        a_user_id, b_user_id, 
-        speaker: this.userID < this.currOponent ? '0' : '1',
-        date_time: date,
-        details: this.textarea        
-      }
-      // 调用接口：传入（用户ID，对方ID，说话方，时间，内容） 返回（null）
-      this.axios.post('/api/sendMessage', message)
+    })
+}
+// 发送消息
+function handleSendMessage(){
+  let a_user_id = userID, b_user_id = currOponent.value
+  if(a_user_id > b_user_id){
+    [a_user_id, b_user_id] = [b_user_id, a_user_id]
+  }
+  const date = new Date(+ new Date() + 8 * 3600 * 1000).toISOString().slice(0, 19).replace('T', ' ')
+  let message = {
+    a_user_id, b_user_id, 
+    speaker: userID < currOponent.value ? '0' : '1',
+    date_time: date,
+    details: textarea.value        
+  }
+  // 调用接口：传入（用户ID，对方ID，说话方，时间，内容） 返回（null）
+  axios.post('/api/sendMessage', message)
 
-      this.textarea='';
-    },
-  },
+  textarea.value = ''
 }
 </script>
 
 <style scoped>
-.oponentBlockList :hover{
-  background-color: #D9D8D8;
+.root {
+  display: flex;
+  margin: 20px 0;
+  justify-content: center;
+  --blue: #4790DC;
+  background: linear-gradient(90deg, rgba(200, 200, 200, 0.1) 3%, transparent 0),
+  linear-gradient(rgba(200, 200, 200, 0.1) 3%, transparent 0);
+  background-size: 20px 20px;
 }
-.point{
+.chat-wrapper {
+  font-size: .8rem;
+  width: calc(60em + .6em);
+  height: calc(48em + .6em);
+  background-color: #FCFCFC;
+  display: flex;
+  box-sizing: border-box;
+  overflow: auto;
+  border-radius: .3em;
+  box-shadow: 0 0 .3em rgba(0,0,0,0.2);
+}
+.left-sider {
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  flex-grow: 0;
+  width: 17em;
+  font-size: .8rem;
+  border: 1px solid #91ABCD;
+}
+.message-title {
+  margin: 0;
+  background-color: var(--blue);
+  padding: .4em 0 .2em 0;
+  font-weight: 500;
+  color: white;
+  font-size: .9rem;
+  letter-spacing: .2em;
+}
+.oponent-card {
+  display: flex;
+  background-color: #FCFCFC;
+  box-sizing: border-box;
+  padding: .5em;
+  border-bottom: 1px solid #eee;
   cursor: pointer;
+  color: #666;
+  font-weight: 600;
 }
-.contentOponent :hover{
-  background-color: #FAFAFA;
+.oponent-card:hover {
+  background-color: #E1E9F3;
 }
-.contentOponent span{
-  background-color: #ecf5ff;
-  padding: 5px 8px;
-  display: inline-block;
-  border-radius: 10px;
-  margin: 0px 0px 0px 5px;
-  position: relative;
-  border: 1px solid #E3E3E3;
-  max-width: 290px;  
+.oponent-card-selected {
+  background-color: #91ABCD;
+  color: white;
 }
-.contentSelf {
-  float: right;
+.oponent-card-selected:hover {
+  background-color: #91ABCD;
+  color: white;
 }
-
-.contentSelf :hover {
-  background-color: #0a61cc;
+.oponent-info {
+  display: flex;
+  flex-direction: column;
+  padding-left: 1em;
 }
-
-.contentSelf span {
-  background-color: #2683f5;
-  padding: 5px 8px;
-  display: inline-block;
-  border-radius: 10px;
-  margin: 0px 5px 0px 0px;
-  position: relative;
-  border: 1px solid #E3E3E3;
-  max-width: 290px;
-  color: #fff;
+.uname {
+  margin: .5em 0 .2em 0;
+}
+.right-sider {
+  flex: 1 1 0;
+  box-sizing: border-box;
+  border: 1px solid #91ABCD;
+  border-left: none;
+  display: flex;
+  flex-direction: column;
+}
+.right-bar {
+  background-color: #F3F4F6;
+  display: flex;
+  border-bottom: 1px solid white;  
+}
+.oponent-name {
+  flex-grow: 1;
+  text-align: left;
+  color: #666;
+  margin: 0;
+  padding: .2em 0 .1em 1em;
+  font-size: 1.1rem;
+  font-weight: 600;
+  letter-spacing: .1em;
+}
+.close-tag {
+  flex-grow: 0;
+  cursor: pointer;
+  padding-top: .2em;
+}
+.message-wrapper {
+  box-sizing: border-box;
+  border: 1px solid #91ABCD;
+  margin: .6em;
+  background-color: #fff;
+  height: 33em;
+}
+.message-box {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+.message-template {
+  display: flex;
+  flex-direction: column;
+}
+.time-tag {
+  align-self: center;
+  margin: .6em 0;
+}
+.oponentBubble {
+  max-width: 18em;
+  align-self: flex-start;
+  padding: .3em .5em;
+  margin-left: .6em;
+  font-size: .9rem;
+  background-color: #4793DA;
+  color: white;
+  border-radius: .5em;
+  text-align: left;
+  word-wrap: break-word;
+  margin-bottom: .2em;
+}
+.selfBubble {
+  max-width: 18em;   
+  align-self: flex-end;
+  padding: .3em .5em;
+  margin-right: .6em;
+  font-size: .9rem;
+  background-color: #BDDEFD;
+  color: black;
+  border-radius: .5em;
+  text-align: left;
+  word-wrap: break-word; 
+  margin-bottom: .2em; 
+}
+.input-textarea {
+  padding: 0 .6em;
+  text-align: left;
+}
+.button {
+  align-self: flex-end;
+  margin-top: .5em;
+  margin-right: .6em;
+}
+.empty-wrapper {
+  padding-top: 2em;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-flow: column;
+}
+.dog {
+  margin: 1em 0;
+  font-size: 1.5rem;
+  letter-spacing: .2em;
 }
 </style>

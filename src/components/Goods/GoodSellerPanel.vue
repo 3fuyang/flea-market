@@ -100,7 +100,8 @@ const concactSeller = () => {
     path:'/chat',
     query: {
       oponentID: props.sellerID,
-      oponentName: sellerInfo.value.sellerName
+      oponentName: sellerInfo.value.sellerName,
+      avatar: sellerInfo.value.avatarUrl
     }
   })
   window.open(routeUrl .href, '_blank')

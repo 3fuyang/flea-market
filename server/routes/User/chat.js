@@ -18,12 +18,13 @@ app.get('/getChatOponent/:user_id', (req, res) => {
       promises.push(
         new Promise((resolve) => {
           connection.query(
-            `select nickname from userAccount where user_id = '${id}'`,
+            `select nickname,avatar from userAccount where user_id = '${id}'`,
             (err, result) => {
               if(err) throw err
               resolve({
                 user_id: id,
-                nickname: JSON.parse(JSON.stringify(result))[0]['nickname']
+                nickname: JSON.parse(JSON.stringify(result))[0]['nickname'],
+                avatar: JSON.parse(JSON.stringify(result))[0]['avatar']
               })
             }
           )
@@ -58,7 +59,6 @@ app.get('/getChatOponent/:user_id', (req, res) => {
         }
       )
     })
-
 })
 
 // 接口19 获取与某个用户的消息列表

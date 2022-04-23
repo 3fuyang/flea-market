@@ -94,7 +94,7 @@
   <el-carousel type="card" v-if="goodsList.length >= 5" indicator-position="none" height="240px" style="width: 627px;">
     <el-carousel-item v-for="item in goodsList" :key="item.id" style="margin-left: 38px;">
       <el-card :body-style="{ padding: '0px' }" style="width: 220px;height: 240px;" @click="jumpCard(item.id)">
-        <el-image :src="item.path" fit="scale-down" />
+        <el-image :src="item.path" style="max-height: 190px;" fit="scale-down" />
           <span style="display: inline-block;font-size: 13px;color: #808080;margin-top: 3px;">{{item.name}}</span><br/>
           <span style="display: inline-block;font-size: 18px;color: #FF9900;margin-top: 0px;">￥{{item.price}}</span>
       </el-card>

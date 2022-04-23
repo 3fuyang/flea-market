@@ -95,11 +95,13 @@ onBeforeMount(() => {
 const router = useRouter()
 // 联系买家
 const concactSeller = () => {
-  // 调用接口 将买家上升到用户消息列表的首位：传入（用户ID，买家ID）返回（无）
- 
   // 在新窗口打开聊天页面。
   const routeUrl = router.resolve({
-    path:'/chat'
+    path:'/chat',
+    query: {
+      oponentID: props.sellerID,
+      oponentName: sellerInfo.value.sellerName
+    }
   })
   window.open(routeUrl .href, '_blank')
 }
@@ -136,7 +138,6 @@ const getTrends = () => {
   for(let i of [1, 2, 3, 4]){
     axios.get(`/api/getGoods/${i}`)
       .then((res) => {
-        console.log(res)
         trendGoods.value.push(
           {
             goodID: res.data[0].good_id,

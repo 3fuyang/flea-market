@@ -45,12 +45,12 @@
               </el-icon>
             </div> 
             <div v-show="currOponent!='我的聊天'">           
-              <div style="background: #F5F5F5;border: 1px solid #fff;width: 100%;height: 340px;">
+              <div style="background: #F5F5F5;border: 1px solid #fff;width: 100%;height: 340px;overflow: auto;">
                 <div v-for="(item) in messageData" :key="item.day_time">
                     <el-tag size="small" style="margin: 15px 0px;">
                       {{item.day_time}}
                     </el-tag>
-                    <div v-if="item.speaker==0">
+                    <div v-if="item.speaker == 0">
                       <el-row>
                         <div class="contentOponent">
                           <span style="line-height: 23px;text-align: left;margin-left: 6px;">{{item.details}}</span>
@@ -81,7 +81,7 @@
                   v-model="textarea"
                   maxlength="200"
                   show-word-limit
-                  @keydown.enter="handleSendMessage" />
+                  @keyup.enter="handleSendMessage" />
               </div>
             </div>
           </el-col>
@@ -101,10 +101,11 @@ export default {
   },
 
   created(){
-    this.getChatList();
+    let newOponent = this.$route?.query
+    this.getChatList(newOponent.oponentID, newOponent.oponentName);
     // 设置定时器
-    this.chatListTimer = setInterval(this.getChatList, 1000);
-    this.chatTimer = setInterval(this.getMessage, 1000);
+    //this.chatListTimer = setInterval(this.getChatList, 2000);
+    this.chatTimer = setInterval(this.getMessage, 2000);
   },
 
   beforeRouteLeave(){
@@ -134,7 +135,7 @@ export default {
     changeOponent(oponentID,oponentName){
       this.currOponent = oponentID;
       this.currOponengName = oponentName;
-      this.getMessage();
+      this.getMessage(true);
     },
     // 关闭聊天窗口
     closeChat(){
@@ -142,45 +143,79 @@ export default {
       this.currOponengName='';
     },
     // 获取聊天对象列表
-    getChatList(){
+    getChatList(newOponentID = null, newOponentName = null){
       // 调用接口：传入（用户ID，聊天对象ID） 返回（聊天对象列表：ID，名称）
-      if(!this.oponentList.length){
-        this.oponentList=[{
-          uid: '1953193',
-          uname: 'Fwio',
-          },{
-          uid: '1852185',
-          uname: 'Hegel',
-          },{
-          uid: '1703682',
-          uname: 'Joe',
-          },];
-      }
+      const newList = []
+      this.axios.get(`/api/getChatOponent/${this.userID}`)
+        .then(res => {
+          res.data.forEach((item) => {
+            newList.push({
+              uid: item.user_id,
+              uname: item.nickname
+            })
+          })
+        })
+        .then(() => {
+          if(newList.length !== this.oponentList.length){
+            this.oponentList = newList
+          }
+          if(newOponentID){
+            let index = this.oponentList.findIndex(item => item.uid === newOponentID)
+            if(index >= 0){
+              this.oponentList.splice(index, 1)
+            }
+            this.oponentList.unshift({
+              uid: newOponentID,
+              uname: newOponentName                
+            })            
+          }          
+        })
     },
     // 获取消息列表
-    getMessage(){
-      // 调用接口：传入（用户ID，聊天对象ID） 返回（两人消息列表：时间、说话方、内容）
-      if(!this.messageData.length){
-        this.messageData=[{
-          day_time: '2022/1/3 上午8:01:15',
-          speaker: '0',
-          details:'Hello World',
-          },{
-          day_time: '2022/1/3 上午8:04:52',
-          speaker: '1',
-          details:'Test Reply',
-          },]
+    getMessage(oponentChanged = false){
+      if(oponentChanged){
+        this.messageData = []
       }
+      let newMessage = []
+      // 调用接口：传入（用户ID，聊天对象ID） 返回（两人消息列表：时间、说话方、内容）
+      let a_user_id = this.userID, b_user_id = this.currOponent
+      if(a_user_id > b_user_id){
+        [a_user_id, b_user_id] = [b_user_id, a_user_id]
+      }
+      this.axios.get(`/api/getMessage/${a_user_id}/${b_user_id}`)
+        .then((res) => {
+          let isSelfA = a_user_id === this.userID
+          res.data.forEach((item) => {
+            newMessage.push({
+              day_time: item.date_time.substr(0, 19).replace('T', ' '),
+              // 0 表示对方，1 表示该用户
+              speaker: isSelfA ? (item.speaker === 0 ? 1 : 0) : (item.speaker === 1 ? 1: 0),
+              details: item.details
+            })
+          })
+        })
+        .then(() => {
+          if(oponentChanged || newMessage.length !== this.messageData.length){
+            this.messageData = newMessage
+          }
+        })
     },
     // 发送消息
     handleSendMessage(){
-      var date = new Date();
+      let a_user_id = this.userID, b_user_id = this.currOponent
+      if(a_user_id > b_user_id){
+        [a_user_id, b_user_id] = [b_user_id, a_user_id]
+      }
+      const date = new Date(+ new Date() + 8 * 3600 * 1000).toISOString().slice(0, 19).replace('T', ' ')
+      let message = {
+        a_user_id, b_user_id, 
+        speaker: this.userID < this.currOponent ? '0' : '1',
+        date_time: date,
+        details: this.textarea        
+      }
       // 调用接口：传入（用户ID，对方ID，说话方，时间，内容） 返回（null）
-      this.messageData.push({
-        day_time: date.toLocaleString(),
-        speaker: '1',
-        details: this.textarea,
-      })
+      this.axios.post('/api/sendMessage', message)
+
       this.textarea='';
     },
   },

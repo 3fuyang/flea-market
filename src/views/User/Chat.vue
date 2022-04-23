@@ -91,7 +91,7 @@
 
 <script setup>
 import { NScrollbar, NIcon, NAvatar, NTag, NInput, NButton } from "naive-ui"
-import { Promotion, Close, ChatDotRound } from "@element-plus/icons-vue"
+import { Promotion, Close } from "@element-plus/icons-vue"
 import { ref, onBeforeMount, onUnmounted } from "vue"
 import { useRoute } from 'vue-router'
 import axios from "axios"

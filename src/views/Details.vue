@@ -153,20 +153,21 @@ goodID.value = router.resolve(router.currentRoute.value).query.gid
 // 调用接口：传入（商品ID）返回（商品详情：卖家ID、卖家昵称、商品标题、商品类型、上架时间、收藏数、商品图片URL、价格、地址、简介）
 axios.get(`/api/getGoods/${goodID.value}`)
 	.then(response => {
+		console.log(response)
 		goodInfo.value = {
-			goodTitle: response.data[0].title,
-			onshelfTime: response.data[0].onshelf_time.substr(0, 19).replace('T', ' '),
-			sellerID: response.data[0].seller_id,
-			likes: 1000,	// 对接收藏夹接口后，需要重写接口适配收藏数
-			type: response.data[0].category,
-			campus: response.data[0].campus,
+			goodTitle: response.data.title,
+			onshelfTime: response.data.onshelf_time.substr(0, 19).replace('T', ' '),
+			sellerID: response.data.seller_id,
+			likes: response.data.likes,	// 对接收藏夹接口后，需要重写接口适配收藏数
+			type: response.data.category,
+			campus: response.data.campus,
 			images: 
 				// 一件商品允许最少一张、最多三张图片
 				// 后端只返回图片名称，URL在前端编码
-				response.data[0].images.split(';')
+				response.data.images.split(';')
 			,
-			price: Number.parseFloat(response.data[0].price).toFixed(2),
-			intro: response.data[0].intro
+			price: Number.parseFloat(response.data.price).toFixed(2),
+			intro: response.data.intro
 		}
 		// 获取图片数组
 		imageCollection.value = goodInfo.value.images.map((name) => `http://127.0.0.1:8082/public/images/${name}.png`)

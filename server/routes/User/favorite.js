@@ -36,11 +36,41 @@ app.post('/collectGood', (req, res) => {
 })
 
 // 接口14 获取收藏夹：传入（用户ID） 返回（收藏夹数据:商品ID）
-app.get('/getFavorite/:user_id',(req,res) => {
-  connection.query("select * from favorite where user_id = '" + req.params.user_id + "'",(err,result)=>{
-    if (err) throw err
-    res.end(JSON.stringify(result))
+app.get('/getCollection/:user_id',(req,res) => {  
+  let data
+  const promises = []
+  new Promise((resolve, reject) => {
+    connection.query(
+      "select * from collectionBox where user_id = '" + req.params.user_id + "' order by day_time desc",
+      (err, result) => {
+        if (err) throw err
+        data = JSON.parse(JSON.stringify(result))
+        resolve()
+      }
+    )
   })
+    .then(() => {
+      for(let item of data){
+        promises.push(
+          new Promise((resolve) =>{
+            connection.query(
+              `select title,price,images from goodInfo where good_id = '${item.good_id}'`,
+              (err, result) => {
+                if(err) throw err
+                result = JSON.parse(JSON.stringify(result))[0]
+                for(let property in result){
+                  item[property] = result[property]
+                }
+                resolve()
+              }
+            )
+          })
+        )
+      }
+      Promise.all(promises).then(() => {
+        res.end(JSON.stringify(data))
+      })
+    })
 })
 
 // 接口15 取消收藏某商品：传入（用户ID，商品ID） 返回（null）

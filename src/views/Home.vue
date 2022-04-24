@@ -327,7 +327,7 @@ export default {
           this.goodsList.push({
             id: item,
             name: response.data[0].title,
-            price: response.data[0].price,
+            price: Number.parseFloat(response.data[0].price).toFixed(2),
             path: `http://127.0.0.1:8082/public/images/${response.data[0].images.split(';')[0]}.png`,
           });       
         })

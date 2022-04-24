@@ -16,6 +16,9 @@
   <el-row>
     <el-col :span="2"></el-col>
     <el-col :span="20">
+      <div v-if="showData.length === 0">
+        <el-empty description="您暂时没有收藏！"></el-empty>
+      </div>
       <el-row>
       <template v-for="(goodItem) in showData" :key="goodItem.id">
       <el-card :body-style="{ padding: '0px' }" style="width: 220px;height: 250px;margin: 0px 5px 10px 5px;" >
@@ -43,26 +46,24 @@ export default {
 
   created(){
     // 调用接口：传入（用户ID） 返回（收藏夹数据:商品ID、图片url、名称、价格）
-    /* this.axios.get('/api/getFavorite/'+this.userID).then((response)=>{
-      for(let item of response.data){
-        this.axios.get('/api/getBriefInfo/'+item.goods_id).then((son_response)=>{
-          console.log(son_response);
+    this.axios.get('/api/getCollection/'+this.userID)
+      .then((response)=>{
+        response.data.forEach(item => {
           this.favoriteData.push({
-            id: item.goods_id,
-            name: son_response.data[0].goods_title,
-            price: son_response.data[0].price,
-          });
-          console.log(this.favoriteData);
+            id: item.good_id,
+            name: item.title,
+            price: Number.parseFloat(item.price).toFixed(2),
+            path: `http://127.0.0.1:8082/public/images/${item.images.split(';')[0]}.png`
+          })
         })
-      }
-    }) */    
-    this.favoriteData=[
+      })    
+    /* this.favoriteData=[
       { id:'0',name:'大学物理学 (附)网络课程&配套习题',price:'15.00',path: ("/src/assets/physics.png")},
       { id:'1',name:'Apple iPad Pro 11英寸平板电脑',price:'3499.00',path: ("/src/assets/ipad.png")},
       { id:'2',name:'派克威雅XL系列 樱花粉特别款礼盒',price:'198.00',path: ("/src/assets/pen.png")},
       { id:'3',name:'Ecovas智能家用空气净化器 机器智能',price:'3399.00',path: ("/src/assets/philips.png")},
       { id:'4',name:'传奇武夷山 大红袍茶叶',price:'149.00',path: ("/src/assets/tea.png")},
-    ];
+    ]; */
     this.showData = this.favoriteData;
   },
   
@@ -116,30 +117,36 @@ export default {
         }
       ).then(()=>{
         // 调用接口： 传入（用户ID,商品ID） 返回(null)
-        /* this.axios.get('/api/cancelFavorite/' + this.userID + '/' + gid); */
-        let index = 0;
-        for(let item of this.favoriteData){
-          if(item.id===gid){
-            break;
-          }else{
-            index++;
-          }
+        let data = {
+          userID: this.userID,
+          goodID: gid
         }
-        this.favoriteData.splice(index,1);
+        this.axios.post('/api/cancelCollection', data)
+          .then(() => {
+            let index = 0;
+            for(let item of this.favoriteData){
+              if(item.id===gid){
+                break;
+              }else{
+                index++;
+              }
+            }
+            this.favoriteData.splice(index,1);
 
-        index= 0;
-        for(let item of this.showData){
-          if(item.id===gid){
-            break;
-          }else{
-            index++;
-          }
-        }
-        this.showData.splice(index,1);        
-        ElMessage({
-          type:'success',
-          message:'删除成功!',
-        });
+            index= 0;
+            for(let item of this.showData){
+              if(item.id===gid){
+                break;
+              }else{
+                index++;
+              }
+            }
+            this.showData.splice(index,1);        
+            ElMessage({
+              type:'success',
+              message:'删除成功!',
+            });
+          })
       })      
     },
   },

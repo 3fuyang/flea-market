@@ -8,6 +8,9 @@
   <el-row>
   <el-col :span="2"></el-col>
   <el-col :span="20">
+  <div v-if="dateArray.length === 0">
+    <el-empty description="脑袋空空。"/>
+  </div>
   <div v-for="(item) in dateArray" :key=item>
     <div style="text-align: left;margin-bottom: 10px;">
     <span style="display: inline-block;font-size: 18px;font-weight: bold;">{{item}}</span>

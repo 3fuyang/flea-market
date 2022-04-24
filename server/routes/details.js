@@ -8,13 +8,25 @@ app.use(express.json())
 app.use(express.urlencoded({extended:  false}))
 // 接口21 获取商品详情
 app.get('/getGoods/:good_id',(req,res) => {
-  connection.query(
-    "select * from goodInfo where good_id ='"+ req.params.good_id + "'",
-    (err, result) =>{
-      if (err) throw err
-      res.end(JSON.stringify(result))    
-    }
-  )
+  new Promise((resolve) => {
+    connection.query(
+      "select * from goodInfo where good_id ='"+ req.params.good_id + "'",
+      (err, result) =>{
+        if (err) throw err
+        resolve(JSON.parse(JSON.stringify(result))[0])   
+      }
+    )    
+  })
+    .then(baseInfo => {
+      connection.query(
+        `select count(*) as cnt from collectionBox where good_id='${req.params.good_id}'`,
+        (err, result) => {
+          if(err) throw err
+          baseInfo.likes = JSON.parse(JSON.stringify(result))[0].cnt
+          res.end(JSON.stringify(baseInfo))
+        }
+      )
+    })
 })
 
 // 接口22 获取卖家信息

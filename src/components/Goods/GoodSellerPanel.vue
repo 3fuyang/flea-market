@@ -141,10 +141,10 @@ const getTrends = () => {
       .then((res) => {
         trendGoods.value.push(
           {
-            goodID: res.data[0].good_id,
-            goodTitle: res.data[0].title,
-            price: Number.parseFloat(res.data[0].price).toFixed(2),
-            imgUrl: `http://127.0.0.1:8082/public/images/${res.data[0].images.split(';')[0]}.png`
+            goodID: res.data.good_id,
+            goodTitle: res.data.title,
+            price: Number.parseFloat(res.data.price).toFixed(2),
+            imgUrl: `http://127.0.0.1:8082/public/images/${res.data.images.split(';')[0]}.png`
           }
         )
       })

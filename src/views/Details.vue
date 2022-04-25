@@ -123,7 +123,7 @@
 </template>
 
 <script setup>
-import { computed, onMounted, ref } from 'vue'
+import { computed, onBeforeMount, onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import GoodSellerPanel from '../components/Goods/GoodSellerPanel.vue'
 import Comments from '../components/Goods/Comments.vue'
@@ -150,30 +150,39 @@ const imageCollection = ref([])
 // 挂载前，初始化数据
 // 从queryString获取商品ID
 goodID.value = router.resolve(router.currentRoute.value).query.gid
-// 调用接口：传入（商品ID）返回（商品详情：卖家ID、卖家昵称、商品标题、商品类型、上架时间、收藏数、商品图片URL、价格、地址、简介）
-axios.get(`/api/getGoods/${goodID.value}`)
-	.then(response => {
-		console.log(response)
-		goodInfo.value = {
-			goodTitle: response.data.title,
-			onshelfTime: response.data.onshelf_time.substr(0, 19).replace('T', ' '),
-			sellerID: response.data.seller_id,
-			likes: response.data.likes,	// 对接收藏夹接口后，需要重写接口适配收藏数
-			type: response.data.category,
-			campus: response.data.campus,
-			images: 
-				// 一件商品允许最少一张、最多三张图片
-				// 后端只返回图片名称，URL在前端编码
-				response.data.images.split(';')
-			,
-			price: Number.parseFloat(response.data.price).toFixed(2),
-			intro: response.data.intro
+axios.get(`/api/checkAvailable/${goodID.value}`)
+	.then(res => {
+		if(!res.data){
+			ElMessage.error('该商品已下架！')
+			router.back()
 		}
-		// 获取图片数组
-		imageCollection.value = goodInfo.value.images.map((name) => `http://127.0.0.1:8082/public/images/${name}.png`)
-		//console.log(imageCollection.value)
-		// 初始化当前展示大图为第一张图片
-		currImageIndex.value = 0			
+	})
+	.then(() => {
+		// 调用接口：传入（商品ID）返回（商品详情：卖家ID、卖家昵称、商品标题、商品类型、上架时间、收藏数、商品图片URL、价格、地址、简介）
+		axios.get(`/api/getGoods/${goodID.value}`)
+			.then(response => {
+				console.log(response)
+				goodInfo.value = {
+					goodTitle: response.data.title,
+					onshelfTime: response.data.onshelf_time.substr(0, 19).replace('T', ' '),
+					sellerID: response.data.seller_id,
+					likes: response.data.likes,	// 对接收藏夹接口后，需要重写接口适配收藏数
+					type: response.data.category,
+					campus: response.data.campus,
+					images: 
+						// 一件商品允许最少一张、最多三张图片
+						// 后端只返回图片名称，URL在前端编码
+						response.data.images.split(';')
+					,
+					price: Number.parseFloat(response.data.price).toFixed(2),
+					intro: response.data.intro
+				}
+				// 获取图片数组
+				imageCollection.value = goodInfo.value.images.map((name) => `http://127.0.0.1:8082/public/images/${name}.png`)
+				//console.log(imageCollection.value)
+				// 初始化当前展示大图为第一张图片
+				currImageIndex.value = 0			
+			})
 	})
 
 // 由于要监听多个元素的同一事件，需手写一个含有全局计时器的防抖函数
@@ -238,7 +247,7 @@ onMounted(() => {
 				debounceShowBigImg(Number.parseInt(e.target.id))
 			})
 		})
-	}, 0)
+	}, 100)
 })
 
 // 收藏或取消收藏

@@ -6,6 +6,22 @@ const connection = require('../database/db')
 
 app.use(express.json())
 app.use(express.urlencoded({extended:  false}))
+
+// 商品是否可访问
+app.get('/checkAvailable/:good_id', (req, res) => {
+  connection.query(
+    `select available from goodInfo where good_id='${req.params.good_id}'`,
+    (err, result) => {
+      if (err) throw err
+      let message = true
+      let available = JSON.parse(JSON.stringify(result))[0].available
+      if (available == 1) {
+        message = false
+      }
+      res.end(JSON.stringify(message))
+    }
+  )
+})
 // 接口21 获取商品详情
 app.get('/getGoods/:good_id',(req,res) => {
   new Promise((resolve) => {

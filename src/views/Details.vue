@@ -123,7 +123,7 @@
 </template>
 
 <script setup>
-import { computed, onBeforeMount, onMounted, ref } from 'vue'
+import { computed, onMounted, onUpdated, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import GoodSellerPanel from '../components/Goods/GoodSellerPanel.vue'
 import Comments from '../components/Goods/Comments.vue'
@@ -161,7 +161,6 @@ axios.get(`/api/checkAvailable/${goodID.value}`)
 		// 调用接口：传入（商品ID）返回（商品详情：卖家ID、卖家昵称、商品标题、商品类型、上架时间、收藏数、商品图片URL、价格、地址、简介）
 		axios.get(`/api/getGoods/${goodID.value}`)
 			.then(response => {
-				console.log(response)
 				goodInfo.value = {
 					goodTitle: response.data.title,
 					onshelfTime: response.data.onshelf_time.substr(0, 19).replace('T', ' '),
@@ -208,7 +207,7 @@ const liked = ref(false)
 // 是否加入购物车
 const inCart = ref(false)
 // 挂载后，为DOM添加事件监听
-onMounted(() => {
+const initialize = () => {
 	// 从SessionStorage获取用户ID
 	userID = window.sessionStorage.getItem('uid')
 	// 对于用户账号
@@ -248,7 +247,9 @@ onMounted(() => {
 			})
 		})
 	}, 100)
-})
+}
+onMounted(initialize)
+onUpdated(initialize)
 
 // 收藏或取消收藏
 const changeLike = () => {

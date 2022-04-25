@@ -147,7 +147,8 @@ import { ref, computed, onMounted, onUpdated, watch } from 'vue';
 import { useRouter } from 'vue-router';
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { Close } from '@element-plus/icons-vue'
-defineProps({
+import axios from 'axios';
+const props = defineProps({
   goodId: String, // 商品ID
   show: Boolean,  // 组件渲染条件
   status: String, // 当前商品的状态: 'onShelf' 或 'soldOut'
@@ -170,28 +171,25 @@ const typeOptions = ["图书音像", "电子产品", "美妆个护", "运动户�
 const campusOptions = ["四平路校区", "嘉定校区", "沪西校区", "沪北校区"];
 function getGoodInfo(){
   // 调用接口：传入（商品ID）返回（商品详细信息）
-  goodPreInfo.value = {
-    title: '原标题',
-    type: '原类型',
-    name: '原名称',
-    keywords: '原关键词',
-    campus: '原校区',
-    intro: '原简介',
-    price: 4000.00,
-    detail: '原交易细节',  
-  };
-  goodInfo.value = {
-    title: '原标题',
-    type: '原类型',
-    name: '原名称',
-    keywords: '原关键词',
-    campus: '原校区',
-    intro: '原简介',
-    price: 4000.00,
-    detail: '原交易细节',    
-  };  
-  imgLocalUrl.value = '#';
-  imgServerUrl.value = '#';
+  axios.get(`/api/getGoods/${props.goodId}`)
+    .then((res) => {
+      let data = res.data
+      goodPreInfo.value = {
+        title: data.title,
+        type: data.category,
+        name: data.good_name,
+        keywords: data.keywords,
+        campus: data.campus,
+        intro: data.intro,
+        price: Number.parseFloat(data.price).toFixed(2),
+        detail: data.detail,        
+      }
+      for(let property in goodPreInfo.value) {
+        goodInfo.value[property] = goodPreInfo.value[property]
+      }
+    })
+  imgLocalUrl.value = '#'
+  imgServerUrl.value = '#'
 }
 onMounted(()=>{
   getGoodInfo();

@@ -19,8 +19,8 @@
     <template v-for="(goodItem) in historyData" :key="goodItem.id">
     <el-card v-if="goodItem.date === item" :key=goodItem.id :body-style="{ padding: '0px' }" style="width: 220px;height: 250px;margin: 0px 5px 10px 5px;" 
     @click="jumpCard(goodItem.id)">
-      <el-image class="point" :src="goodItem.image" fit="scale-down" />
-        <span style="display: inline-block;font-size: 13px;color: #808080;margin-top: 3px;">{{goodItem.title}}</span><br/>
+      <el-image class="point" :src="goodItem.image" fit="scale-down" style="max-height: 190px;"/>
+        <span style="display: inline-block;font-size: 13px;color: #808080;margin-top: 3px;overflow: hidden;text-overflow: ellipsis;white-space: nowrap;">{{goodItem.title}}</span><br/>
         <span style="display: inline-block;font-size: 18px;color: #FF9900;margin-top: 3px;">￥{{goodItem.price}}</span>
     </el-card> 
     </template>

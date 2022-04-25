@@ -1,6 +1,9 @@
 <template>
 <div class="root-wrapper">
   <div class="list-wrapper">
+    <el-empty
+      v-if="goodsListView.length === 0"
+      description="好像什么都看不到，只能说很神秘。"/>
     <div 
       v-for="good of goodsListView"
       :key="good.id"
@@ -60,10 +63,11 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue';
-import { StarFilled, Avatar } from '@element-plus/icons-vue';
-import { useRouter } from 'vue-router';
-import { ElMessageBox, ElMessage } from 'element-plus';
+import { ref, onMounted } from 'vue'
+import { StarFilled, Avatar } from '@element-plus/icons-vue'
+import { useRouter } from 'vue-router'
+import { ElMessageBox, ElMessage } from 'element-plus'
+import axios from 'axios'
 const props = defineProps({
   userId: String,
   goodsStatus: String,
@@ -78,47 +82,34 @@ onMounted(()=>{
   // 根据 props 中的商品状态，调用不同的接口
   if(props.goodsStatus === 'onShelf'){
     // 调用接口：传入（用户ID） 返回（上架中商品列表）
-    goodsListView.value.push.apply(goodsListView.value, [{ 
-      id:'0',
-      name:'大学物理学 (附)网络课程&配套习题', 
-      status: '上架中',
-      price:'15.00',
-      browsed: 798,
-      likes: 909,
-      image: ("/src/assets/physics.png")},{ 
-      id:'1',
-      name:'Apple iPad Pro 11英寸平板电脑',
-      status: '上架中',    
-      price:'3499.00',
-      browsed: 1006,
-      likes: 66,
-      image: ("/src/assets/ipad.png")},{ 
-      id:'3',
-      name:'Ecovas智能家用空气净化器 机器智能',
-      status: '上架中',    
-      price:'3399.00',
-      browsed: 377,
-      likes: 100,
-      image: ("/src/assets/philips.png")}
-    ]);    
+    axios.get(`/api/onShelfGoods/${props.userId}`)
+      .then((res) => {
+        res.data.forEach(item => {
+          goodsListView.value.push({
+            id: item.good_id,
+            name: item.title,
+            price: Number.parseFloat(item.price).toFixed(2),
+            browsed: item.browsed,
+            likes: item.likes,
+            image: `http://127.0.0.1:8082/public/images/${item.images.split(';')[0]}.png`
+          })
+        })
+      })
   }else if(props.goodsStatus === 'soldOut'){
     // 调用接口：传入（用户ID） 返回（已售出商品列表）
-    goodsListView.value.push.apply(goodsListView.value, [{ 
-      id:'2',
-      name:'派克威雅XL系列 樱花粉特别款礼盒',
-      status: '已售出',    
-      price:'198.00',
-      browsed: 2667,
-      likes: 420,
-      image: ("/src/assets/pen.png")},{
-      id:'4',
-      name:'传奇武夷山 大红袍茶叶',
-      status: '已售出',    
-      price:'149.00',
-      browsed: 177,
-      likes: 66,
-      image: ("/src/assets/tea.png")}
-    ]);    
+    axios.get(`/api/soldGoods/${props.userId}`)
+      .then((res) => {
+        res.data.forEach(item => {
+          goodsListView.value.push({
+            id: item.good_id,
+            name: item.title,
+            price: Number.parseFloat(item.price).toFixed(2),
+            browsed: item.browsed,
+            likes: item.likes,
+            image: `http://127.0.0.1:8082/public/images/${item.images.split(';')[0]}.png`
+          })
+        })
+      })    
   }
 })
 

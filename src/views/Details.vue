@@ -217,8 +217,10 @@ onMounted(() => {
 			.then(res => {
 				liked.value = res.data
 			})
-		liked.value = false
-		inCart.value = false
+		axios.post(`/api/checkInCart`, {userID: userID, goodID: goodID.value})
+			.then(res => {
+				inCart.value = res.data
+			})
 	}
 	// 对于管理员账号
 	else{
@@ -250,18 +252,20 @@ const changeLike = () => {
 		const data = {
 			userID,
 			goodID: goodID.value,
-			time: new Date().toISOString().slice(0, 19).replace('T', ' ')
+			time: date.toISOString().slice(0, 19).replace('T', ' ')
 		}
 		// 调用接口：传入（用户ID，商品ID） 返回（收藏结果）
 		if(!liked.value){
 			axios.post('/api/collectGood', data)
 				.then(() => {
 					liked.value = !liked.value
+					goodInfo.value.likes++
 				})
 		}else{
 			axios.post('/api/cancelCollection', {userID: data.userID, goodID: data.goodID})
 				.then(() => {
 					liked.value = !liked.value
+					goodInfo.value.likes--
 				})			
 		}
 	}
@@ -291,9 +295,18 @@ const addToCart = () => {
 	// 普通用户
 	else if(userID.length === 7){
 		if(!inCart.value){
+			let date = new Date()
+			date.setHours(date.getHours() + 8)			
 			// 调用接口-加入购物车：传入（用户ID，商品ID） 返回（添加结果）
-
-			inCart.value = true
+			const data = {
+				userID,
+				goodID: goodID.value,
+				time: date.toISOString().slice(0, 19).replace('T', ' ')
+			}
+			axios.post('/api/addToCart', data)
+				.then(() => {
+					inCart.value = true
+				})
 		}else{
 			// 已在购物车中，跳转到购物车页面
 			router.push('/shoppingcart')

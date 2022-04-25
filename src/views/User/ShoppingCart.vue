@@ -75,41 +75,17 @@ export default {
 
     created(){
       // 调用接口：传入（用户ID） 返回（购物车数据：商品ID,图片url,名称,价格）
-      /* this.axios.get('/api/getCart/'+this.userID).then((response)=>{
-        for(let item of response.data){
-          this.axios.get('/api/getBriefInfo/'+item.goods_id).then((son_response)=>{
-            console.log(son_response);
+      this.axios.get('/api/getCart/'+this.userID)
+        .then((response)=>{
+          response.data.forEach(item => {
             this.tableData.push({
-              id: item.goods_id,
-              name: son_response.data[0].goods_title,
-              price: son_response.data[0].price,
-            });
-            console.log(this.tableData);
+              id: item.good_id,
+              name: item.title,
+              price: Number.parseFloat(item.price).toFixed(2),
+              path: `http://127.0.0.1:8082/public/images/${item.images.split(';')[0]}.png`
+            })
           })
-        }
-      }) */      
-      this.tableData=[
-        { id:'0',name:'大学物理学 (附)网络课程&配套习题',price:'15.00',path: ("/src/assets/physics.png")},
-        { id:'1',name:'Apple iPad Pro 11英寸平板电脑',price:'3499.00',path: ("/src/assets/ipad.png")},
-        { id:'2',name:'派克威雅XL系列 樱花粉特别款礼盒',price:'198.00',path: ("/src/assets/pen.png")},
-        { id:'3',name:'Ecovas智能家用空气净化器 机器智能',price:'3399.00',path: ("/src/assets/philips.png")},
-        { id:'4',name:'传奇武夷山 大红袍茶叶',price:'149.00',path: ("/src/assets/tea.png")},
-        { id:'0',name:'大学物理学 (附)网络课程&配套习题',price:'15.00',path: ("/src/assets/physics.png")},
-        { id:'1',name:'Apple iPad Pro 11英寸平板电脑',price:'3499.00',path: ("/src/assets/ipad.png")},
-        { id:'2',name:'派克威雅XL系列 樱花粉特别款礼盒',price:'198.00',path: ("/src/assets/pen.png")},
-        { id:'3',name:'Ecovas智能家用空气净化器 机器智能',price:'3399.00',path: ("/src/assets/philips.png")},
-        { id:'4',name:'传奇武夷山 大红袍茶叶',price:'149.00',path: ("/src/assets/tea.png")},
-        { id:'0',name:'大学物理学 (附)网络课程&配套习题',price:'15.00',path: ("/src/assets/physics.png")},
-        { id:'1',name:'Apple iPad Pro 11英寸平板电脑',price:'3499.00',path: ("/src/assets/ipad.png")},
-        { id:'2',name:'派克威雅XL系列 樱花粉特别款礼盒',price:'198.00',path: ("/src/assets/pen.png")},
-        { id:'3',name:'Ecovas智能家用空气净化器 机器智能',price:'3399.00',path: ("/src/assets/philips.png")},
-        { id:'4',name:'传奇武夷山 大红袍茶叶',price:'149.00',path: ("/src/assets/tea.png")},
-        { id:'0',name:'大学物理学 (附)网络课程&配套习题',price:'15.00',path: ("/src/assets/physics.png")},
-        { id:'1',name:'Apple iPad Pro 11英寸平板电脑',price:'3499.00',path: ("/src/assets/ipad.png")},
-        { id:'2',name:'派克威雅XL系列 樱花粉特别款礼盒',price:'198.00',path: ("/src/assets/pen.png")},
-        { id:'3',name:'Ecovas智能家用空气净化器 机器智能',price:'3399.00',path: ("/src/assets/philips.png")},
-        { id:'4',name:'传奇武夷山 大红袍茶叶',price:'149.00',path: ("/src/assets/tea.png")},                        
-      ];
+        })
     },
 
     data(){
@@ -161,20 +137,22 @@ export default {
           }
         ).then(()=>{
           // 调用接口： 传入（用户ID,商品ID） 返回(null)
-          /* this.axios.get('/api/removeCart/' + this.userID + '/' + gid); */
-          let index = 0;
-          for(let item of this.tableData){
-            if(item.id===gid){
-              break;
-            }else{
-              index++;
-            }
-          }
-          this.tableData.splice(index,1);       
-          ElMessage({
-            type:'success',
-            message:'删除成功!',
-          });
+          this.axios.get('/api/removeCart/' + this.userID + '/' + gid)
+            .then(() => {
+              let index = 0
+              for(let item of this.tableData){
+                if(item.id===gid){
+                  break
+                }else{
+                  index++
+                }
+              }
+              this.tableData.splice(index,1)
+              ElMessage({
+                type:'success',
+                message:'删除成功!',
+              })
+            })
         })        
       },
       // 批量移除商品
@@ -197,9 +175,9 @@ export default {
             for(let sitem of this.selectedData){
               let index = 0;
               for(let item of this.tableData){
-                if(item.id===sitem.id){
-                // 调用接口： 传入（用户ID,商品ID） 返回(null)
-                /* this.axios.get('/api/removeCart/' + this.userID + '/' + sitem.id); */
+                if(item.id === sitem.id){
+                  // 调用接口： 传入（用户ID,商品ID） 返回(null)
+                  this.axios.get('/api/removeCart/' + this.userID + '/' + sitem.id);
                   break;
                 }else{
                   index++;

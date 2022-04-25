@@ -141,7 +141,7 @@ function getChatList(newOponentID = null, newOponentName = null, newOponentAvata
         newList.push({
           uid: item.user_id,
           uname: item.nickname,
-          avatar: `http://127.0.0.1:8082/public/avatars/${item.avatar}.png`
+          avatar: `http://127.0.0.1:8082/public/avatars/${item.avatar}`
         })
       })
     })

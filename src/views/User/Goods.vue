@@ -2,26 +2,45 @@
 <div class="root-wrapper">
 <span class="title">商品管理</span><br/>  
   <el-row>
-    <el-col :span="6"></el-col>
+    <el-col :span="6"/>
     <el-col :span="12">
       <div class="tab-wrapper">
-        <el-tabs v-model="currentTab" class="tabs" type="border-card" stretch>
+        <el-tabs 
+          v-model="currentTab" 
+          class="tabs" 
+          type="border-card" 
+          stretch>
           <el-tab-pane label="上架中" name="onShelf" lazy>
-            <GoodsListTable v-if="currentTab === 'onShelf'" :userId="uid" :goodsStatus="currentTab" @check-info="checkGoodInfo"/>
+            <GoodsListTable 
+              v-if="currentTab === 'onShelf'" 
+              :userId="uid" 
+              :goodsStatus="currentTab" 
+              @check-info="checkGoodInfo"/>
           </el-tab-pane>
           <el-tab-pane label="已售出" name="soldOut" lazy>
-            <GoodsListTable v-if="currentTab === 'soldOut'" :userId="uid" :goodsStatus="currentTab" @check-info="checkGoodInfo"/>
+            <GoodsListTable 
+              v-if="currentTab === 'soldOut'" 
+              :userId="uid" 
+              :goodsStatus="currentTab" 
+              @check-info="checkGoodInfo"/>
           </el-tab-pane>
           <el-tab-pane label="新添闲置" name="uploadGood" lazy>
-            <UploadGoodModal v-if="currentTab === 'uploadGood'" :userId="uid"/>
+            <UploadGoodModal 
+              v-if="currentTab === 'uploadGood'" 
+              :userId="uid"/>
           </el-tab-pane>
         </el-tabs>
       </div>
     </el-col>
-    <el-col :span="6"></el-col>
+    <el-col :span="6"/>
   </el-row>
   <Teleport to="main">
-    <GoodsInfoModal :show="showInfoModal" :goodId="currentGoodId" :status="currentTab" @close="closeGoodInfo"/>
+    <GoodsInfoModal 
+      v-if="showInfoModal" 
+      :goodId="currentGoodId.toString()" 
+      :status="currentTab"
+      :show="showInfoModal"
+      @close="closeGoodInfo"/>
   </Teleport>
 </div>
 </template>

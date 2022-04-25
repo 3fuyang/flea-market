@@ -83,7 +83,7 @@ onBeforeMount(() => {
     .then((res) => {     
       sellerInfo.value = {
         sellerName: res.data.nickname,
-        avatarUrl: `http://127.0.0.1:8082/public/avatars/${res.data.avatar}.png`,
+        avatarUrl: `http://127.0.0.1:8082/public/avatars/${res.data.avatar}`,
         reputation: res.data.reputation,
         score: Number.parseFloat(res.data.score).toFixed(1)
       }
@@ -144,7 +144,7 @@ const getTrends = () => {
             goodID: res.data.good_id,
             goodTitle: res.data.title,
             price: Number.parseFloat(res.data.price).toFixed(2),
-            imgUrl: `http://127.0.0.1:8082/public/images/${res.data.images.split(';')[0]}.png`
+            imgUrl: `http://127.0.0.1:8082/public/images/${res.data.images.split(';')[0]}`
           }
         )
       })

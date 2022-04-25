@@ -53,12 +53,12 @@ onBeforeMount(() => {
   let images =  [
 			// 一件商品允许最少一张、最多三张图片
 			// 后端只返回图片名称，URL在前端编码
-			'philips',
-			'pen',
-			'tea',
+			'philips.png',
+			'pen.png',
+			'tea.png',
 		]
 	// 获取图片数组
-	imageCollection.value = images.map((name) => `/src/assets/${name}.png`)
+	imageCollection.value = images.map((name) => `/src/assets/${name}`)
   currImageIndex.value = 0
 })
 

@@ -91,7 +91,7 @@ onMounted(()=>{
             price: Number.parseFloat(item.price).toFixed(2),
             browsed: item.browsed,
             likes: item.likes,
-            image: `http://127.0.0.1:8082/public/images/${item.images.split(';')[0]}.png`
+            image: `http://127.0.0.1:8082/public/images/${item.images.split(';')[0]}`
           })
         })
       })
@@ -106,7 +106,7 @@ onMounted(()=>{
             price: Number.parseFloat(item.price).toFixed(2),
             browsed: item.browsed,
             likes: item.likes,
-            image: `http://127.0.0.1:8082/public/images/${item.images.split(';')[0]}.png`
+            image: `http://127.0.0.1:8082/public/images/${item.images.split(';')[0]}`
           })
         })
       })    

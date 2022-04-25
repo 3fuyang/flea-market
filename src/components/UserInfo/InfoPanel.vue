@@ -129,7 +129,7 @@ onBeforeMount(() => {
         college: data.college,
         gender: data.gender,
         birthday: data.birthday,
-        avatar: `http://127.0.0.1:8082/public/avatars/${data.avatar}.png`,
+        avatar: `http://127.0.0.1:8082/public/avatars/${data.avatar}`,
         sellerRate: 4
       }
     })

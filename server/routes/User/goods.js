@@ -1,7 +1,8 @@
 /* Goods 页面 */
 const express = require('express')
 const app = express()
-
+const multer = require('multer')
+const fs = require('fs')
 const connection = require('../../database/db')
 
 app.use(express.json())
@@ -79,6 +80,56 @@ app.get('/soldGoods/:user_id', (req, res) => {
           res.end(JSON.stringify(result))
         })
     })
+})
+
+// 上传图片
+app.post(
+  '/uploadImage',
+  multer({
+    // 设置文件存储路径
+    dest: './public/images',
+  }).array('file', 3),  // 注意：这里的字段必须与前端formdata的字段名相同
+  (req, res, next) => {
+    const fileInfoList = []
+    req.files.forEach((file) => {
+      let fileInfo = {};
+      let path = './public/images/' + Date.now().toString() + '_' + file.originalname
+      fs.renameSync('./public/images/' + file.filename, path)
+      // 获取文件基本信息
+      fileInfo.type = file.mimetype
+      fileInfo.name = file.originalname
+      fileInfo.size = file.size
+      fileInfo.path = path
+      fileInfoList.push(fileInfo)
+    })
+    res.end(JSON.stringify(fileInfoList))
+  }
+)
+
+// 上架新商品
+app.post('/addGood', (req, res) => {
+  connection.query(
+    `insert into goodInfo(seller_id, price, category, good_name, title, keywords, campus, intro, detail, images, onshelf_time)
+     value(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+     req.body,
+     (err, result) => {
+       if(err) throw err
+       res.end(JSON.stringify(result))
+     }
+  )
+})
+
+// 修改上架中商品信息
+app.post('/modifyGood', (req, res) => {
+  connection.query(   
+    `update goodInfo set price='${req.body[0]}', category='${req.body[1]}', good_name='${req.body[2]}', 
+     title='${req.body[3]}', keywords='${req.body[4]}', campus='${req.body[5]}', intro='${req.body[6]}',
+     detail='${req.body[7]}', images='${req.body[8]}' where good_id='${req.body[9]}'`,
+     (err, result) => {
+       if(err) throw err
+       res.end(JSON.stringify(result))
+     }
+  )
 })
 
 module.exports = app

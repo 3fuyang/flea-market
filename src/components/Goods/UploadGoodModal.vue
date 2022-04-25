@@ -1,6 +1,11 @@
 <template>
 <div class="root-wrapper">
-	<el-steps :space="200" :active="active" process-status="finish" finish-status="success" align-center>
+	<el-steps 
+    :space="200" 
+    :active="active" 
+    process-status="finish" 
+    finish-status="success" 
+    align-center>
     <el-step title="基本信息"></el-step>
     <el-step title="简介和图片"></el-step>
     <el-step title="交易信息"></el-step>
@@ -10,53 +15,85 @@
     <div v-if="active==0">
       <div>
         标题:
-        <el-input v-model="goodInfo.title" placeholder="为你的商品起一个响亮的标题" class="titleInput"/>
+        <el-input 
+          v-model="goodInfo.title" 
+          placeholder="为你的商品起一个响亮的标题" 
+          class="titleInput"/>
       </div>
       <div>
         商品类型:     
-        <el-select v-model="goodInfo.type" placeholder="选择商品类型" size="large" class="typeSelect">
-          <el-option v-for="item in typeOptions" :key="item" :label="item" :value="item"/>
+        <el-select 
+          v-model="goodInfo.type" 
+          placeholder="选择商品类型" 
+          size="large" 
+          class="typeSelect">
+          <el-option 
+            v-for="item in typeOptions" 
+            :key="item" 
+            :label="item" 
+            :value="item"/>
         </el-select>
       </div>
       <div>
         商品名称:
-        <el-input v-model="goodInfo.name" placeholder="你想出售的商品是什么" class="nameInput"/>
+        <el-input 
+          v-model="goodInfo.name" 
+          placeholder="你想出售的商品是什么" 
+          class="nameInput"/>
       </div>
       <div>
         关键词:     
-        <el-input v-model="goodInfo.keywords" placeholder="输入搜索关键词，用分号分隔" class="keywordsInput"/>
+        <el-input 
+          v-model="goodInfo.keywords" 
+          placeholder="输入搜索关键词，用分号分隔" 
+          class="keywordsInput"/>
       </div>
       <div>
         校区:     
-        <el-select v-model="goodInfo.campus" placeholder="选择发布校区" size="large" class="campusSelect">
-          <el-option v-for="item in campusOptions" :key="item" :label="item" :value="item"/>
+        <el-select 
+          v-model="goodInfo.campus" 
+          placeholder="选择发布校区" 
+          size="large" 
+          class="campusSelect">
+          <el-option 
+            v-for="item in campusOptions" 
+            :key="item" 
+            :label="item" 
+            :value="item"/>
         </el-select>
       </div>
     </div>
     <div v-if="active === 1">
       <div>
         <span class="introTitle">简介:</span><br/>
-        <el-input v-model="goodInfo.intro" placeholder="快来简单介绍一下你的商品吧" :rows="3" type="textarea" class="introductionInput"/>
+        <el-input 
+          v-model="goodInfo.intro" 
+          placeholder="快来简单介绍一下你的商品吧" 
+          :rows="3" 
+          type="textarea" 
+          class="introductionInput"/>
       </div>
       <div>
-        <div class="imgTitle">商品实物图:</div>
+        <div class="imgTitle">
+          商品实物图:
+        </div>
         <!-- 图片上传组件 -->
         <el-upload
           ref="upload"
           class="uploadImg" 
-          action="/api/uploadimage"
+          action="/api/uploadImage"
           :auto-upload="false"
           :before-upload="handleBeforeUpload"
           :on-success="handleOnSuccess"
           :on-error="handleOnError"
-          :limit="1"
+          :limit="3"
           :on-exceed="handleExceed">
-          <span v-if="imgLocalUrl" class="avatarWrapper">
-            <img :src="imgLocalUrl" class="avatar"/>
-          </span>
+          <div v-if="imgLocalUrl.length > 0" class="avatarWrapper">
+            <img v-for="item in imgLocalUrl" :src="item" class="avatar"/>
+          </div>
             <template #tip>
               <div class="el-upload__tip">
-                limit 1 jpg/png file with a size of 220*190.
+                limit less than 3 jpg/png files with a size of 220*190.
               </div>
             </template>          
             <template #trigger>
@@ -77,11 +114,20 @@
       <span class="priceTitle">
         价格(CNY):
       </span><br/>
-      <el-input-number v-model="goodInfo.price" :min="0" class="priceInput"/><br/>
+      <el-input-number 
+        v-model="goodInfo.price" 
+        :min="0" 
+        class="priceInput"/>
+      <br/>
       <span class="detailTitle">
         交易信息:
       </span>
-      <el-input v-model="goodInfo.detail" placeholder="你期望的交易时间、地点以及其他细节。" :rows="4" class="detailInput" type="textarea"></el-input>
+      <el-input 
+        v-model="goodInfo.detail" 
+        placeholder="你期望的交易时间、地点以及其他细节。" 
+        :rows="4" 
+        class="detailInput" 
+        type="textarea"></el-input>
     </div>
     <div v-if="active === 3">
       <el-result
@@ -92,7 +138,9 @@
     </div>
   </el-card>  
   <div v-if="active < 4" class="controlButton">
-    <el-button @click="preStep" type="primary">上一步</el-button>
+    <el-button 
+      @click="preStep" 
+      type="primary">上一步</el-button>
     <el-button @click="nextStep" type="primary">{{buttonInfo}}</el-button>
   </div>  
 </div>
@@ -100,9 +148,10 @@
 
 <script setup>
 import { computed, ref } from 'vue'
-import { useRouter } from 'vue-router';
+import { useRouter } from 'vue-router'
 import { ElMessage, ElMessageBox } from 'element-plus'
-defineProps({
+import axios from 'axios'
+const props = defineProps({
   userId: String, // 用户ID
 })
 
@@ -117,110 +166,126 @@ const goodInfo = ref({
   price: '',  // 价格
   detail: '',  // 交易细节
 })
-const typeOptions = ["图书音像", "电子产品", "美妆个护", "运动户外", "生活电器", "其他"];
-const campusOptions = ["四平路校区", "嘉定校区", "沪西校区", "沪北校区"];
+const typeOptions = ["图书音像", "电子产品", "美妆个护", "运动户外", "生活电器", "其他"]
+const campusOptions = ["四平路校区", "嘉定校区", "沪西校区", "沪北校区"]
 
-const active = ref(0);  // 步骤条激活标号
+const active = ref(0)  // 步骤条激活标号
 const buttonInfo = computed(()=>{
-  return active.value < 3 ? "下一步" : "发布";
-}); // 'nextStep'按钮的显示文本
+  return active.value < 3 ? "下一步" : "发布"
+}) // 'nextStep'按钮的显示文本
 // 上一步
 function preStep(){
   if(active.value > 0){
-    --active.value;
-    return;
+    --active.value
+    return
   }
 }
 // 下一步
 function nextStep(){
-  /* switch(active.value){
+  switch(active.value){
     case 0:
       if(goodInfo.value.title == ""){
-        ElMessage.error('标题不可为空!');
+        ElMessage.error('标题不可为空!')
       }else if(goodInfo.value.type == ""){
-        ElMessage.error('商品类型不可为空!');
+        ElMessage.error('商品类型不可为空!')
       }else if(goodInfo.value.name == ""){
-        ElMessage.error('商品名称不可为空');
+        ElMessage.error('商品名称不可为空')
       }else if(goodInfo.value.keywords == ""){
-        ElMessage.error('关键词不可为空!');
+        ElMessage.error('关键词不可为空!')
       }else if(goodInfo.value.campus == ""){
-        ElMessage.error('校区不可为空!');
+        ElMessage.error('校区不可为空!')
       }else{
-        ++active.value;
+        ++active.value
       }
-      break;
+      break
     case 1:
       if(goodInfo.value.intro == ""){
-        ElMessage.error('商品简介不可为空!');
-      }else if(imgServerUrl.value === ''){
-        ElMessage.error('请为商品上传实物图!');
+        ElMessage.error('商品简介不可为空!')
+      }else if(imgServerName.value.length === 0){
+        ElMessage.error('请为商品上传实物图!')
       }else{
-        ++active.value;
+        ++active.value
       }
-      break;
+      break
     case 2:
       if(goodInfo.value.price === 0){
-        ElMessage.error('商品价格不能为零!');
+        ElMessage.error('商品价格不能为零!')
       }else if(goodInfo.value.detail === ''){
-        ElMessage.error('请指定商品交易细节!');
+        ElMessage.error('请指定商品交易细节!')
       }else{
-        ++active.value;
+        ++active.value
       }
-      break;
+      break
     case 3:
       ElMessageBox.confirm('确认要上架商品吗？','提示')
       .then(() => {
         // 调用接口-添加商品：传入（商品信息） 返回（商品ID）
-        ElMessage({
-            type: 'success',
-            message: '上架成功'
-        });
-        // 刷新当前页面
-        const router = useRouter();
-        router.go(0);
+        let date = new Date()
+        date.setHours(date.getHours() + 8)
+        let newGood = [
+          props.userId,
+          goodInfo.value.price,
+          goodInfo.value.type,
+          goodInfo.value.name,
+          goodInfo.value.title,
+          goodInfo.value.keywords,
+          goodInfo.value.campus,
+          goodInfo.value.intro,
+          goodInfo.value.detail,
+          imgServerName.value.join(';'),
+          date.toISOString().slice(0, 19).replace('T', ' ')         
+        ]
+        axios.post('/api/addGood', newGood)
+          .then(() => {
+            ElMessage({
+                type: 'success',
+                message: '上架成功'
+            })
+            // 刷新当前页面
+            const router = useRouter()
+            router.go(0)
+          })
       })
-      .catch(() => {});
-      break;
-  } */  
-  if(active.value < 3){
-    ++active.value;
+      .catch(() => {})
+      break
   }
 }
 
-const upload = ref(null); // 使用ref获取el-upload元素
+// 使用ref获取el-upload元素
+const upload = ref(null) 
 // 注意：不需要额外添加头部声明content-type, 否则会引发后端报错: 
 // Error: Multipart: Boundary not found
-//const headers = {'content-type': 'multipart/form-data'}; // 请求头, 固定数据类型
-const imgLocalUrl = ref(''); // 上传图片后返回的本地 url
-const imgServerUrl = ref(''); // 上传图片后返回的服务端 url(只取名称)
-const limitMax = 2200*1900; // 允许上传的最大尺寸
+//const headers = {'content-type': 'multipart/form-data'} // 请求头, 固定数据类型
+const imgLocalUrl = ref([]) // 上传图片后返回的本地 url
+const imgServerName = ref([]) // 上传图片后返回的服务端名称
+const limitMax = 2200*1900 // 允许上传的最大尺寸
 // on-exceed hook
 function handleExceed(){
-  ElMessage.warning('只能为商品上传一张图片!');
-  return false;
+  ElMessage.warning('只能为商品上传最多三张图片!')
+  return false
 }
 // before-upload hook
 function handleBeforeUpload(file){
   if(file.size > limitMax){
-    ElMessage.error('大小超出限制');
-    return false;
+    ElMessage.error('大小超出限制')
+    return false
   }
 }
 // 手动上传文件
 function submitUpload(){
-  upload.value.submit();
+  upload.value.submit()
 }
 // on-success hook
 function handleOnSuccess(res, file){
-  imgLocalUrl.value = URL.createObjectURL(file.raw);
-  imgServerUrl.value = res.data.path.split('/')[3];
+  imgLocalUrl.value.push(URL.createObjectURL(file.raw))
+  // 后端的文件信息逐个以数组的形式返回
+  imgServerName.value.push(res[0].path.split('/')[3])
   // 前端访问图片时，使用node.js配置公共资源
-  // 注意：图片统一存储在服务器 ./pulic/image 目录下，用名称区分
-  console.log(imgServerUrl.value);
+  // 注意：图片统一存储在服务器 ./pulic/images 目录下，用名称区分
 }
 // on-error hook
 function handleOnError(err){
-  console.log(err);
+  console.log(err)
 }
 </script>
 

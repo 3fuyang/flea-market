@@ -88,19 +88,24 @@
           ref="upload"
           class="uploadImg" 
           :disabled="status === 'soldOut'"
-          action="/api/uploadimage"
+          action="/api/uploadImage"
           :auto-upload="false"
           :before-upload="handleBeforeUpload"
           :on-success="handleOnSuccess"
           :on-error="handleOnError"
-          :limit="1"
+          :limit="3"
           :on-exceed="handleExceed">
-          <span v-if="imgLocalUrl" class="avatarWrapper">
-            <img :src="imgLocalUrl" class="avatar"/>
+          <span 
+            v-if="imgLocalUrl.length > 0" 
+            class="avatarWrapper">
+            <img 
+              v-for="item in imgLocalUrl" 
+              :src="item" 
+              class="avatar"/>
           </span>
             <template #tip>
               <div class="el-upload__tip">
-                limit 1 jpg/png file with a size of 220*190.
+                limit less than 3 jpg/png files with a size of 220*190.
               </div>
             </template>          
             <template #trigger>
@@ -143,11 +148,11 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted, onUpdated, watch } from 'vue';
-import { useRouter } from 'vue-router';
+import { ref, computed, onMounted, onUpdated, watch } from 'vue'
+import { useRouter } from 'vue-router'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { Close } from '@element-plus/icons-vue'
-import axios from 'axios';
+import axios from 'axios'
 const props = defineProps({
   goodId: String, // 商品ID
   show: Boolean,  // 组件渲染条件
@@ -167,8 +172,8 @@ const goodInfo = ref({
   price: '',  // 价格
   detail: '',  // 交易细节
 })  // 商品信息
-const typeOptions = ["图书音像", "电子产品", "美妆个护", "运动户外", "生活电器", "其他"];
-const campusOptions = ["四平路校区", "嘉定校区", "沪西校区", "沪北校区"];
+const typeOptions = ["图书音像", "电子产品", "美妆个护", "运动户外", "生活电器", "其他"]
+const campusOptions = ["四平路校区", "嘉定校区", "沪西校区", "沪北校区"]
 function getGoodInfo(){
   // 调用接口：传入（商品ID）返回（商品详细信息）
   axios.get(`/api/getGoods/${props.goodId}`)
@@ -181,54 +186,55 @@ function getGoodInfo(){
         keywords: data.keywords,
         campus: data.campus,
         intro: data.intro,
-        price: Number.parseFloat(data.price).toFixed(2),
-        detail: data.detail,        
+        price: Number.parseFloat(data.price),
+        detail: data.detail,
+        images: data.images        
       }
+      imgLocalUrl.value = data.images.split(';').map(name => `http://127.0.0.1:8082/public/images/${name}`)
+      imgServerName.value = data.images.split(';')
       for(let property in goodPreInfo.value) {
         goodInfo.value[property] = goodPreInfo.value[property]
       }
     })
-  imgLocalUrl.value = '#'
-  imgServerUrl.value = '#'
 }
 onMounted(()=>{
-  getGoodInfo();
-});
+  getGoodInfo()
+})
 onUpdated(()=>{
-  getGoodInfo();
-});
+  getGoodInfo()
+})
 
-const edited = ref(false);  // 信息编辑标志
+const edited = ref(false)  // 信息编辑标志
 // 检查商品信息是否有修改
-const goodPreInfo = ref(null);  // 商品原信息副本
+const goodPreInfo = ref(null)  // 商品原信息副本
 watch(goodInfo, ()=>{
   for(const property in goodInfo.value){
     if(goodInfo.value[property] !== goodPreInfo.value[property]){
-      edited.value = true;
-      break;
+      edited.value = true
+      break
     }else{
-      continue;
+      continue
     }
   }
-}, { deep: true });
+}, { deep: true })
 
-const active = ref(0);  // 步骤条激活标号
+const active = ref(0)  // 步骤条激活标号
 const buttonInfo = computed(()=>{
   switch(active.value){
     case 0:
     case 1:
-      return '下一条';
+      return '下一条'
     case 2:
       return '提交审核'
     default:
       return '提交修改'
   }
-}); // 'nextStep'按钮的显示文本
+}) // 'nextStep'按钮的显示文本
 // 上一步
 function preStep(){
   if(active.value > 0){
-    --active.value;
-    return;
+    --active.value
+    return
   }
 }
 // 下一步
@@ -236,105 +242,125 @@ function nextStep(){
   switch(active.value){
     case 0:
       if(goodInfo.value.title == ""){
-        ElMessage.error('标题不可为空!');
-        break;
+        ElMessage.error('标题不可为空!')
+        break
       }else if(goodInfo.value.type == ""){
-        ElMessage.error('商品类型不可为空!');
-        break;
+        ElMessage.error('商品类型不可为空!')
+        break
       }else if(goodInfo.value.name == ""){
-        ElMessage.error('商品名称不可为空');
-        break;
+        ElMessage.error('商品名称不可为空')
+        break
       }else if(goodInfo.value.keywords == ""){
-        ElMessage.error('关键词不可为空!');
-        break;
+        ElMessage.error('关键词不可为空!')
+        break
       }else if(goodInfo.value.campus == ""){
-        ElMessage.error('校区不可为空!');
-        break;
+        ElMessage.error('校区不可为空!')
+        break
       }else{
-        ++active.value;
-        break;
+        ++active.value
+        break
       }
     case 1:
       if(goodInfo.value.intro == ""){
-        ElMessage.error('商品简介不可为空!');
-        break;
-      }else if(imgServerUrl.value === ''){
-        ElMessage.error('请为商品上传实物图!');
-        break;
+        ElMessage.error('商品简介不可为空!')
+        break
+      }else if(imgServerName.value === ''){
+        ElMessage.error('请为商品上传实物图!')
+        break
       }else{
-        ++active.value;
-        break;
+        goodInfo.value.images = imgServerName.value.join(';')
+        ++active.value
+        break
       }
     case 2:
       if(goodInfo.value.price === 0){
-        ElMessage.error('商品价格不能为零!');
-        break;
+        ElMessage.error('商品价格不能为零!')
+        break
       }else if(goodInfo.value.detail === ''){
-        ElMessage.error('请指定商品交易细节!');
-        break;
+        ElMessage.error('请指定商品交易细节!')
+        break
       }else{
         if(edited.value){
-          ++active.value;
-          break;
+          ++active.value
+          break
         }else{
-          ElMessage.warning('没有需要提交的修改！');
-          break;
+          ElMessage.warning('没有需要提交的修改！')
+          break
         }
       }
     case 3:
       ElMessageBox.confirm('确认要修改商品信息吗？','提示')
       .then(() => {
         // 调用接口-添加商品：传入（商品信息） 返回（商品ID）
-        emits('close')
-        ElMessage({
-            type: 'success',
-            message: '修改成功'
-        });
-        // 刷新当前页面
-        const router = useRouter();
-        router.go(0);
+        let date = new Date()
+        date.setHours(date.getHours() + 8)
+        let modifiedGood = [
+          goodInfo.value.price,
+          goodInfo.value.type,
+          goodInfo.value.name,
+          goodInfo.value.title,
+          goodInfo.value.keywords,
+          goodInfo.value.campus,
+          goodInfo.value.intro,
+          goodInfo.value.detail,
+          imgServerName.value.join(';'),
+          props.goodId
+        ]
+        axios.post('/api/modifyGood', modifiedGood)
+          .then(() => {
+            emits('close')
+            ElMessage({
+                type: 'success',
+                message: '修改成功'
+            })
+            // 刷新当前页面
+            const router = useRouter()
+            router.go(0)
+          })
       })
       .catch(() => {
-        ElMessage.error('修改失败!');
-      });
-      break;
+        ElMessage.info('取消修改!')
+        edited.value = false
+      })
+      break
   } 
 }
 
-const upload = ref(null); // 使用ref获取el-upload元素
+const upload = ref(null) // 使用ref获取el-upload元素
 // 注意：不需要额外添加头部声明content-type, 否则会引发后端报错: 
 // Error: Multipart: Boundary not found
-//const headers = {'content-type': 'multipart/form-data'}; // 请求头, 固定数据类型
-const imgLocalUrl = ref(''); // 上传图片后返回的本地 url
-const imgServerUrl = ref(''); // 上传图片后返回的服务端 url(只取名称)
-const limitMax = 2200*1900; // 允许上传的最大尺寸
+//const headers = {'content-type': 'multipart/form-data'} // 请求头, 固定数据类型
+const imgLocalUrl = ref([]) // 上传图片后返回的本地 url
+const imgServerName = ref([]) // 上传图片后返回的服务端 url(只取名称)
+const limitMax = 2200*1900 // 允许上传的最大尺寸
 // on-exceed hook
 function handleExceed(){
-  ElMessage.warning('只能为商品上传一张图片!');
-  return false;
+  ElMessage.warning('只能为商品上传最多三张图片!')
+  return false
 }
 // before-upload hook
 function handleBeforeUpload(file){
   if(file.size > limitMax){
-    ElMessage.error('大小超出限制');
-    return false;
+    ElMessage.error('大小超出限制')
+    return false
+  }else{
+    imgLocalUrl.value = []
   }
 }
 // 手动上传文件
 function submitUpload(){
-  upload.value.submit();
+  upload.value.submit()
 }
 // on-success hook
 function handleOnSuccess(res, file){
-  imgLocalUrl.value = URL.createObjectURL(file.raw);
-  imgServerUrl.value = res.data.path.split('/')[3];
-  // 前端访问图片时，使用node.js配置公共资源
-  // 注意：图片统一存储在服务器 ./pulic/image 目录下，用名称区分
-  console.log(imgServerUrl.value);
+  // 生成预览图
+  imgLocalUrl.value.push(URL.createObjectURL(file.raw))
+  // 获取服务端返回的文件名
+  imgServerName.value.push(res[0].path.split('/')[3])
 }
 // on-error hook
 function handleOnError(err){
-  console.log(err);
+  console.log(err)
 }
 </script>
 
@@ -363,7 +389,7 @@ function handleOnError(err){
   background-color: #f5f5f5;
   width: 40%;
   position: absolute;
-  top: 20%;
+  top: 15%;
   left: 30%;
 }
 .close-button{
@@ -424,8 +450,8 @@ function handleOnError(err){
   margin: 5px auto;
 }
 .avatar{
-  width: 220px;
-  height: 190px;
+  width: 160x;
+  height: 140px;
   padding: 1px;
   border: 1px solid #f5f5f5;
 }

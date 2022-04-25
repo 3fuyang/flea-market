@@ -165,7 +165,7 @@ axios.get(`/api/checkAvailable/${goodID.value}`)
 					goodTitle: response.data.title,
 					onshelfTime: response.data.onshelf_time.substr(0, 19).replace('T', ' '),
 					sellerID: response.data.seller_id,
-					likes: response.data.likes,	// 对接收藏夹接口后，需要重写接口适配收藏数
+					likes: response.data.likes,	
 					type: response.data.category,
 					campus: response.data.campus,
 					images: 
@@ -177,7 +177,7 @@ axios.get(`/api/checkAvailable/${goodID.value}`)
 					intro: response.data.intro
 				}
 				// 获取图片数组
-				imageCollection.value = goodInfo.value.images.map((name) => `http://127.0.0.1:8082/public/images/${name}.png`)
+				imageCollection.value = goodInfo.value.images.map((name) => `http://127.0.0.1:8082/public/images/${name}`)
 				//console.log(imageCollection.value)
 				// 初始化当前展示大图为第一张图片
 				currImageIndex.value = 0			
@@ -212,14 +212,6 @@ const initialize = () => {
 	userID = window.sessionStorage.getItem('uid')
 	// 对于用户账号
 	if(userID.length === 7){
-		let date = new Date()
-		date.setHours(date.getHours() + 8)
-		// 调用接口，加入浏览记录：传入（用户ID，商品ID，当前时间） 返回（null）
-		axios.post('/api/addTrack', {
-			userID,
-			goodID: goodID.value,
-			time: date.toISOString().slice(0, 19).replace('T', ' ')
-		})
 		// 调用接口：传入（用户ID）	返回（用户是否将该商品收藏、加入购物车)
 		axios.post(`/api/checkCollected`, {userID: userID, goodID: goodID.value})
 			.then(res => {
@@ -234,7 +226,6 @@ const initialize = () => {
 	else{
 		ElMessage.warning('请使用普通账号收藏商品。')
 	}
-
 	// 为缩略图添加鼠标事件监听器
 	const subImages = document.getElementsByClassName('sub-image')
 	// 注意：由于Vue的mounted钩子不会承诺所有的子组件一起被挂载
@@ -248,7 +239,19 @@ const initialize = () => {
 		})
 	}, 100)
 }
-onMounted(initialize)
+onMounted(() => {
+	if(userID.length === 7) {
+		let date = new Date()
+		date.setHours(date.getHours() + 8)
+		// 调用接口，加入浏览记录：传入（用户ID，商品ID，当前时间） 返回（null）
+		axios.post('/api/addTrack', {
+			userID,
+			goodID: goodID.value,
+			time: date.toISOString().slice(0, 19).replace('T', ' ')
+		})
+	}
+	initialize()
+})
 onUpdated(initialize)
 
 // 收藏或取消收藏

@@ -53,7 +53,7 @@ export default {
             id: item.good_id,
             name: item.title,
             price: Number.parseFloat(item.price).toFixed(2),
-            path: `http://127.0.0.1:8082/public/images/${item.images.split(';')[0]}.png`
+            path: `http://127.0.0.1:8082/public/images/${item.images.split(';')[0]}`
           })
         })
       })    

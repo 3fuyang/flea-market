@@ -1,8 +1,8 @@
 <template>
   <div class="info">
     <el-row justify="center">
-      <info-panel :userID="userID"/>
-      <comment-list :userID="userID"/>
+      <info-panel v-if="userID.length > 0" :userID="userID"/>
+      <comment-list v-if="userID.length > 0" :userID="userID"/>
     </el-row>
   </div>  
 </template>

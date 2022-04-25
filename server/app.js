@@ -9,6 +9,7 @@ const chatAPI = require('./routes/User/chat')
 const historyAPI = require('./routes/User/history')
 const favoriteAPI = require('./routes/User/favorite')
 const shoppingcartAPI = require('./routes/User/shoppingcart')
+const infoAPI = require('./routes/User/info')
 
 app
   // 配置图片等静态资源  
@@ -22,6 +23,7 @@ app
   .use('/api', historyAPI)
   .use('/api', favoriteAPI)
   .use('/api', shoppingcartAPI)
+  .use('/api', infoAPI)
 
 // 启动服务器
 const server = app.listen(8082, () => {

@@ -208,8 +208,6 @@ const liked = ref(false)
 const inCart = ref(false)
 // 挂载后，为DOM添加事件监听
 const initialize = () => {
-	// 从SessionStorage获取用户ID
-	userID = window.sessionStorage.getItem('uid')
 	// 对于用户账号
 	if(userID.length === 7){
 		// 调用接口：传入（用户ID）	返回（用户是否将该商品收藏、加入购物车)
@@ -240,6 +238,8 @@ const initialize = () => {
 	}, 100)
 }
 onMounted(() => {
+	// 从SessionStorage获取用户ID
+	userID = window.sessionStorage.getItem('uid')	
 	if(userID.length === 7) {
 		let date = new Date()
 		date.setHours(date.getHours() + 8)

@@ -221,8 +221,9 @@ const initialize = () => {
 			})
 	}
 	// 对于管理员账号
-	else{
-		ElMessage.warning('请使用普通账号收藏商品。')
+	else if(userID.length === 4){
+		liked.value = false
+		inCart.value = false
 	}
 	// 为缩略图添加鼠标事件监听器
 	const subImages = document.getElementsByClassName('sub-image')
@@ -286,12 +287,18 @@ const changeLike = () => {
 
 // 跳转到付款页面
 const goConfirm = () => {
-	router.push({
-		path: '/confirm',
-		query:{
-			gid: goodID.value,
-		},		
-	})
+	if (userID.length === 7) {
+		router.push({
+			path: '/confirm',
+			query:{
+				gid: goodID.value,
+			}	
+		})
+	} else if (userID.length === 4) {
+		ElMessage.warning(`请使用普通账号执行该操作。`)
+	} else {
+		router.push(`/login`)
+	}
 }
 
 // 加入购物车

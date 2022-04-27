@@ -9,10 +9,10 @@
   </div>
   <div class="sub-images-container">
     <img
-      class="sub-image"
+      :class="['sub-image', `g${props.goodID}`]"
       v-for="(image, index) of imageCollection"
       :src="image"
-      :id="index"/>
+      :id="`g-${index}`"/>
   </div>
   <p class="price-tag">
     ￥{{goodPrice}}
@@ -26,40 +26,28 @@
 </template>
 
 <script setup>
-import { onBeforeMount, ref, computed, onMounted } from 'vue'
-import { useRouter } from 'vue-router';
+import { ref, computed, onMounted } from 'vue'
+import { useRouter } from 'vue-router'
 
 const props = defineProps({
-  goodID: String
+  goodID: String,
+  title: String,
+  price: String,
+  images: Array
 })
 
 // 商品标题
-const goodTitle = ref('')
+const goodTitle = ref(props.title)
 // 商品价格
-const goodPrice = ref(0)
+const goodPrice = ref(props.price)
 // 当前展示的大号图片序号
 const currImageIndex = ref(0)
 // 图片集合
 const imageCollection = ref([])
+imageCollection.value = props.images.map(item => `http://127.0.0.1:8082/public/images/${item}`)
 // 展示大图的URL
 const currImageURL = computed(() => {
 	return imageCollection.value[currImageIndex.value]
-})
-
-onBeforeMount(() => {
-  // 调用接口-获取商品信息：传入（商品ID） 返回（商品图片URL，商品标题，价格）
-  goodTitle.value = '商品标题，最多两行，商品标题，最多两行,商品标题，最多两行，商品标题，最多两行，商品标题，最多两行超过以...隐藏'
-  goodPrice.value = 1234.56
-  let images =  [
-			// 一件商品允许最少一张、最多三张图片
-			// 后端只返回图片名称，URL在前端编码
-			'philips.png',
-			'pen.png',
-			'tea.png',
-		]
-	// 获取图片数组
-	imageCollection.value = images.map((name) => `/src/assets/${name}`)
-  currImageIndex.value = 0
 })
 
 // 由于要监听多个元素的同一事件，需手写一个含有全局计时器的防抖函数
@@ -83,11 +71,11 @@ const debounceShowBigImg = debounce(showBigImg, 500)
 
 onMounted(() => {
 	// 为缩略图添加鼠标事件监听器
-	const subImages = document.getElementsByClassName('sub-image')
+	const subImages = document.getElementsByClassName(`g${props.goodID}`)
 	Array.from(subImages).forEach((subImg) => {
 		subImg.addEventListener('mouseenter', (e) => {
 			// 加上防抖
-			debounceShowBigImg(Number.parseInt(e.target.id))
+			debounceShowBigImg(Number.parseInt(e.target.id.substring(2)))
 		})
 	})
 })
@@ -136,6 +124,7 @@ function navigateDetails() {
 	object-fit: scale-down;
 	border: 1px solid #EEE;
   cursor: pointer;
+  height: 100%;
 }
 .sub-images-container{
   box-sizing: border-box;

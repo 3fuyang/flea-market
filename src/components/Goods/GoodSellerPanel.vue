@@ -72,11 +72,13 @@ import { ref, onBeforeMount } from 'vue'
 import { ChatDotRound, RefreshLeft } from "@element-plus/icons-vue"
 import { useRouter } from 'vue-router'
 import axios from 'axios'
+import { ElMessage } from 'element-plus'
 const props = defineProps({
   sellerID: String
 })
 
 const sellerInfo = ref({}) // 卖家信息
+const userID = window.sessionStorage.getItem('uid')
 onBeforeMount(() => {
   // 调用接口：传入（卖家ID） 返回（卖家信息：卖家昵称、信誉、头像URL）
   axios.get(`/api/getSellerInfo/${props.sellerID}`)
@@ -95,16 +97,22 @@ onBeforeMount(() => {
 const router = useRouter()
 // 联系买家
 const concactSeller = () => {
-  // 在新窗口打开聊天页面。
-  const routeUrl = router.resolve({
-    path:'/chat',
-    query: {
-      oponentID: props.sellerID,
-      oponentName: sellerInfo.value.sellerName,
-      avatar: sellerInfo.value.avatarUrl
-    }
-  })
-  window.open(routeUrl .href, '_blank')
+  if (userID.length === 7) {
+    // 在新窗口打开聊天页面。
+    const routeUrl = router.resolve({
+      path:'/chat',
+      query: {
+        oponentID: props.sellerID,
+        oponentName: sellerInfo.value.sellerName,
+        avatar: sellerInfo.value.avatarUrl
+      }
+    })
+    window.open(routeUrl .href, '_blank')
+  } else if (userID.length === 4) {
+    ElMessage.warning(`请使用普通账号执行该操作。`)
+  } else {
+    router.push(`/login`)
+  }
 }
 
 // 前往趋势商品详情页

@@ -22,19 +22,24 @@
 </template>
 
 <script setup>
-import { onBeforeMount } from 'vue'
+import axios from 'axios'
+import { onBeforeMount, ref } from 'vue'
 import { useRouter } from 'vue-router'
 
-const recommendList = []
+const recommendList = ref([])
 onBeforeMount(() => {
   // 调用接口：传入（null） 返回（8个商品的简要信息：商品ID，商品价格，商品图片(任意一张)，商品标题）
-  for(let i = 0 ; i < 8 ; ++i){
-    recommendList.push({
-      goodID: '000001',
-      imageURL: '/src/assets/tea.png',
-      goodPrice: 11.22,
-      goodTitle: '商品标题，最多两行，商品标题，最多两行,商品标题，最多两行，商品标题，最多两行，商品标题，最多两行超过以...隐藏'
-    })
+  for(let i = 1 ; i < 9 ; ++i){
+    axios.get(`/api/getGoods/${i}` )
+      .then(res => {
+        let data = res.data
+        recommendList.value.push({
+          goodID: data.good_id,
+          imageURL: `http://127.0.0.1:8082/public/images/${data.images.split(';')[0]}`,
+          goodPrice: Number.parseFloat(data.price).toFixed(2),
+          goodTitle: data.title
+        })
+      })
   }
 })
 

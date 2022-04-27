@@ -8,9 +8,9 @@
 			<router-view/>
 		</el-main>
     <el-footer v-if="$route.path!='/login'" style="background-color: #F0F8FF; height:100%">
-    <p style="margin:0px; padding:30px 0px 40px 0px">
-      Copyright ©2022 同济大学校内二手交易平台
-    </p>
+      <p style="margin:0px; padding:30px 0px 40px 0px">
+        Copyright ©2022 同济大学校内二手交易平台
+      </p>
 	</el-footer>
   </el-container>
 	<el-backtop v-if="$route.path!='/login'" :bottom="100" :right="40">

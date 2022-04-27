@@ -109,7 +109,7 @@ const minPrice = ref(undefined)
 const maxPrice = ref(undefined)
 
 onBeforeMount(() => {
-  console.log('调用 beforeMount')  
+  //console.log('调用 beforeMount')  
   // 挂载组件前
   getAndParseQuery()
 })
@@ -142,7 +142,7 @@ onMounted(() => {
 })
 
 onBeforeRouteUpdate((to) => {
-  console.log('调用 beforeRouteUpdate')
+  //console.log('调用 beforeRouteUpdate')
   // 路由更新前
   getAndParseQuery(to.query)
 })
@@ -205,7 +205,7 @@ function applyFilter(key, value) {
     filters: JSON.stringify(filters.value)
   }
   router.push({
-    path: '/newresult',
+    path: '/result',
     query: query
   })
 }
@@ -228,7 +228,7 @@ function removeFilter(key, value) {
     filters: JSON.stringify(filters.value)
   }
   router.push({
-    path: '/newresult',
+    path: '/result',
     query: query
   })  
 }
@@ -241,7 +241,7 @@ function applyPriceFilter(){
   filters.value.maxPrice = maxPrice.value
   filters.value.minPrice = minPrice.value
   router.push({
-    path: '/newresult',
+    path: '/result',
     query: {
       keywords: keywords.value,
       filters: JSON.stringify(filters.value)
@@ -258,7 +258,7 @@ function removePriceFilter(){
     filters: JSON.stringify(filters.value)
   }
   router.push({
-    path: '/newresult',
+    path: '/result',
     query: query
   })    
 }

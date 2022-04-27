@@ -1,7 +1,12 @@
 <template>
 <div class="total-wrapper">
-  <div class="gl-wrapper">
-    <GoodCard v-for="n in 21" :good-i-d="`00000${n}`"/>
+  <div class="gl-wrapper" v-if="resultGoods.length > 0">
+    <GoodCard 
+      v-for="good in resultGoods" 
+      :good-i-d="good.goodID.toString()"
+      :price="good.price"
+      :title="good.title" 
+      :images="good.images" />
   </div>
   <div class="pagination-wrapper">
     <el-pagination
@@ -15,11 +20,55 @@
 </template>
 
 <script setup>
-import { onBeforeMount } from 'vue'
+import axios from 'axios'
+import { ref, onBeforeMount } from 'vue'
+import { useRoute, onBeforeRouteUpdate } from 'vue-router'
 import GoodCard from './GoodCard.vue'
-onBeforeMount(() => {
-  // 根据query中的关键词、过滤条件、以初始页码1，向服务器请求数据
 
+// 结果商品
+const resultGoods = ref([])
+
+const parseQuery = (route) => {
+  resultGoods.value = []
+  // 提取关键字
+  let keywords = route.query.keywords
+  // campus, catalog, minPrice, maxPrice, onShelfTime, score
+  // 提取筛选条件
+  let filters = route.query.filters ? JSON.parse(route.query.filters) : null
+  // 请求体
+  let body = { keywords }
+  // 解析filters
+  if (filters) {
+    for(let property in filters) {
+      if (property !== 'minPrice' && property !== 'maxPrice' && filters[property].length === 0) {
+        delete filters[property]
+      }
+    }
+    // 检查filters对象在解析后是否是空字面值对象
+    if (Object.keys(filters).length > 0) {
+      body = Object.assign(body, filters)
+    }
+  }
+  // 发送请求
+  axios.post('/api/getResult', body)
+    .then(res => {
+      res.data.forEach(item => {
+        resultGoods.value.push({
+          goodID: item.good_id,
+          price: Number.parseFloat(item.price).toFixed(2),
+          title: item.title,
+          images: item.images.split(';')
+        })
+      })
+    })
+}
+
+onBeforeMount(() => {
+  parseQuery(useRoute())
+})
+
+onBeforeRouteUpdate((to, from, next) => {
+  parseQuery(to)
 })
 </script>
 

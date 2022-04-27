@@ -19,7 +19,7 @@
         <span 
           class="popular-keywords" 
           v-for="item in popularKeywords"
-          @click="queryByKeywords(item)">
+          @click="queryByPupular(item)">
           {{item}}
         </span>
       </div>      
@@ -39,8 +39,8 @@
 
 <script setup>
 import { ElMessage } from 'element-plus'
-import { onMounted, ref } from 'vue'
-import { onBeforeRouteUpdate, useRouter } from 'vue-router'
+import { onBeforeMount, ref } from 'vue'
+import { onBeforeRouteUpdate, useRouter, useRoute } from 'vue-router'
 import FilterTable from '../components/Result/FilterTable.vue'
 import RecommendList from '../components/Result/RecommendList.vue'
 import ResultList from '../components/Result/ResultList.vue'
@@ -48,11 +48,12 @@ import ResultList from '../components/Result/ResultList.vue'
 const router = useRouter()
 // 用户输入的搜索关键字
 const keywords = ref('')
-onMounted(() => {
-  let queryValue = router.currentRoute.value.query.keywords
+onBeforeMount(() => {
+  let queryValue = useRoute().query.keywords
   keywords.value = queryValue ? queryValue : ''
 })
 onBeforeRouteUpdate((to) => {
+  console.log(to)
   keywords.value = to.query.keywords
 })
 // 流行的关键词列表
@@ -65,27 +66,28 @@ const popularKeywords = [
   '雷蛇鼠标',
   '机械键盘'
 ]
-// 使用关键词搜索
-function queryByKeywords(popular = null) {
-  if(popular){
-    router.push({
-      path: '/result',
-      query: {
-        keywords: popular
-      }
-    })
-    return    
-  }
-  if(!keywords.value.length) {
-    ElMessage.warning('亲，请输入关键词哦。')
-    return false
-  }
+// 使用流行关键词搜索
+function queryByPupular(item) {
   router.push({
     path: '/result',
     query: {
-      keywords: keywords.value
+      keywords: item
     }
   })
+}
+// 使用关键词搜索
+function queryByKeywords() {
+  if (!keywords.value.length) {
+    ElMessage.warning('亲，请输入关键词哦。')
+    return false
+  } else {
+    router.push({
+      path: '/result',
+      query: {
+        keywords: keywords.value
+      }
+    })
+  }
 }
 </script>
 

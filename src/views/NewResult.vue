@@ -53,7 +53,6 @@ onBeforeMount(() => {
   keywords.value = queryValue ? queryValue : ''
 })
 onBeforeRouteUpdate((to) => {
-  console.log(to)
   keywords.value = to.query.keywords
 })
 // 流行的关键词列表

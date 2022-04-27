@@ -46,13 +46,14 @@ const parseQuery = (route) => {
     }
     // 检查filters对象在解析后是否是空字面值对象
     if (Object.keys(filters).length > 0) {
-      body = Object.assign(body, filters)
+      body.filters = filters
     }
   }
   // 发送请求
+  console.log(body)
   axios.post('/api/getResult', body)
     .then(res => {
-      res.data.forEach(item => {
+      res.data && res.data.forEach(item => {
         resultGoods.value.push({
           goodID: item.good_id,
           price: Number.parseFloat(item.price).toFixed(2),

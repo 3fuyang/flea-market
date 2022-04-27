@@ -269,22 +269,22 @@ const filterTable = ref({
     [
       {
         label: '四平路校区',
-        value: 'Siping',
+        value: '四平路校区',
         selected: false
       },
       {
         label: '嘉定校区',
-        value: 'Jiading',
+        value: '嘉定校区',
         selected: false        
       },
       {
         label: '沪西校区',
-        value: 'Huxi',
+        value: '沪西校区',
         selected: false        
       },
       {
         label: '沪北校区',
-        value: 'Hubei',
+        value: '沪北校区',
         selected: false        
       }
     ],
@@ -292,32 +292,32 @@ const filterTable = ref({
     [
       {
         label: '图书音像',
-        value: 'Book',
+        value: '图书音像',
         selected: false        
       },
       {
         label: '电子产品',
-        value: 'Digital',
+        value: '电子产品',
         selected: false        
       },
       {
         label: '美妆个护',
-        value: 'Makeup',
+        value: '美妆个护',
         selected: false        
       },
       {
         label: '运动户外',
-        value: 'Sports',
+        value: '运动户外',
         selected: false  
       },
       {
         label: '生活电器',
-        value: 'Electro',
+        value: '生活电器',
         selected: false  
       },
       {
         label: '其他',
-        value: 'Other',
+        value: '其他',
         selected: false  
       }
     ],
@@ -353,27 +353,27 @@ const filterTable = ref({
     [
       {
         label: '低于1分',
-        value: 'OverZero',
+        value: '0-1',
         selected: false  
       },
       {
         label: '1-2分',
-        value: 'OverOne',
+        value: '1-2',
         selected: false  
       },
       {
         label: '2-3分',
-        value: 'OverTwo',
+        value: '2-3',
         selected: false  
       },
       {
         label: '3-4分',
-        value: 'OverThree',
+        value: '3-4',
         selected: false  
       },
       {
         label: '4-5分',
-        value: 'OverFour',
+        value: '4-5',
         selected: false  
       }
     ],

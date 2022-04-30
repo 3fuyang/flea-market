@@ -13,6 +13,7 @@ const infoAPI = require('./routes/User/info')
 const goodsAPI = require('./routes/User/goods')
 const resultAPI = require('./routes/result')
 const confirmAPI = require('./routes/User/confirm')
+const orderAPI = require('./routes/User/order')
 
 app
   // 配置图片等静态资源  
@@ -30,6 +31,7 @@ app
   .use('/api', goodsAPI)
   .use('/api', resultAPI)
   .use('/api', confirmAPI)
+  .use('/api', orderAPI)
 
 // 启动服务器
 const server = app.listen(8082, () => {

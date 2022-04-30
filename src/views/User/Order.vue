@@ -4,102 +4,63 @@
   <el-row>
     <el-col :span="2"></el-col>
     <el-col :span="20">
-      <OrderListTable :orderList="orderList" @show-report-modal="showReportModal" @show-evaluate-modal="showEvaluateModal"/>
+      <OrderListTable 
+        :orderList="orderList" 
+        @show-report-modal="showReportModal" 
+        @show-evaluate-modal="showEvaluateModal"/>
     </el-col>
     <el-col :span="2"></el-col>
   </el-row>
   <Teleport to="main">
-    <ReportModal :show="showReport" :currOrderId="currentOrderId" @close="showReport = false"/>
+    <ReportModal 
+      :show="showReport" 
+      :currOrderId="currentOrderId" 
+      @close="showReport = false"/>
   </Teleport>
   <Teleport to="main">
-    <EvaluateModal :show="showEvaluate" :currOrderId="currentOrderId" :currOrderStatus="currentOrderStatus" 
+    <EvaluateModal 
+      :show="showEvaluate" 
+      :currOrderId="currentOrderId" 
+      :currOrderStatus="currentOrderStatus" 
+      @order-done="completeOrder"
       @close="showEvaluate = false"/>
   </Teleport>  
 </div>
 </template>
 
 <script setup>
-import {ref, onMounted,} from 'vue'
-import OrderListTable from '../../components/Order/OrderListTable.vue';
-import ReportModal from '../../components/Order/ReportModal.vue';
-import EvaluateModal from '../../components/Order/EvaluateModal.vue';
+import { ref } from 'vue'
+import OrderListTable from '../../components/Order/OrderListTable.vue'
+import ReportModal from '../../components/Order/ReportModal.vue'
+import EvaluateModal from '../../components/Order/EvaluateModal.vue'
+import axios from 'axios'
+
+const userID = window.sessionStorage.getItem('uid')
+
 const orderList = ref([]);  // 订单原始数据
 const showReport = ref(false); // 举报窗口开关
 const showEvaluate = ref(false);  // 评价窗口开关
 const currentOrderId = ref(''); // 当前处理订单的ID
 const currentOrderStatus = ref(''); // 当前处理订单的状态
 
-onMounted(()=>{
-  // 调用接口：传入（用户ID） 返回（订单列表：订单ID，订单时间，商品名称，金额，卖家ID，订单状态，订单评价）
-  orderList.value.push.apply(orderList.value, [{
-    userRole: 0,
-    orderId: '235579152596',
-    goodId: 0,
-    goodName: "混合商品",
-    image: ("/src/assets/physics.png"),
-    time: "2022-01-02 20:40",
-    status: '待付款',
-    commentStars: 1,
-    price: 998,
-    comment: "被骗了！无良商家还我血汗钱！！！！",
-    detailedDescription: "2022年1月2日晚上8点40后，卖家一直会在20号楼435寝室等着的，可以找一个时间来领，尽量不要来的太晚，以免影响其他人休息。",
-    reportState: 1,
-    reportReason: "无良商家，贩卖假冒伪劣产品！！",
-    reportReply: "很抱歉给您造成了不好的购物体验，该商家当前已被封号处理，付款金额也将在七个工作日内返回给您的账号",
-    name: "绝对不是奸商",
-  },{
-    userRole: 0,
-    orderId: '235579151234',
-    goodId: 1,
-    goodName: "混合商品",
-    image: ("/src/assets/physics.png"),
-    time: "2022-01-01 09:25",
-    status: '已完成',
-    isCompleted: true,
-    commentStars: 5,
-    price: 120,
-    comment: "被骗了！无良商家还我血汗钱！！！！",
-    detailedDescription: "2022年1月2日晚上8点40后，卖家一直会在20号楼435寝室等着的，可以找一个时间来领，尽量不要来的太晚，以免影响其他人休息。",
-    reportState: 1,
-    reportReason: "无良商家，贩卖假冒伪劣产品！！",
-    reportReply: "很抱歉给您造成了不好的购物体验，该商家当前已被封号处理，付款金额也将在七个工作日内返回给您的账号",
-    name: "绝对不是奸商",
-  },{
-    userRole: 0,
-    orderId: '235579321232',
-    goodId: 1,
-    goodName: "混合商品",
-    image: ("/src/assets/pen.png"),
-    time: "2022-01-01 09:25",
-    status: '待确定',
-    isCompleted: true,
-    commentStars: 5,
-    price: 3999,
-    comment: "被骗了！无良商家还我血汗钱！！！！",
-    detailedDescription: "2022年1月2日晚上8点40后，卖家一直会在20号楼435寝室等着的，可以找一个时间来领，尽量不要来的太晚，以免影响其他人休息。",
-    reportState: 1,
-    reportReason: "无良商家，贩卖假冒伪劣产品！！",
-    reportReply: "很抱歉给您造成了不好的购物体验，该商家当前已被封号处理，付款金额也将在七个工作日内返回给您的账号",
-    name: "绝对不是奸商",
-  },{
-    userRole: 0,
-    orderId: '235579159090',
-    goodId: 1,
-    goodName: "混合商品",
-    image: ("/src/assets/philips.png"),
-    time: "2022-01-01 09:25",
-    status: '待评价',
-    isCompleted: true,
-    commentStars: 5,
-    price: 120,
-    comment: "被骗了！无良商家还我血汗钱！！！！",
-    detailedDescription: "2022年1月2日晚上8点40后，卖家一直会在20号楼435寝室等着的，可以找一个时间来领，尽量不要来的太晚，以免影响其他人休息。",
-    reportState: 1,
-    reportReason: "无良商家，贩卖假冒伪劣产品！！",
-    reportReply: "很抱歉给您造成了不好的购物体验，该商家当前已被封号处理，付款金额也将在七个工作日内返回给您的账号",
-    name: "绝对不是奸商",
-  }]) 
-});
+// 调用接口：传入（用户ID） 返回（订单列表：订单ID，订单时间，商品名称，金额，卖家ID，订单状态，订单评价）
+axios.get(`/api/getOrders/${userID}`)
+  .then(res => {
+    res.data.forEach(item => {
+      orderList.value.push({
+        sellerId: item.seller_id,
+        orderId: new Array(12).join('0') + item.order_id,
+        goodId: item.good_id,
+        goodName: item.title,
+        image: `http://127.0.0.1:8082/public/images/${item.images.split(';')[0]}`,
+        time: item.generated_time.replace('T', ' '),
+        status: item.stat,
+        commentStars: 1,
+        price: Number.parseFloat(item.price).toFixed(2),
+        comment: item.review       
+      })
+    })
+  })
 
 function showReportModal(oid){
   currentOrderId.value = oid;
@@ -112,6 +73,16 @@ function showEvaluateModal(oid, ost){
   currentOrderStatus.value = ost;
   console.log(currentOrderId.value, currentOrderStatus.value);
   showEvaluate.value = true;  
+}
+
+function completeOrder(oid) {
+  // 更改视图中订单的状态为“已完成”
+  console.log(oid)
+  let index = orderList.value.findIndex((item) => item.orderId === oid)
+  console.log(index)
+  if (index >= 0) {
+    orderList.value[index].status = '已完成'
+  }
 }
 </script>
 

@@ -56,67 +56,90 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted, onBeforeUpdate } from 'vue';
-import { ElMessage } from 'element-plus';
+import { ref, computed, onMounted, onBeforeUpdate } from 'vue'
+import { ElMessage } from 'element-plus'
+import axios from 'axios'
+
 const props = defineProps({
   show: Boolean,  // 是否显示对话框
   currOrderId: String,  // 当前订单 ID
   currOrderStatus: String, // 当前订单状态
-});
-const emits = defineEmits(['close', 'order-done']);
+})
+const emits = defineEmits([
+  'close', 
+  'order-done'
+])
 
-const grade = ref(null); // 评分
-const evaluation = ref(''); // 评价文本
+const grade = ref(null) // 评分
+const evaluation = ref('') // 评价文本
+
 const submitted = computed(()=>{
-  return props.currOrderStatus === '已完成'?true:false;
+  return props.currOrderStatus === '已完成' ? true : false
 })  // 是否已提交过评价
 
-// 每次渲染时，重新计算 textarea 的文本值
+// 每次渲染时，重新计算星级和 textarea 的文本值
 onMounted(()=>{
-  console.log(submitted.value);
   if(submitted.value){
     // 调用接口：传入(订单ID) 返回（评价文本）
-    evaluation.value = '已提交的评价';
+    axios.get(`/api/getOrderEvaulation/${props.currOrderId}`)
+      .then(res => {
+        evaluation.value = res.data[0].review
+        grade.value = res.data[0].rate
+      })
   }else{
-    evaluation.value = '';
+    evaluation.value = ''
   }
 })
 
 onBeforeUpdate(()=>{
   if(submitted.value){
     // 调用接口：传入(订单ID) 返回（评价文本，评价星级）
-    evaluation.value = '已提交的评价';
-    grade.value = 3;
+    axios.get(`/api/getOrderEvaulation/${props.currOrderId}`)
+      .then(res => {
+        evaluation.value = res.data[0].review
+        grade.value = res.data[0].rate
+      })
   }else{
-    evaluation.value = '';
-    grade.value = null;
+    evaluation.value = ''
+    grade.value = null
   }  
 })
 
 // 提交评价
 function submitEvaluation(){
-  if(evaluation.value === ''){
+  if (evaluation.value === '') {
     ElMessage({
       type: 'error',
       message: '请输入您的评价！'
     })
-  }else if(grade.value === null){
+  }
+  else if (grade.value === null) {
     ElMessage({
       type: 'error',
       message: '请为本次交易评分(0~5)！'
     })    
   }
-  else{
+  else {
+    let date = new Date()
+    date.setHours(date.getHours() + 8)
     // 调用接口：传入（订单ID，用户评价）返回（无）
-
-    // 触发事件，修改视图中订单状态为'已完成'
-    emits('order-done', props.currOrderId);
-    
-    ElMessage({
-      type: 'success',
-      message: '谢谢您的评价！'
-    });
-    emits('close');
+    let data = {
+      orderID: props.currOrderId,
+      review: evaluation.value,
+      grade: grade.value,
+      time: date.toISOString().slice(0, 19).replace('T', ' ')
+    }
+    axios.post(`/api/submitEvaluation`, data)
+      .then(() => {
+        // 触发事件，修改视图中订单状态为'已完成'
+        emits('order-done', props.currOrderId)
+        
+        ElMessage({
+          type: 'success',
+          message: '谢谢您的评价！'
+        })
+        emits('close')
+      })
   }
 }
 </script>

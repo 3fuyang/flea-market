@@ -13,11 +13,12 @@ app.post('/getResult', (req, res) => {
     // 有关键词
     if ('filters' in reqBody) {
       // 有关键词，有筛选条件
-      console.log('有关键词，有筛选条件')
+      //console.log('有关键词，有筛选条件')
+      const filters = reqBody.filters
       let sql = `select good_id,price,title,images from goodInfo where available=0 and title like '%${reqBody.keywords.split('').join('%')}%'`
-      for (let property in reqBody.filters) {
+      for (let property in filters) {
         if (property == 'onShelfTime') {
-          switch (reqBody.filters[property]) {
+          switch (filters[property]) {
             case 'HalfYear':
               sql += ` and to_days(now()) - to_days(onshelf_time) <= 1`
               break
@@ -35,21 +36,28 @@ app.post('/getResult', (req, res) => {
               break
           }          
         } else if (property == 'minPrice') {
-          sql += ` and price>=${reqBody.filters[property]}`
+          sql += ` and price>=${filters[property]}`
         } else if (property == 'maxPrice') {
-          sql += ` and price<=${reqBody.filters[property]}`
+          sql += ` and price<=${filters[property]}`
         } else if (property == 'score') {
-
+          sql += ` and (`
+          filters[property].forEach((item) => {
+            // 获取评分上、下界
+            let [min, max] = item.split('-')
+            sql += ` ((select rate from userAccount where user_id=goodInfo.seller_id)>=${min} and (select rate from userAccount where user_id=goodInfo.seller_id)<=${max}) or`  
+          })
+          sql = sql.substring(0, sql.length - 3)
+          sql += ')'
         } else {
-          sql += `and (`
-          reqBody.filters[property].forEach((item) => {
+          sql += ` and (`
+          filters[property].forEach((item) => {
             sql += ` ${property}='${item}' or`
           })
           sql = sql.substring(0, sql.length - 3)
           sql += ')'
         }
       }
-      console.log(sql)
+      //console.log(sql)
       connection.query(
         sql,
         (err, result) => {
@@ -63,14 +71,14 @@ app.post('/getResult', (req, res) => {
         `select good_id,price,title,images from goodInfo where available=0 and title like '%${reqBody.keywords.split('').join('%')}%'`,
         (err, result) => {
           if (err) throw err
-          console.log('有关键词，无筛选条件')
+          //console.log('有关键词，无筛选条件')
           res.end(JSON.stringify(result))
         }
       )
     }
   } else if ('filters' in reqBody) {
     // 无关键词，有筛选条件
-    console.log('无关键词，有筛选条件')
+    //console.log('无关键词，有筛选条件')
     let sql = `select good_id,price,title,images from goodInfo where availabel=0`
     for (let property in reqBody.filters) {
       if (property == 'onShelfTime') {
@@ -96,7 +104,14 @@ app.post('/getResult', (req, res) => {
       } else if (property == 'maxPrice') {
         sql += ` and price<=${reqBody.filters[property]}`
       } else if (property == 'score') {
-        
+        sql += ` and (`
+        filters[property].forEach((item) => {
+          // 获取评分上、下界
+          let [min, max] = item.split('-')
+          sql += ` ((select rate from userAccount where user_id=goodInfo.seller_id)>=${min} and (select rate from userAccount where user_id=goodInfo.seller_id)<=${max}) or`  
+        })
+        sql = sql.substring(0, sql.length - 3)
+        sql += ')'        
       } else {
         sql += `and (`
         reqBody.filters[property].forEach((item) => {
@@ -115,7 +130,7 @@ app.post('/getResult', (req, res) => {
     )
   } else {
     // 无关键词，无筛选条件
-    console.log('无关键词，无筛选条件')
+    //console.log('无关键词，无筛选条件')
     res.end(JSON.stringify(null))
   }
 })

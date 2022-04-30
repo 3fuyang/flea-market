@@ -20,18 +20,18 @@
   </div>
   <span class="label2">商品类型</span>
   <div class="filter2">
-    <template v-for="item in filterTable.catalog">
+    <template v-for="item in filterTable.category">
       <span
         v-if="!item.selected"
         class="text-tag"
-        @click="applyFilter('catalog', item.value)">
+        @click="applyFilter('category', item.value)">
         {{item.label}}
       </span>
       <el-tag
         v-else
         class="filter-tag"
         closable
-        @close="removeFilter('catalog', item.value)">
+        @close="removeFilter('category', item.value)">
         {{item.label}}
       </el-tag>      
     </template>
@@ -98,7 +98,7 @@ const keywords = ref('')
 // 已启用的筛选条件
 const filters = ref({
   campus: [],
-  catalog: [],
+  category: [],
   onShelfTime: '',
   minPrice: undefined,
   maxPrice: undefined,
@@ -288,7 +288,7 @@ const filterTable = ref({
         selected: false        
       }
     ],
-  catalog:
+  category:
     [
       {
         label: '图书音像',

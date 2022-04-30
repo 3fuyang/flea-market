@@ -32,7 +32,7 @@ const parseQuery = (route) => {
   resultGoods.value = []
   // 提取关键字
   let keywords = route.query.keywords
-  // campus, catalog, minPrice, maxPrice, onShelfTime, score
+  // campus, category, minPrice, maxPrice, onShelfTime, score
   // 提取筛选条件
   let filters = route.query.filters ? JSON.parse(route.query.filters) : null
   // 请求体

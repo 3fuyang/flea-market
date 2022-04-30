@@ -427,7 +427,7 @@ export default {
           this.$router.push({
             path:'/result',
             query:{
-              catalog:item,
+              category:item,
             }
           });
         }

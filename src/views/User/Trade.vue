@@ -12,7 +12,7 @@
 </template>
 
 <script setup>
-import OrderList from '../../components/Trade/OrderList.vue'
+import OrderList from '../../components/Trade/TradeOrders.vue'
 import { NDialogProvider } from 'naive-ui'
 </script>
 

@@ -143,7 +143,7 @@ export default {
       //获取验证码
       getCAPTCHA(tel){
         //调用接口：传入（手机号码）  返回（验证码）
-        console.log(tel);
+        //console.log(tel);
         this.CAPTCHA='123456';
       },
       //验证

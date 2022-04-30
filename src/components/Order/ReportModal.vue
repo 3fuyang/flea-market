@@ -68,7 +68,6 @@ onMounted(()=>{
     // 调用接口：传入（订单ID） 返回（举报理由，状态，回复，回复时间）
     axios.get(`/api/getReport/${props.currOrderId}`)
       .then(res => {
-        console.log(res)
         reasonView.value = res.data[0].reason
         reported.value = res.data[0].stat
         reply.value = res.data[0].reply
@@ -83,7 +82,6 @@ onUpdated(() => {
     // 调用接口：传入（订单ID） 返回（举报理由，状态，回复，回复时间）
     axios.get(`/api/getReport/${props.currOrderId}`)
       .then(res => {
-        console.log(res)
         reasonView.value = res.data[0].reason
         reported.value = res.data[0].stat
         reply.value = res.data[0].reply

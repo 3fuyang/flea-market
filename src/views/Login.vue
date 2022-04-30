@@ -356,7 +356,7 @@ export default {
     },
     // 用户登录
     userLogin(account,password){
-      console.log(account,password);
+      //console.log(account,password);
       let uid;
       var id_pwd = {
         id: this.loginForm.IDNumber,
@@ -376,7 +376,7 @@ export default {
     },
     // 管理员登录
     adminLogin(account,password){
-      console.log(account,password);
+      //console.log(account,password);
       let uid;
       var id_pwd = {
         id: this.loginForm.IDNumber,
@@ -463,7 +463,7 @@ export default {
             college: this.infoForm.school,
             birthday: this.infoForm.birthday,
           };
-          console.log(reg_info)
+          //console.log(reg_info)
           // 调用接口：传入（用户信息:registerForm+infoForm） 返回（注册结果）
           this.axios.post('/api/register',reg_info);
           // 自动登录，并跳转到主页，此处'1'后期应改为用户学号

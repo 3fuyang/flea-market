@@ -1,6 +1,6 @@
 <template>
 <article class="orders-wrapper">
-  <section class="order-card" v-for="item in orders">
+  <section class="order-card" v-for="item in ordersView">
     <nav class="card-nav">
       <span class="nav-txt">
           订单号：{{item.orderId}}
@@ -74,17 +74,28 @@
   </section>
   <NPagination
     v-model:page="page" 
-    :page-count="10"
+    :item-count="orders.length"
+    :page-size="4"
     class="pagination">
   </NPagination>
 </article>
 </template>
 
 <script setup>
-import { onBeforeMount, ref, h } from 'vue'
+import { onBeforeMount, ref, h, computed } from 'vue'
 import { ChatDotRound } from '@element-plus/icons-vue'
+import { useRouter } from 'vue-router'
 import { NTag, NButton, NPopover, NPagination, useDialog, NDescriptions, NDescriptionsItem, NRate } from 'naive-ui'
-const orders = ref()
+import axios from 'axios'
+
+const userID = window.sessionStorage.getItem('uid')
+const orders = ref([])
+
+const ordersView = computed(() => {
+  let begin = (page.value - 1) * 4
+  let end = begin + 4 > orders.value.length ? orders.value.length : begin +4
+  return orders.value.slice(begin, end)
+})
 
 // 当前页码，与后端合并时使用onUpdate来获取对应页的数据
 const page = ref(1)
@@ -93,13 +104,27 @@ const page = ref(1)
 const rejectable = (o) => Date.now() - Date.parse(o.time) >= 3*24*60*60*1000
 
 function rejectOrder(oid){
-  // 调用接口：传入（订单iD） 返回（null）
+  // 调用接口：传入（订单ID） 返回（null）
   let index = orders.value.findIndex(item => item.orderId === oid)
   orders.value[index].status = '已拒接'
 }
 
 function contactBuyer(id) {
-  // 调用接口：传入（用户ID， 买家ID） 返回（null）
+  // 传入（买家ID） 返回（买家昵称，头像）
+  app.post(`/api/getBuyerAvatarAndName/${id}`)
+    .then(res => {
+      const {nickname, avatar} = res.data[0]
+      const routeUrl = useRouter().resolve({
+        path:'/chat',
+        query: {
+          oponentID: id,
+          oponentName: nickname,
+          avatar: `http://127.0.0.1:8082/public/avatars/${avatar}`
+        }
+      })
+      // 在新页面打开聊天窗口
+      window.open(routeUrl .href, '_blank')      
+    })
 }
 
 const dialog = useDialog()
@@ -148,57 +173,25 @@ function checkEvaluation(oid) {
   })
 }
 onBeforeMount(() => {
-  // 调用接口：传入（用户ID） 返回（卖出产品）
-  orders.value = [
-    {
-      orderId: '235579152576',
-      goodId: 0,
-      goodTitle: "混合商品",
-      image: "/src/assets/physics.png",
-      time: "2022-04-15T20:40:00",
-      status: '待付款',
-      commentStars: 1,
-      buyerId: '1951001',
-      buyerName: '甲',
-      price: 998,
-      comment: "被骗了！无良商家还我血汗钱！！！！",
-      reportState: 1,
-      reportReason: "无良商家，贩卖假冒伪劣产品！！",
-      reportReply: "很抱歉给您造成了不好的购物体验，该商家当前已被封号处理，付款金额也将在七个工作日内返回给您的账号",
-    },
-    {
-      orderId: '235579102596',
-      goodId: 0,
-      goodTitle: "混合商品",
-      image: "/src/assets/physics.png",
-      time: "2022-01-02T20:40:00",
-      status: '待付款',
-      commentStars: 1,
-      buyerId: '1951001',
-      buyerName: '甲',      
-      price: 998,
-      comment: "被骗了！无良商家还我血汗钱！！！！",
-      reportState: 1,
-      reportReason: "无良商家，贩卖假冒伪劣产品！！",
-      reportReply: "很抱歉给您造成了不好的购物体验，该商家当前已被封号处理，付款金额也将在七个工作日内返回给您的账号",
-    },
-    {
-      orderId: '235573152596',
-      goodId: 0,
-      goodTitle: "混合商品",
-      image: "/src/assets/physics.png",
-      time: "2022-01-02T20:40:00",
-      status: '已完成',
-      commentStars: 1,
-      buyerId: '1951001',
-      buyerName: '甲',      
-      price: 998,
-      comment: "被骗了！无良商家还我血汗钱！！！！",
-      reportState: 1,
-      reportReason: "无良商家，贩卖假冒伪劣产品！！",
-      reportReply: "很抱歉给您造成了不好的购物体验，该商家当前已被封号处理，付款金额也将在七个工作日内返回给您的账号",
-    }        
-  ]
+  // 调用接口：传入（用户ID） 返回（订单列表：订单ID，订单时间，商品名称，金额，卖家ID，订单状态，订单评价）
+  axios.get(`/api/getSoldOrders/${userID}`)
+    .then(res => {
+      res.data.forEach(item => {
+        orders.value.push({
+          buyerId: item.buyer,
+          buyerName: item.nickname,
+          orderId: new Array(12).join('0') + item.order_id,
+          goodId: item.good_id,
+          goodTitle: item.title,
+          image: `http://127.0.0.1:8082/public/images/${item.images.split(';')[0]}`,
+          time: item.generated_time.replace('T', ' '),
+          status: item.stat,
+          commentStars: item.rate,
+          comment: item.review,
+          reported: item.reported     
+        })
+      })
+    })  
 })
 </script>
 

@@ -251,7 +251,7 @@ export default {
             })
         },
         sortTypeChange(type){
-            console.log(type);
+            //console.log(type);
             switch(type){
                 case '时间顺序':
                     this.searchedGoods.sort((a, b)=>{return a.time < b.time ? -1 : 1;});

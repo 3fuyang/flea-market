@@ -256,7 +256,7 @@ const changeInfoConfirm = () => {
         })
     })
   }else{
-    console.log(userInfo.value, newInfo.value)
+    //console.log(userInfo.value, newInfo.value)
     ElMessage.warning('您没有要保存的修改。')
   }
 }

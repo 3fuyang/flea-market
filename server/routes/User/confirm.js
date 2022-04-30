@@ -25,8 +25,8 @@ app.post(`/goodsToConfirm`, (req, res) => {
   req.body.forEach(item => {
     promises.push(new Promise((resolve) => {
       connection.query(
-        `select good_id,title,price,images from goodInfo where good_id='${item}';
-         select nickname from userAccount where user_id=(select seller_id from goodInfo where good_id='${item}')`,
+        `select good_id,title,price,images,seller_id from goodInfo where good_id='${item}' and available=0;
+         select nickname from userAccount where user_id=(select seller_id from goodInfo where good_id='${item}' and available=0)`,
         (err, result) => {
           if (err) throw err
           let raw = JSON.parse(JSON.stringify(result)).flat(2)
@@ -39,6 +39,21 @@ app.post(`/goodsToConfirm`, (req, res) => {
     .then(result => {
       res.end(JSON.stringify(result))
     })
+})
+
+// 生成订单
+app.post(`/generateOrder`, (req, res) => {
+  const {buyer, seller, goodID, price, generatedTime, stat} = req.body
+  // 向orderData插入新订单，在goodInfo中更新商品为不可访问，从买家的shoppingCart中删除商品
+  connection.query(
+    `insert into orderData(buyer, seller, good_id, price, generated_time, stat) values (${buyer}, ${seller}, '${goodID}', ${price}, '${generatedTime}', '${stat}');
+     update goodInfo set available=1 where good_id='${goodID}';
+     delete from shoppingCart where good_id='${goodID}' and user_id='${buyer}'`,
+    (err, result) => {
+      if (err) throw err
+      res.end(JSON.stringify(result))
+    }
+  )
 })
 
 module.exports = app

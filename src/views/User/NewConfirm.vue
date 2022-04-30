@@ -54,6 +54,7 @@ axios.post(`/api/goodsToConfirm`, goodsID.value)
     res.data.forEach(info => {
       goodsInfo.value.push({
         goodID: info.good_id,
+        sellerID: info.seller_id,
         sellerName: info.nickname,
         image: `http://127.0.0.1:8082/public/images/${info.images.split(';')[0]}`,
         goodTitle: info.title,
@@ -75,14 +76,38 @@ axios.get(`/api/getBuyerInfo/${userID}`)
   })
 
 function payBill() {
+  // 付款标志
+  let paid = false
   // 调用支付宝API，显示付款码
+  paid = true
 
-  for(let gid of goodsID.value){
-    // 调用接口：传入（用户ID，商品ID，下单时间） 返回（null）
-    gid
+  const order = {
+    buyer: userID,
+    seller: '',
+    goodID: '',
+    price: 0,
+    generatedTime: '',
+    stat: paid ? '待确认' : '待付款'
   }
-  ElMessage.success('提交成功，即将为您跳转到订单页！')
-  window.setTimeout(() => router.push('/order'), 500)
+  const promises = []
+  for(let item of goodsInfo.value){
+    let date = new Date()
+		date.setHours(date.getHours() + 8)
+    order.seller = item.sellerID
+    order.goodID = item.goodID
+    order.price = item.price
+    order.generatedTime = date.toISOString().slice(0, 19).replace('T', ' ')
+    // 调用接口：传入（用户ID，商品ID，下单时间） 返回（null）
+    promises.push(axios.post(`/api/generateOrder`, order))
+  }
+  Promise.all(promises)
+    .then(() => {
+        ElMessage.success('提交成功，即将为您跳转到订单页！')
+        window.setTimeout(() => router.push('/order'), 500)
+    })
+    .catch(err => {
+      console.err(err)
+    })
 }
 </script>
 

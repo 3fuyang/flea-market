@@ -12,6 +12,7 @@ const shoppingcartAPI = require('./routes/User/shoppingcart')
 const infoAPI = require('./routes/User/info')
 const goodsAPI = require('./routes/User/goods')
 const resultAPI = require('./routes/result')
+const confirmAPI = require('./routes/User/confirm')
 
 app
   // 配置图片等静态资源  
@@ -28,6 +29,7 @@ app
   .use('/api', infoAPI)
   .use('/api', goodsAPI)
   .use('/api', resultAPI)
+  .use('/api', confirmAPI)
 
 // 启动服务器
 const server = app.listen(8082, () => {

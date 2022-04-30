@@ -1,16 +1,16 @@
 <template>
 <div class="good-wrapper">
   <p class="seller-name">
-    商家：{{briefInfo.sellerName}}
+    商家：{{props.sellerName}}
   </p>
   <div class="img-txt-wrapper">
     <el-image 
       class="img"
-      :src="briefInfo.image">
+      :src="props.image">
     </el-image>
     <div class="title-num-wrapper">
       <p class="good-title">
-        {{briefInfo.goodTitle}}
+        {{props.goodTitle}}
       </p>
       <p class="num">
         <el-icon :size="14" color="#6679b3" class="icon">
@@ -20,29 +20,20 @@
       </p>
     </div>
     <p class="good-price">
-      ￥{{briefInfo.price}}
+      ￥{{props.price}}
     </p>
   </div>
 </div>
 </template>
 
 <script setup>
-import { ref, onBeforeMount } from 'vue'
 import { Discount } from '@element-plus/icons-vue'
-defineProps({
-  goodID: String
-})
-
-// 商品简要信息
-const briefInfo = ref(null)
-onBeforeMount(() => {
-  // 调用接口：传入（商品ID） 返回（商品简要信息：卖家昵称，商品标题，图片，价格）
-  briefInfo.value = {
-    sellerName: '卖家名称',
-    image: '/src/assets/tea.png',
-    goodTitle: '商品标题，最多两行，商品标题，最多两行,商品标题，最多两行，商品标题，最多两行，商品标题，最多两行超过以...隐藏',
-    price: 10.00
-  }
+const props = defineProps({
+  goodID: String,
+  sellerName: String,
+  image: String,
+  goodTitle: String,
+  price: Number
 })
 </script>
 

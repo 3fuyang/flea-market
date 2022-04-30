@@ -3,18 +3,22 @@
   <p class="confirm-title">确认订单</p>
   <el-scrollbar class="list-wrapper">
     <GoodMediaObject 
-      v-for="item in goodsID" 
-      :good-i-d="item"/>
+      v-for="item in goodsInfo" 
+      :good-i-d="item.goodID"
+      :seller-name="item.sellerName"
+      :good-title="item.goodTitle"
+      :image="item.image"
+      :price="item.price"/>
   </el-scrollbar>
   <div class="price-box">
     <p class="price-label">
       应付总额：
       <span class="price-total">
-        ￥{{totalPrice}}
+        ￥{{totalPrice.toFixed(2)}}
       </span>
     </p>
     <p class="buyer-info">
-      收货人：{{userName}} {{telNum}}
+      收货人：{{userName}} ({{`${telNum.substring(0, 3)} XXXX ${telNum.substring(7, 11)}`}})
     </p>
   </div>
   <div class="btn-box">
@@ -28,31 +32,47 @@
 </template>
 
 <script setup>
-import { ElMessage } from 'element-plus';
-import { onBeforeMount, ref } from 'vue'
+import { ElMessage } from 'element-plus'
+import { ref } from 'vue'
 import { useRouter } from 'vue-router'
+import axios from 'axios'
 import GoodMediaObject from '../../components/Confirm/GoodMediaObject.vue'
 
+// 用户ID
+const userID = window.sessionStorage.getItem('uid')
+
+const router = useRouter()
 // 需要结算的商品ID集合
-const goodsID = ref(null)
+const goodsID = ref(router.currentRoute.value.query.gid.split('-'))
+// 商品简要信息
+const goodsInfo = ref([])
 // 总金额
 const totalPrice = ref(0)
+// 调用接口：传入（ID集合）返回（商品信息列表）
+axios.post(`/api/goodsToConfirm`, goodsID.value)
+  .then(res => {
+    res.data.forEach(info => {
+      goodsInfo.value.push({
+        goodID: info.good_id,
+        sellerName: info.nickname,
+        image: `http://127.0.0.1:8082/public/images/${info.images.split(';')[0]}`,
+        goodTitle: info.title,
+        price: Number.parseFloat(info.price).toFixed(2)
+      })
+      totalPrice.value += info.price
+    })
+  })
+
 // 昵称
 const userName = ref('')
 // 手机号
 const telNum = ref('')
-
-const router = useRouter()
-onBeforeMount(() => {
-  // 从query中提取要购买的商品ID
-  let query = router.currentRoute.value.query.gid
-  goodsID.value = query.split('-')
-  // 调用接口：传入（商品ID） 返回（总金额）
-  totalPrice.value = 1000.55
-  // 调用接口：传入（用户ID） 返回（用户昵称，绑定手机）
-  userName.value = '买家昵称'
-  telNum.value = '123 XXXX 5678'
-})
+// 调用接口：传入（用户ID） 返回（用户昵称，绑定手机）
+axios.get(`/api/getBuyerInfo/${userID}`)
+  .then(res => {
+    userName.value = res.data[0].real_name
+    telNum.value = res.data[0].telnum
+  })
 
 function payBill() {
   // 调用支付宝API，显示付款码

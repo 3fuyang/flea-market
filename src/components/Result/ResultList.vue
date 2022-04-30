@@ -50,7 +50,7 @@ const parseQuery = (route) => {
     }
   }
   // 发送请求
-  console.log(body)
+  //console.log(body)
   axios.post('/api/getResult', body)
     .then(res => {
       res.data && res.data.forEach(item => {

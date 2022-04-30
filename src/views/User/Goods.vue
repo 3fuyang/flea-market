@@ -46,29 +46,29 @@
 </template>
 
 <script setup>
-import { onMounted, ref } from 'vue';
-import GoodsListTable from '../../components/Goods/GoodsListTable.vue';
-import UploadGoodModal from '../../components/Goods/UploadGoodModal.vue';
+import { onMounted, ref } from 'vue'
+import GoodsListTable from '../../components/Goods/GoodsListTable.vue'
+import UploadGoodModal from '../../components/Goods/UploadGoodModal.vue'
 import GoodsInfoModal from '../../components/Goods/GoodsInfoModal.vue'
 
-const currentTab = ref('');
-const uid = ref(null);
+const currentTab = ref('')
+const uid = ref(null)
 
 onMounted(()=>{
   // 获取用户ID
-  uid.value = window.sessionStorage.getItem('uid');
+  uid.value = window.sessionStorage.getItem('uid')
   currentTab.value = 'onShelf'
 })
 
-const showInfoModal = ref(false);
-const currentGoodId = ref('');
+const showInfoModal = ref(false)
+const currentGoodId = ref('')
 function checkGoodInfo(gid){
-  currentGoodId.value = gid;
-  showInfoModal.value = true;
+  currentGoodId.value = gid
+  showInfoModal.value = true
 }
 function closeGoodInfo(){
-  currentGoodId.value = '';
-  showInfoModal.value = false;
+  currentGoodId.value = ''
+  showInfoModal.value = false
 }
 </script>
 

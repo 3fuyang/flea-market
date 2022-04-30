@@ -16,7 +16,10 @@
             @click="jumpToDetail(good.id)"></el-image>
          </el-col>
          <el-col :span="12">
-          <span class="name">&nbsp;&nbsp;{{good.name}}</span><br/>
+          <span class="name">
+            <n-ellipsis>&nbsp;&nbsp;{{good.name}}</n-ellipsis>
+          </span>
+          <br/>
           <el-row>
             <el-col :span="12">
               <span class="key">浏览数</span><br/>
@@ -67,7 +70,9 @@ import { ref, onMounted } from 'vue'
 import { StarFilled, Avatar } from '@element-plus/icons-vue'
 import { useRouter } from 'vue-router'
 import { ElMessageBox, ElMessage } from 'element-plus'
+import { NEllipsis } from 'naive-ui'
 import axios from 'axios'
+
 const props = defineProps({
   userId: String,
   goodsStatus: String,
@@ -75,8 +80,8 @@ const props = defineProps({
 defineEmits([
   'check-info',
 ])
-const goodsListView = ref([]);
-const router = useRouter();
+const goodsListView = ref([])
+const router = useRouter()
 
 onMounted(()=>{
   // 根据 props 中的商品状态，调用不同的接口
@@ -139,13 +144,14 @@ function pullOffGood(goodId){
     // 调用接口：传入（商品ID）返回（下架结果）
 
     // 从视图中删除商品
-    goodsListView.value = goodsListView.value.filter((item)=>{return item.id !== goodId});
+    goodsListView.value = goodsListView.value.filter((item)=>{return item.id !== goodId})
     ElMessage({
       type:'success',
       message:'下架成功!',
-    });
+    })
   }).catch(()=>{
     // 取消下架
+    return false
   })
 }
 </script>
@@ -184,7 +190,10 @@ function pullOffGood(goodId){
   display: inline-block;
   color: #999999;
   margin: 20px 0px 15px 0px;
-  overflow-x: scroll;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 100%;
 }
 .key{
   display: inline-block;

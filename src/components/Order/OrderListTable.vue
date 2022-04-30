@@ -62,13 +62,13 @@
         <el-col :span="3">
           <span 
             class="Consult point" 
-            @click="$emit('show-report-modal', order.orderId)">
+            @click="$emit('show-report-modal', order.orderId, order.reported)">
             <el-icon 
               :size="16" 
               class="Icon">
               <Service/>
             </el-icon>
-            申请售后
+            {{ order.reported === '未举报' ? '申请售后' : '查看申请' }}
           </span>
         </el-col>
         <el-col :span="4">

@@ -89,4 +89,28 @@ app.post(`/submitEvaluation`, (req, res) => {
   )
 })
 
+// 查询举报
+app.get(`/getReport/:order_id`, (req, res) => {
+  connection.query(
+    `select reason,stat,reply,reply_time,replyer from reportData where order_id='${req.params.order_id}'`,
+    (err, result) => {
+      if (err) throw err
+      res.end(JSON.stringify(result))
+    }
+  )
+})
+
+// 举报订单
+app.post(`/reportOrder`, (req, res) => {
+  const {orderID, reason, time} = req.body
+  connection.query(
+    `insert into reportData(order_id, reason, report_time, stat) values('${orderID}', '${reason}', '${time}', '待处理');
+     update orderData set reported='待处理' where order_id='${orderID}'`,
+    (err, result) => {
+      if (err) throw err
+      res.end(JSON.stringify(result))
+    }
+  )
+})
+
 module.exports = app

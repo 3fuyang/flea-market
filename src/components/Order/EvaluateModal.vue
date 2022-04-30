@@ -94,7 +94,7 @@ onMounted(()=>{
 onBeforeUpdate(()=>{
   if(submitted.value){
     // 调用接口：传入(订单ID) 返回（评价文本，评价星级）
-    axios.get(`/api/getOrderEvaulation/${props.currOrderId}`)
+    axios.get(`/api/getOrderEvaluation/${props.currOrderId}`)
       .then(res => {
         evaluation.value = res.data[0].review
         grade.value = res.data[0].rate
@@ -122,13 +122,13 @@ function submitEvaluation(){
   else {
     let date = new Date()
     date.setHours(date.getHours() + 8)
-    // 调用接口：传入（订单ID，用户评价）返回（无）
     let data = {
       orderID: props.currOrderId,
       review: evaluation.value,
       grade: grade.value,
       time: date.toISOString().slice(0, 19).replace('T', ' ')
     }
+    // 调用接口：传入（订单ID，用户评价）返回（无）
     axios.post(`/api/submitEvaluation`, data)
       .then(() => {
         // 触发事件，修改视图中订单状态为'已完成'

@@ -14,8 +14,9 @@
   <Teleport to="main">
     <ReportModal 
       :show="showReport" 
-      :currOrderId="currentOrderId" 
-      @close="showReport = false"/>
+      :currOrderId="currentOrderId"
+      :reported="currentOrderReported"
+      @close="closeReport"/>
   </Teleport>
   <Teleport to="main">
     <EvaluateModal 
@@ -37,11 +38,12 @@ import axios from 'axios'
 
 const userID = window.sessionStorage.getItem('uid')
 
-const orderList = ref([]);  // 订单原始数据
-const showReport = ref(false); // 举报窗口开关
-const showEvaluate = ref(false);  // 评价窗口开关
-const currentOrderId = ref(''); // 当前处理订单的ID
-const currentOrderStatus = ref(''); // 当前处理订单的状态
+const orderList = ref([])  // 订单原始数据
+const showReport = ref(false) // 举报窗口开关
+const showEvaluate = ref(false)  // 评价窗口开关
+const currentOrderId = ref('') // 当前处理订单的ID
+const currentOrderStatus = ref('') // 当前处理订单的状态
+const currentOrderReported = ref(false) // 当前订单是否已被举报
 
 // 调用接口：传入（用户ID） 返回（订单列表：订单ID，订单时间，商品名称，金额，卖家ID，订单状态，订单评价）
 axios.get(`/api/getOrders/${userID}`)
@@ -57,29 +59,37 @@ axios.get(`/api/getOrders/${userID}`)
         status: item.stat,
         commentStars: 1,
         price: Number.parseFloat(item.price).toFixed(2),
-        comment: item.review       
+        comment: item.review,
+        reported: item.reported     
       })
     })
   })
 
-function showReportModal(oid){
-  currentOrderId.value = oid;
-  console.log(currentOrderId.value);
-  showReport.value = true;
+function showReportModal(oid, orp){
+  currentOrderId.value = oid
+  currentOrderReported.value = orp === '未举报' ? false : true
+  showReport.value = true
+}
+
+function closeReport(mode, oid) {
+  if (mode === 'reported') {
+    let index = orderList.value.findIndex(item => item.orderId === oid)
+    if (index >= 0) {
+      orderList.value[index].reported = '待处理'
+    }
+  }
+  showReport.value = false
 }
 
 function showEvaluateModal(oid, ost){
-  currentOrderId.value = oid;
-  currentOrderStatus.value = ost;
-  console.log(currentOrderId.value, currentOrderStatus.value);
-  showEvaluate.value = true;  
+  currentOrderId.value = oid
+  currentOrderStatus.value = ost
+  showEvaluate.value = true  
 }
 
 function completeOrder(oid) {
   // 更改视图中订单的状态为“已完成”
-  console.log(oid)
   let index = orderList.value.findIndex((item) => item.orderId === oid)
-  console.log(index)
   if (index >= 0) {
     orderList.value[index].status = '已完成'
   }

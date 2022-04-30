@@ -9,18 +9,18 @@
           </span>
         </div>     
         <span>
-          <el-tag class="reported" type="warning" effect="light">
-            您的举报已收悉，工作人员将在三个工作日内给予回复。
+          <el-tag v-if="props.reported" class="reported" type="warning" effect="light">
+            {{reported === '待处理' ? '您的举报已收悉，工作人员将在三个工作日内给予回复。' : reply}}
           </el-tag>
         </span><br/>
         <div class="modal-input">
           <el-input 
-            v-model.trim="reasonView" 
+            v-model="reasonView" 
             placeholder="请输入举报理由。"
             :rows="6"
             maxlength="300"
             show-word-limit
-            :readonly="reported"
+            :readonly="props.reported"
             type="textarea">
           </el-input>
         </div>
@@ -30,12 +30,12 @@
               <el-button
                 @click="reportOrder"
                 type="primary"
-                v-if="!reported"
+                v-if="!props.reported"
               >确定</el-button>
             </el-col>
             <el-col :span="12">
               <el-button
-                @click="$emit('close')"
+                @click="$emit('close', 'normal', props.currOrderId)"
               >{{reported === true?'返回':'关闭'}}</el-button>
             </el-col>
           </el-row>
@@ -47,27 +47,52 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue';
-import { ElMessage } from 'element-plus';
-defineProps({
+import { ref, onMounted, onUpdated } from 'vue'
+import { ElMessage } from 'element-plus'
+import axios from 'axios'
+
+const props = defineProps({
   show: Boolean,  // 是否显示对话框
   currOrderId: String,  // 当前订单 ID
-});
-const emits = defineEmits(['close']);
-const reported = ref(false); // 举报状态
-const reasonView = ref(''); // 举报理由
+  reported: Boolean // 是否被举报
+})
+const emits = defineEmits(['close'])
+const reported = ref(props.reported) // 举报状态
+const reasonView = ref('') // 举报理由
+const reply = ref('') // 管理员回复
+const replyer = ref('') // 回复者
+const replyTime = ref('') // 回复时间
 
 onMounted(()=>{
-  // 调用接口：传入（订单ID） 返回（举报内容）
-  reported.value = true;
-  if(reported.value){
-    // 已经举报，则显示举报理由
-    reasonView.value = '已提交的举报理由。';
-  }else{
-    // 未举报过
-    reported.value = false;
+  if(props.reported){
+    // 调用接口：传入（订单ID） 返回（举报理由，状态，回复，回复时间）
+    axios.get(`/api/getReport/${props.currOrderId}`)
+      .then(res => {
+        console.log(res)
+        reasonView.value = res.data[0].reason
+        reported.value = res.data[0].stat
+        reply.value = res.data[0].reply
+        replyer.value = res.data[0].replyer
+        replyTime.value = res.data[0].reply_time
+      })
   }
 })
+
+onUpdated(() => {
+  if(props.reported){
+    // 调用接口：传入（订单ID） 返回（举报理由，状态，回复，回复时间）
+    axios.get(`/api/getReport/${props.currOrderId}`)
+      .then(res => {
+        console.log(res)
+        reasonView.value = res.data[0].reason
+        reported.value = res.data[0].stat
+        reply.value = res.data[0].reply
+        replyer.value = res.data[0].replyer
+        replyTime.value = res.data[0].reply_time
+      })
+  }
+})
+
 // 提交举报
 function reportOrder(){
   if(reasonView.value === ''){
@@ -76,14 +101,24 @@ function reportOrder(){
       message: '举报理由不能为空！'
     })
   }else{
+    let date = new Date()
+    date.setHours(date.getHours() + 8)
+    let body = {
+      orderID: props.currOrderId,
+      reason: reasonView.value,
+      time: date.toISOString().slice(0, 19).replace('T', ' ')
+    }
     // 调用接口：传入（订单ID，举报理由）
-    reported.value  = true;
-    ElMessage({
-      type: 'success',
-      message: '举报成功，敬请等待管理员回复！'
-    });
-    // 注意这里用defineEmits返回的emits在脚本中发出事件的方法！
-    emits('close');
+    axios.post(`/api/reportOrder`, body)
+      .then(() => {
+        props.reported  = true
+        ElMessage({
+          type: 'success',
+          message: '举报成功，敬请等待管理员回复！'
+        })
+        // 注意这里用defineEmits返回的emits在脚本中发出事件的方法！
+        emits('close', 'reported')
+      })
   }
 }
 </script>

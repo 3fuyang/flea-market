@@ -29,7 +29,7 @@
           @click="contactBuyer(item.buyerId)">
           <ChatDotRound/>
         </el-icon>
-        <NTag v-if="item.status === '已拒接'" type="error" style="margin: 0 3em;">
+        <NTag v-if="item.status === '已取消'" type="error" style="margin: 0 3em;">
           {{item.status}}
         </Ntag>
         <NTag v-else-if="item.status === '待付款'" type="info" style="margin: 0 3em;">
@@ -105,8 +105,11 @@ const rejectable = (o) => Date.now() - Date.parse(o.time) >= 3*24*60*60*1000
 
 function rejectOrder(oid){
   // 调用接口：传入（订单ID） 返回（null）
-  let index = orders.value.findIndex(item => item.orderId === oid)
-  orders.value[index].status = '已拒接'
+  axios.post(`/api/rejectOrder`, {orderID: oid})
+    .then(() => {
+      let index = orders.value.findIndex(item => item.orderId === oid)
+      orders.value[index].status = '已取消'
+    })
 }
 
 function contactBuyer(id) {

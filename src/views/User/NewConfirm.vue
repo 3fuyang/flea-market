@@ -29,6 +29,19 @@
     </button>
   </div>
 </div>
+<Teleport to="main">
+  <PayQRCode
+    :show="showQRModal"
+    :price="totalPrice"
+    @close="closeModal">
+    <template #header>
+      请扫描付款码，进行付款。
+    </template>
+    <template #body>
+      <img style="object-fit: scale-down;width: 60%;" src="/src/assets/payment.jpg"/>
+    </template>       
+  </PayQRCode>
+</Teleport>
 </template>
 
 <script setup>
@@ -37,6 +50,7 @@ import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import axios from 'axios'
 import GoodMediaObject from '../../components/Confirm/GoodMediaObject.vue'
+import PayQRCode from '../../components/Confirm/PayQRCode.vue'
 
 // 用户ID
 const userID = window.sessionStorage.getItem('uid')
@@ -75,12 +89,11 @@ axios.get(`/api/getBuyerInfo/${userID}`)
     telNum.value = res.data[0].telnum
   })
 
-function payBill() {
-  // 付款标志
-  let paid = false
-  // 调用支付宝API，显示付款码
-  paid = true
+const showQRModal = ref(false)  
 
+// 关闭付款窗口，根据参数paid改变订单的相应状态
+function closeModal(paid) {
+  showQRModal.value = false
   const order = {
     buyer: userID,
     seller: '',
@@ -107,7 +120,12 @@ function payBill() {
     })
     .catch(err => {
       console.err(err)
-    })
+    })  
+}
+
+function payBill() {
+  // 打开付款模态框
+  showQRModal.value = true
 }
 </script>
 

@@ -1,5 +1,6 @@
 /* Trade 页面 */
 const express = require('express')
+const { reject } = require('lodash')
 const app = express()
 
 const connection = require('../../database/db')
@@ -26,7 +27,7 @@ app.get(`/getSoldOrders/:user_id`, (req, res) => {
     connection.query(
       `select * from orderData where seller='${req.params.user_id}' order by generated_time desc`,
       (err, result) => {
-        if (err) throw err
+        if (err) reject(err)
         data = JSON.parse(JSON.stringify(result))
         resolve()
       }
@@ -55,7 +56,18 @@ app.get(`/getSoldOrders/:user_id`, (req, res) => {
       Promise.all(promises).then(() => {
         res.end(JSON.stringify(data))
       })
-    })    
+    })   
 })
 
+// 拒接订单
+app.post(`/rejectOrder`, (req, res) => {
+  connection.query(
+    `update orderData set stat='已取消' where order_id='${req.body.orderID}';
+     update goodInfo set available=0 where good_id=(select good_id from orderData where order_id='${req.body.orderID}')`,
+     (err, result) => {
+       if (err) throw err
+       res.end(JSON.stringify(result))
+     }
+  )
+})
 module.exports = app

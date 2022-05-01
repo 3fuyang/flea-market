@@ -31,7 +31,11 @@
       </el-col>           
     </el-row>
   </div>
-  <div class="Card" v-for="order of orderListView" :key="order.orderId">
+  <el-empty v-if="orderListView.length === 0"/>
+  <div 
+    class="Card" 
+    v-for="order of orderListView" 
+    :key="order.orderId">
     <div class="CardNav">
       <el-row>
         <el-col :span="4">
@@ -97,7 +101,7 @@
               查看评价
             </span>            
             <span v-else-if="order.status === '待付款'" class="Option point"
-            @click="payOrder(order.orderId)">
+            @click="payOrder(order.orderId, order.price)">
               <el-icon :size="13" class="Icon"><Wallet/></el-icon>
               去付款
             </span>  
@@ -126,7 +130,7 @@ const props = defineProps({
   orderList: Array, // 订单原始数据
 })
 
-const categories = ['全部订单', '待付款', '待确认', '待评价', '已完成'] // 订单状态
+const categories = ['全部订单', '待付款', '待确认', '待评价', '已完成', '已取消'] // 订单状态
 const category = ref('全部订单') // 当前订单分类
 const columns = ['','订单详情','', '金额', '状态', '操作'] // 表头
 const rawOrderList = ref(props.orderList)
@@ -141,9 +145,10 @@ const orderListView = computed(()=>{
 }) // 订单视图
 const router = useRouter()
 
-defineEmits({
+const emits = defineEmits({
   'show-report-modal': null,  // 举报窗口展示
   'show-evaluate-modal': null,  // 评价窗口展示
+  'show-pay-modal': null, //付款窗口展示
 })
 
 // 删除订单
@@ -189,8 +194,8 @@ function contactSeller(sid){
 }
 
 // 付款
-function payOrder(oid){
-  // 调用支付API，生成并付款码
+function payOrder(oid, price){
+  emits('show-pay-modal', oid, price)
 }
 
 // 确认收货

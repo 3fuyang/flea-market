@@ -250,7 +250,7 @@ export default {
                         type: 'success',
                         message: '上架成功'
                     })
-                    console.log(URL.createObjectURL(this.images[0]));
+                    //console.log(URL.createObjectURL(this.images[0]));
                     //location.reload();
                 })
                 .catch(() => {});

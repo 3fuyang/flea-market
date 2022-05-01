@@ -113,4 +113,14 @@ app.post(`/reportOrder`, (req, res) => {
   )
 })
 
+// 订单付款
+app.post(`/payOrder`, (req, res) => {
+  connection.query(
+    `update orderData set stat='待确认' where order_id='${req.body.orderID}'`,
+    (err, result) => {
+      if (err) throw err
+      res.end(JSON.stringify(result))
+    }
+  )
+})
 module.exports = app

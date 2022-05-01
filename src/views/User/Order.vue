@@ -4,10 +4,11 @@
   <el-row>
     <el-col :span="2"></el-col>
     <el-col :span="20">
-      <OrderListTable 
+      <OrderListTable
         :orderList="orderList" 
         @show-report-modal="showReportModal" 
-        @show-evaluate-modal="showEvaluateModal"/>
+        @show-evaluate-modal="showEvaluateModal"
+        @show-pay-modal="showQRModal"/>
     </el-col>
     <el-col :span="2"></el-col>
   </el-row>
@@ -25,6 +26,19 @@
       :currOrderStatus="currentOrderStatus" 
       @order-done="completeOrder"
       @close="showEvaluate = false"/>
+  </Teleport>
+  <Teleport to="main">
+    <PayQRCode
+      :show="showQR"
+      :price="currentOrderPrice"
+      @close="closeQRModal">
+      <template #header>
+        请扫描付款码，进行付款。
+      </template>
+      <template #body>
+        <img style="object-fit: scale-down;width: 60%;" src="/src/assets/payment.jpg"/>
+      </template>       
+    </PayQRCode>
   </Teleport>  
 </div>
 </template>
@@ -34,13 +48,17 @@ import { ref } from 'vue'
 import OrderListTable from '../../components/Order/OrderListTable.vue'
 import ReportModal from '../../components/Order/ReportModal.vue'
 import EvaluateModal from '../../components/Order/EvaluateModal.vue'
+import PayQRCode from '../../components/Confirm/PayQRCode.vue'
 import axios from 'axios'
+import { ElMessage } from 'element-plus'
 
 const userID = window.sessionStorage.getItem('uid')
 
 const orderList = ref([])  // 订单原始数据
 const showReport = ref(false) // 举报窗口开关
 const showEvaluate = ref(false)  // 评价窗口开关
+const showQR = ref(false) // 付款窗口开关
+const currentOrderPrice = ref(0) // 当前订单金额
 const currentOrderId = ref('') // 当前处理订单的ID
 const currentOrderStatus = ref('') // 当前处理订单的状态
 const currentOrderReported = ref(false) // 当前订单是否已被举报
@@ -65,12 +83,14 @@ axios.get(`/api/getOrders/${userID}`)
     })
   })
 
+// 打开举报窗口
 function showReportModal(oid, orp){
   currentOrderId.value = oid
   currentOrderReported.value = orp === '未举报' ? false : true
   showReport.value = true
 }
 
+// 关闭举报窗口
 function closeReport(mode, oid) {
   if (mode === 'reported') {
     let index = orderList.value.findIndex(item => item.orderId === oid)
@@ -81,18 +101,44 @@ function closeReport(mode, oid) {
   showReport.value = false
 }
 
+// 打开评价窗口
 function showEvaluateModal(oid, ost){
   currentOrderId.value = oid
   currentOrderStatus.value = ost
   showEvaluate.value = true  
 }
 
+// 关闭评价窗口
 function completeOrder(oid) {
   // 更改视图中订单的状态为“已完成”
   let index = orderList.value.findIndex((item) => item.orderId === oid)
   if (index >= 0) {
     orderList.value[index].status = '已完成'
   }
+}
+
+// 打开付款窗口
+function showQRModal(oid, price) {
+  showQR.value = true
+  currentOrderId.value = oid
+  currentOrderPrice.value = price
+}
+
+// 关闭付款窗口
+function closeQRModal(paid) {
+  if (paid) {
+    axios.post(`/api/payOrder`, {orderID: currentOrderId.value})
+      .then(() => {
+        let index = orderList.value.findIndex(item => item.orderID === currentOrderId.value)
+        if (index >=0 ) {
+          orderList.value[index].status = '待确认'
+        }
+        ElMessage.success(`付款成功，交易完成后记得确认完成订单哦~`)
+      })
+  } else {
+    ElMessage.info(`取消支付`)
+  }
+  showQR.value = false
 }
 </script>
 

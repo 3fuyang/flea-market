@@ -87,7 +87,7 @@
     <span style="display: inline-block;margin-top: 25px;margin-bottom: 10px;font-size: 22px;color: #ffffff;">冬季特价</span><br/>
     <span style="display: inline-block;margin-top: 10px;margin-bottom: 75px;font-size: 18px;color: #ffffff;font-family: Arial,Verdana,Sans-serif;">FOR &nbsp;&nbsp;SALE</span>
     <el-card class="point" round :body-style="{padding: '0px 0px 0px 0px'}" :style="go" style="width: 50px;height: 25px;margin-left: 38px;">
-      <span style="display: inline-block;font-size: 17px;color: #ffffff;margin-top: 1px;" @click="jumpMenu('冬季促销')">前往</span>
+      <span style="display: inline-block;font-size: 17px;color: #ffffff;margin-top: 1px;">前往</span>
     </el-card>
   </el-card>
   <!--走马灯2-->
@@ -95,7 +95,7 @@
     <el-carousel-item v-for="item in goodsList" :key="item.id" style="margin-left: 38px;">
       <el-card :body-style="{ padding: '0px' }" style="width: 220px;height: 240px;" @click="jumpCard(item.id)">
         <el-image :src="item.path" style="max-height: 190px;" fit="scale-down" />
-          <span style="display: inline-block;font-size: 13px;color: #808080;margin-top: 3px;">{{item.name}}</span><br/>
+          <span style="display: inline-block;font-size: 13px;color: #808080;margin-top: 3px;max-width: 100%;overflow: hidden;text-overflow: ellipsis;white-space: nowrap;">{{item.name}}</span><br/>
           <span style="display: inline-block;font-size: 18px;color: #FF9900;margin-top: 0px;">￥{{item.price}}</span>
       </el-card>
     </el-carousel-item>
@@ -319,19 +319,18 @@ export default {
         { no:'2',path: ("/src/assets/2.png")},
         { no:'3',path: ("/src/assets/3.jpg")},
         { no:'4',path: ("/src/assets/4.png")},
-      ];
-      let IDArray = ['000001','000002','000003','000004','000005'];
-      for(let item of IDArray){
-        // 调用接口：传入（商品ID） 返回（商品标题、商品价格、图片url）
-        this.axios.get('/api/goodsBriefInfo/'+ item).then((response) => {
+      ]
+      // 调用接口：传入（null） 返回（商品标题、商品价格、图片url）
+      this.axios.get('/api/getRecommendList/').then((response) => {
+        response.data.forEach(item => {
           this.goodsList.push({
-            id: item,
-            name: response.data[0].title,
-            price: Number.parseFloat(response.data[0].price).toFixed(2),
-            path: `http://127.0.0.1:8082/public/images/${response.data[0].images.split(';')[0]}`,
-          });       
-        })
-      }      
+            id: item.good_id,
+            name: item.title,
+            price: Number.parseFloat(item.price).toFixed(2),
+            path: `http://127.0.0.1:8082/public/images/${item.images.split(';')[0]}`,
+          }) 
+        })      
+      })     
       /* this.goodsList=[     
         { id:'0',name:'大学物理学 (附)网络课程&配套习题',price:'15.00',path: ("/src/assets/physics.png")},
         { id:'1',name:'Apple iPad Pro 11英寸平板电脑',price:'3499.00',path: ("/src/assets/ipad.png")},
@@ -340,15 +339,15 @@ export default {
         { id:'4',name:'传奇武夷山 大红袍茶叶',price:'149.00',path: ("/src/assets/tea.png")},  
       ] */
       //获取用户ID
-      this.userID=window.sessionStorage.getItem('uid');
+      this.userID=window.sessionStorage.getItem('uid')
       if(this.userID === null){
-        this.userID='0';
+        this.userID='0'
       }else{
         //调用接口：传入（用户ID） 返回（用户购物车数量，待付款数量，待评价数量）
         this.axios.get('/api/homeinfo/'+this.userID).then((response) => {
-          this.shoppingCartNum=response.data.shoppingCartNum;
-          this.notPayNum=response.data.notPaidNum;
-          this.notEvaluateNum=response.data.notEvaluateNum;        
+          this.shoppingCartNum=response.data.shoppingCartNum
+          this.notPayNum=response.data.notPaidNum
+          this.notEvaluateNum=response.data.notEvaluateNum        
         }) 
       }
     },
@@ -396,9 +395,9 @@ export default {
             query:{
               keywords:this.keyWord,
             },
-          });
+          })
         }else{
-          ElMessage.error('亲,请输入关键字哦');
+          ElMessage.error('亲,请输入关键字哦')
         }
       },
       //点击关键字搜索商品
@@ -408,11 +407,11 @@ export default {
           query:{
             keywords:givenWord,
           },
-        });
+        })
       },
       //根据目录跳转分区
       jumpMenu(item){
-        let tail=item.substr(-2,2);
+        let tail=item.substr(-2,2)
         if(tail==='校区'){
           //将分类作为query参数传递至result页面
           this.$router.push({
@@ -420,7 +419,7 @@ export default {
             query:{
               region:item,
             }
-          });
+          })
         }else if(tail==='分布'){
           return
         }else{
@@ -429,7 +428,7 @@ export default {
             query:{
               category:item,
             }
-          });
+          })
         }
       },
       //点击卡片跳转商品详情页

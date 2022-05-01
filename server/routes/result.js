@@ -113,7 +113,7 @@ app.post('/getResult', (req, res) => {
         sql = sql.substring(0, sql.length - 3)
         sql += ')'        
       } else {
-        sql += `and (`
+        sql += ` and (`
         reqBody.filters[property].forEach((item) => {
           sql += ` ${property}='${item}' or`
         })

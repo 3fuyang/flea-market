@@ -79,7 +79,7 @@ app.post('/getResult', (req, res) => {
   } else if ('filters' in reqBody) {
     // 无关键词，有筛选条件
     //console.log('无关键词，有筛选条件')
-    let sql = `select good_id,price,title,images from goodInfo where availabel=0`
+    let sql = `select good_id,price,title,images from goodInfo where available=0`
     for (let property in reqBody.filters) {
       if (property == 'onShelfTime') {
         switch (reqBody.filters[property]) {

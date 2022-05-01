@@ -1,6 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
 
-const Home = () => import('../views/Home.vue')
+const NewHome = () => import('../views/NewHome.vue')
 const Result = () => import('../views/NewResult.vue')
 const Login = () => import('../views/Login.vue')
 const Details = () => import('../views/Details.vue')
@@ -22,7 +22,7 @@ const DealReport = () => import("../views/Administrator/DealingReports.vue")
 const routes = [
 	//侧导航栏和顶部导航栏
 	{ path: '/', 			redirect: '/home' }, // 重定向到首页
-	{ path: '/home', 		component: Home },
+	{ path: '/home', 		component: NewHome },
 	{ path: '/result',		component: Result},
 	{ path: '/login', 		component: Login },
 	{ path: '/details',		component: Details},

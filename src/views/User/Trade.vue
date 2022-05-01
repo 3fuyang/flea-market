@@ -4,7 +4,7 @@
   <div class="list-box">
     <div class="sider"></div>
     <NDialogProvider>
-      <OrderList/>
+      <TradeOrders/>
     </NDialogProvider>
     <div class="sider"></div>
   </div>
@@ -12,7 +12,7 @@
 </template>
 
 <script setup>
-import OrderList from '../../components/Trade/TradeOrders.vue'
+import TradeOrders from '../../components/Trade/TradeOrders.vue'
 import { NDialogProvider } from 'naive-ui'
 </script>
 

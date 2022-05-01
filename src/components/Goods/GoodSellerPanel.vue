@@ -144,19 +144,17 @@ const getPlacement = index => {
 const getTrends = () => {
   // 调用接口： 传入（null） 返回（随机四个商品的简要信息：ID、名称、价格、图片URL）
   trendGoods.value = []
-  for(let i of [1, 2, 3, 4]){
-    axios.get(`/api/getGoods/${i}`)
-      .then((res) => {
-        trendGoods.value.push(
-          {
-            goodID: res.data.good_id,
-            goodTitle: res.data.title,
-            price: Number.parseFloat(res.data.price).toFixed(2),
-            imgUrl: `http://127.0.0.1:8082/public/images/${res.data.images.split(';')[0]}`
-          }
-        )
+  axios.get(`/api/getTrends`)
+    .then(res => {
+      res.data.forEach(item => {
+        trendGoods.value.push({
+          goodID: item.good_id,
+          goodTitle: item.title,
+          price: Number.parseFloat(item.price).toFixed(2),
+          imgUrl: `http://127.0.0.1:8082/public/images/${item.images.split(';')[0]}`          
+        })
       })
-  }
+    })
 }
 </script>
 

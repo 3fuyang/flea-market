@@ -1,5 +1,19 @@
 <template>
 <article class="orders-wrapper">
+  <n-empty v-if="ordersView.length === 0" size="huge">
+    <template #default>
+      什么，居然一件东西都没卖出去？
+    </template>
+    <template #extra>
+      <n-gradient-text
+        gradient="linear-gradient(45deg, #ffc107, deeppink, #9c27b0)">
+        丢人，还不快去交易！
+      </n-gradient-text>
+    </template>
+    <template #icon>
+      <Library/>
+    </template>        
+  </n-empty>
   <section class="order-card" v-for="item in ordersView">
     <nav class="card-nav">
       <span class="nav-txt">
@@ -73,6 +87,7 @@
     </section>
   </section>
   <NPagination
+    v-if="ordersView.length !== 0"
     v-model:page="page" 
     :item-count="orders.length"
     :page-size="4"
@@ -85,7 +100,8 @@
 import { onBeforeMount, ref, h, computed } from 'vue'
 import { ChatDotRound } from '@element-plus/icons-vue'
 import { useRouter } from 'vue-router'
-import { NTag, NButton, NPopover, NPagination, useDialog, NDescriptions, NDescriptionsItem, NRate } from 'naive-ui'
+import { NTag, NButton, NPopover, NPagination, useDialog, NDescriptions, NDescriptionsItem, NRate, NEmpty, NGradientText } from 'naive-ui'
+import { Library } from '@vicons/ionicons5'
 import axios from 'axios'
 
 const userID = window.sessionStorage.getItem('uid')
@@ -93,7 +109,7 @@ const orders = ref([])
 
 const ordersView = computed(() => {
   let begin = (page.value - 1) * 4
-  let end = begin + 4 > orders.value.length ? orders.value.length : begin +4
+  let end = begin + 4 > orders.value.length ? orders.value.length : begin + 4
   return orders.value.slice(begin, end)
 })
 

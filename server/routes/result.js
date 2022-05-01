@@ -135,4 +135,15 @@ app.post('/getResult', (req, res) => {
   }
 })
 
+// 获取任意8个商品的简要信息，作为推荐列表
+app.get(`/getRecommendList`, (req, res) => {
+  connection.query(
+    `select good_id,price,title,images from goodInfo where available=0 order by rand() limit 8`,
+    (err, result) => {
+      if (err) throw err
+      res.end(JSON.stringify(result))
+    }
+  )
+})
+
 module.exports = app

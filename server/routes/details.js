@@ -65,4 +65,15 @@ app.get('/getSellerInfo/:user_id',(req,res) => {
     res.end(JSON.stringify(sellerInfo))
   })
 })
+
+// 获取任意4个商品的简要信息，作为趋势列表
+app.get(`/getTrends`, (req, res) => {
+  connection.query(
+    `select good_id,price,title,images from goodInfo where available=0 order by rand() limit 4`,
+    (err, result) => {
+      if (err) throw err
+      res.end(JSON.stringify(result))
+    }
+  )
+})
 module.exports = app

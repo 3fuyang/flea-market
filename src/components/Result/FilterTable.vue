@@ -88,14 +88,16 @@
 </template>
 
 <script setup>
-import { onBeforeMount, onMounted, ref } from 'vue'
-import { onBeforeRouteUpdate, useRouter } from 'vue-router'
+import { onMounted, ref } from 'vue'
+import { isNavigationFailure, onBeforeRouteUpdate, useRouter } from 'vue-router'
+import { cloneDeep } from 'lodash'
+import { ElMessage } from 'element-plus'
 
 const router = useRouter()
 
-// 关键词
+// 关键词，作为路由query参数传递
 const keywords = ref('')
-// 已启用的筛选条件
+// 已启用的筛选条件，它用来作为路由query参数传递
 const filters = ref({
   campus: [],
   category: [],
@@ -107,163 +109,7 @@ const filters = ref({
 // 价格上、下限
 const minPrice = ref(undefined)
 const maxPrice = ref(undefined)
-
-onBeforeMount(() => {
-  //console.log('调用 beforeMount')  
-  // 挂载组件前
-  getAndParseQuery()
-})
-
-// 防抖
-const debounce = (fn, delay) => {
-  let timer
-	return (...args) => {
-		timer = setTimeout(() => {
-			fn(...args)
-			clearTimeout(timer)
-			timer = null
-		}, delay)
-	}
-}
-const debounceInput = debounce((e) => {
-  const pattern = /\-/g
-  if(pattern.test(e.target.value)){
-    e.target.value = undefined
-  }
-}, 500)
-
-onMounted(() => {
-  const inputs = document.getElementsByClassName('price-input')
-  for(let input of inputs){
-    input.addEventListener('keyup', (e) => {
-      debounceInput(e)
-    })
-  }
-})
-
-onBeforeRouteUpdate((to) => {
-  //console.log('调用 beforeRouteUpdate')
-  // 路由更新前
-  getAndParseQuery(to.query)
-})
-
-// 获取并解析路由信息函数
-function getAndParseQuery(...args) {
-  // 获取query
-  let query
-  if(args.length){
-    // 在beforeRouteUpdate中调用
-    query = args[0]
-    //console.log(query)
-  }else{
-    // 在beforeMount中调用
-    query = router.currentRoute.value.query
-  }
-  keywords.value = query.keywords
-  filters.value = query.filters ? JSON.parse(query.filters) : filters.value    
-  //console.log(filters.value)
-
-  // 根据query中filter的值操作filterTable中的selected属性
-  for(let property in filterTable.value){
-    if(property === 'onShelfTime'){
-      for(let item of filterTable.value[property]){
-        if(item.value === filters.value[property]){
-          item.selected = true
-        }else{
-          item.selected = false
-        }
-      }
-      continue
-    }
-    for(let obj of filterTable.value[property]){
-      if(filters.value[property] && filters.value[property].indexOf(obj.value) >= 0){
-        obj.selected = true
-      }else{
-        obj.selected = false
-      }
-    }
-  }
-  minPrice.value = filters.value.minPrice ? filters.value.minPrice : undefined
-  maxPrice.value = filters.value.maxPrice ? filters.value.maxPrice : undefined
-}
-
-// 启用筛选函数
-function applyFilter(key, value) {
-  if(key === 'onShelfTime'){
-    let index = filterTable.value.onShelfTime.findIndex((obj) => {
-      return obj.selected
-    })
-    if(index >= 0){
-      filterTable.value.onShelfTime[index].selected = false
-    }
-    filters.value[key] = value
-  }else{
-    filters.value[key] ? filters.value[key].push(value) : filters.value[key] = [value]
-  }
-  let query = {
-    keywords: keywords.value,
-    filters: JSON.stringify(filters.value)
-  }
-  router.push({
-    path: '/result',
-    query: query
-  })
-}
-
-// 取消筛选条件函数
-function removeFilter(key, value) {
-  // 修改 filters 即可
-  if(key === 'onShelfTime'){
-    filters.value[key] = ''
-  }else{
-    let index = filters.value[key].findIndex((item) => {
-      return item === value
-    })
-    if(index >= 0){
-      filters.value[key].splice(index, 1)
-    }
-  }
-  let query = {
-    keywords: keywords.value,
-    filters: JSON.stringify(filters.value)
-  }
-  router.push({
-    path: '/result',
-    query: query
-  })  
-}
-
-// 应用价格区间函数
-function applyPriceFilter(){
-  if(minPrice.value > maxPrice.value){
-    [minPrice.value, maxPrice.value] = [maxPrice.value, minPrice.value]
-  }
-  filters.value.maxPrice = maxPrice.value
-  filters.value.minPrice = minPrice.value
-  router.push({
-    path: '/result',
-    query: {
-      keywords: keywords.value,
-      filters: JSON.stringify(filters.value)
-    }
-  })
-}
-
-// 取消价格区间函数
-function removePriceFilter(){
-  filters.value.minPrice = undefined
-  filters.value.maxPrice = undefined
-  let query = {
-    keywords: keywords.value,
-    filters: JSON.stringify(filters.value)
-  }
-  router.push({
-    path: '/result',
-    query: query
-  })    
-}
-
-// 筛选条件
+// 筛选条件，它与模板中的视图相绑定
 const filterTable = ref({
   campus: 
     [
@@ -377,6 +223,157 @@ const filterTable = ref({
         selected: false  
       }
     ],
+})
+
+// 获取并解析路由信息函数
+function getAndParseQuery(args = undefined) {
+  // 获取query
+  let query
+  if (args) {
+    // 用户在该路由进行跳转，在beforeRouteUpdate中调用
+    query = args
+    //console.log(query)
+  }else{
+    // 用户第一次导航到该路由，在setup中调用
+    query = router.currentRoute.value.query
+    //console.log(`首次导航，query为:`)
+    //console.log(query)
+  }
+  // 提取关键词
+  keywords.value = query.keywords ? query.keywords : ''
+  // 提取筛选条件到filters中，若无，则filters不变(延续之前的状态)
+  filters.value = query.filters ? JSON.parse(query.filters) : filters.value    
+  //console.log(`目前的filters为:`)
+  //console.log(filters.value)
+
+  // 根据query中filters的值操作filterTable中的selected属性
+  for (let property in filterTable.value) {
+    if (property === 'onShelfTime') {
+      for (let item of filterTable.value[property]) {
+        if (item.value === filters.value[property]) {
+          item.selected = true
+        } else {
+          item.selected = false
+        }
+      }
+      continue
+    }
+    for (let obj of filterTable.value[property]) {
+      if (filters.value[property] && filters.value[property].indexOf(obj.value) >= 0) {
+        obj.selected = true
+      } else {
+        obj.selected = false
+      }
+    }
+  }
+  minPrice.value = filters.value.minPrice ? filters.value.minPrice : undefined
+  maxPrice.value = filters.value.maxPrice ? filters.value.maxPrice : undefined
+  //console.log('解析后，filterTable为:')
+  //console.log(filterTable.value)
+}
+
+// 首次导航
+getAndParseQuery()
+
+// 正常工作，但是浏览器地址栏不改变
+// 路由更新前，解析将前往的url的query参数，并将其应用到filterTable上
+onBeforeRouteUpdate((to) => {
+  //console.log('调用 beforeRouteUpdate')
+  getAndParseQuery(to.query)
+})
+
+// 导航
+async function navigate () {
+  const newQuery = cloneDeep(router.currentRoute.value.query)
+  newQuery.keywords = keywords.value
+  newQuery.filters = JSON.stringify(filters.value)
+  // 用filters作为query参数，进行导航
+  let failure = await router.push({
+    path: '/result',
+    query: newQuery
+  })
+  if (isNavigationFailure(failure)) {
+    ElMessage.error('路由导航失败')
+  }
+}
+
+// 启用筛选函数，工作正常，但是路由不改变
+async function applyFilter(key, value) {
+  // 根据筛选条件的类型，将其应用到filterTable和filters上
+  if(key === 'onShelfTime'){
+    let index = filterTable.value.onShelfTime.findIndex((obj) => {
+      return obj.selected
+    })
+    if(index >= 0){
+      filterTable.value.onShelfTime[index].selected = false
+    }
+    filters.value[key] = value
+  }else{
+    filters.value[key] ? filters.value[key].push(value) : filters.value[key] = [value]
+  }
+  navigate()
+}
+
+// 取消筛选条件函数
+async function removeFilter(key, value) {
+  // 修改 filters 即可
+  if(key === 'onShelfTime'){
+    filters.value[key] = ''
+  }else{
+    let index = filters.value[key].findIndex((item) => {
+      return item === value
+    })
+    if(index >= 0){
+      filters.value[key].splice(index, 1)
+    }
+  }
+  navigate()
+}
+
+// 应用价格区间函数
+async function applyPriceFilter(){
+  if (minPrice.value > maxPrice.value) {
+    [minPrice.value, maxPrice.value] = [maxPrice.value, minPrice.value]
+  }
+  filters.value.maxPrice = maxPrice.value
+  filters.value.minPrice = minPrice.value
+  navigate()
+}
+
+// 取消价格区间函数
+async function removePriceFilter(){
+  filters.value.minPrice = undefined
+  filters.value.maxPrice = undefined
+  navigate()
+}
+
+// 防抖
+const debounce = (fn, delay) => {
+  let timer
+	return (...args) => {
+		timer = setTimeout(() => {
+			fn(...args)
+			clearTimeout(timer)
+			timer = null
+		}, delay)
+	}
+}
+
+const debounceInput = debounce((e) => {
+  const pattern = /\-/g
+  if(pattern.test(e.target.value)){
+    e.target.value = undefined
+  }
+}, 500)
+
+// 组件挂载后，获取价格输入元素，添加keyup事件，以校验其输入
+onMounted(() => {
+  const inputs = document.getElementsByClassName('price-input')
+  for(let input of inputs){
+    input.addEventListener('keyup', (e) => {
+      debounceInput(e)
+    })
+  }
 })
 </script>
 

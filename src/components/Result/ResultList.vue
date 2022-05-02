@@ -22,7 +22,7 @@
 
 <script setup>
 import axios from 'axios'
-import { ref, onBeforeMount, computed } from 'vue'
+import { ref, computed } from 'vue'
 import { useRoute, onBeforeRouteUpdate } from 'vue-router'
 import { NPagination } from 'naive-ui'
 import GoodCard from './GoodCard.vue'
@@ -60,8 +60,7 @@ const parseQuery = (route) => {
       body.filters = filters
     }
   }
-  // 发送请求
-  //console.log(body)
+  // 发送请求，获取新数据
   axios.post('/api/getResult', body)
     .then(res => {
       res.data && res.data.forEach(item => {
@@ -75,10 +74,10 @@ const parseQuery = (route) => {
     })
 }
 
-onBeforeMount(() => {
-  parseQuery(useRoute())
-})
+// 首次导航
+parseQuery(useRoute())
 
+// 路由更新前
 onBeforeRouteUpdate((to, from, next) => {
   parseQuery(to)
 })

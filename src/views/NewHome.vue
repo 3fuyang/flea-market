@@ -66,7 +66,9 @@ function jumpMenu(item: string): void {
     router.push({
       path: '/result',
       query: {
-        campus: item
+        filters: JSON.stringify({
+          campus: [item]
+        })
       }
     })
   } else if (tail === '分布') {
@@ -75,7 +77,9 @@ function jumpMenu(item: string): void {
     router.push({
       path: '/result',
       query: {
-        category: item
+        filters: JSON.stringify({
+          category: [item]
+        })
       }
     })
   }
@@ -103,7 +107,7 @@ function jumpKeyWord(kwd: string): void {
   router.push({
     path: '/result',
     query: {
-      keywods: kwd
+      keywords: kwd
     }
   })
 }
@@ -262,45 +266,41 @@ const adminButtons = [
 <template>
 <!--搜索框-->
 <el-container class="search-wrapper">
-  <el-row>
-    <el-input
-      class="search-input"
-      v-model.trim="keyWord"
-      placeholder="Type to Search."
-      @keyup.enter="searchKeyWord">
-      <template #prefix>
-        <el-icon 
-          :size="20" 
-          class="search-icon">
-          <Search/>
-        </el-icon>
-      </template>
-      <template #suffix>
-        <el-button 
-          plain 
-          type="primary" 
-          size="small" 
-          round
-          class="search-btn" 
-          @click="searchKeyWord"
-          >搜索</el-button>
-      </template>      
-    </el-input>
-  </el-row>
+  <el-input
+    class="search-input"
+    v-model.trim="keyWord"
+    placeholder="Type to Search."
+    @keyup.enter="searchKeyWord">
+    <template #prefix>
+      <el-icon 
+        :size="20" 
+        class="search-icon">
+        <Search/>
+      </el-icon>
+    </template>
+    <template #suffix>
+      <el-button 
+        plain 
+        type="primary" 
+        size="small" 
+        round
+        class="search-btn" 
+        @click="searchKeyWord"
+        >搜索</el-button>
+    </template>      
+  </el-input>
 </el-container>
 
 <!--流行关键词-->
 <el-container class="popular-wrapper">
-  <el-row>
-    <el-button
-      v-for="item in popularKeywords"
-      type="text"
-      size="small"
-      class="keywords"
-      @click="jumpKeyWord(item)">
-      {{item}}
-    </el-button>
-  </el-row>
+  <el-button
+    v-for="item in popularKeywords"
+    type="text"
+    size="small"
+    class="keywords"
+    @click="jumpKeyWord(item)">
+    {{item}}
+  </el-button>
 </el-container>
 
 <el-container class="menu-wrapper">
@@ -518,7 +518,9 @@ const adminButtons = [
 <style scoped>
 .search-wrapper {
   height: 40px;
-  margin:30px 33% 0 33%;
+  margin: 30px 33% 0 33%;
+  display: flex;
+  justify-content: center;
 }
 .search-input {
   width: 500px;
@@ -534,6 +536,8 @@ const adminButtons = [
   height: 30px;
   margin: 0px 33%;
   margin-bottom: 10px;
+  display: flex;
+  justify-content: center;
 }
 .keywords {
   padding: 0;
@@ -546,14 +550,14 @@ const adminButtons = [
 }
 .category-menu {
   width: 133px;
-  margin-right:4px;
+  margin-right:2px;
 }
 .top-carousel {
   width: 836.05px;
 }
 .campus-menu {
   width: 133px;
-  margin-left: 4px;
+  margin-left: 2px;
 }
 .mid-wrapper {
   height: 240px;
@@ -673,7 +677,7 @@ const adminButtons = [
   align-items: center;
 }
 .panel-wrapper {
-  width: 135px;
+  width: 130px;
   height: 240px;
   margin-left: 3px;
   background-image: url('/src/assets/panel.png');

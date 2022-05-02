@@ -40,7 +40,8 @@
 <script setup>
 import { ElMessage } from 'element-plus'
 import { onBeforeMount, ref } from 'vue'
-import { onBeforeRouteUpdate, useRouter, useRoute } from 'vue-router'
+import { onBeforeRouteUpdate, useRouter, useRoute, isNavigationFailure } from 'vue-router'
+import { cloneDeep } from 'lodash'
 import FilterTable from '../components/Result/FilterTable.vue'
 import RecommendList from '../components/Result/RecommendList.vue'
 import ResultList from '../components/Result/ResultList.vue'
@@ -66,26 +67,32 @@ const popularKeywords = [
   '机械键盘'
 ]
 // 使用流行关键词搜索
-function queryByPupular(item) {
-  router.push({
+async function queryByPupular(item) {
+  const newQuery = cloneDeep(router.currentRoute.value.query)
+  newQuery.keywords = item 
+  const failure = await router.push({
     path: '/result',
-    query: {
-      keywords: item
-    }
+    query: newQuery
   })
+  if (isNavigationFailure(failure)) {
+    ElMessage.error('路由导航失败')
+  }
 }
 // 使用关键词搜索
-function queryByKeywords() {
+async function queryByKeywords() {
   if (!keywords.value.length) {
     ElMessage.warning('亲，请输入关键词哦。')
     return false
   } else {
-    router.push({
+    const newQuery = cloneDeep(router.currentRoute.value.query)
+    newQuery.keywords = keywords.value  
+    const failure = await router.push({
       path: '/result',
-      query: {
-        keywords: keywords.value
-      }
+      query: newQuery
     })
+    if (isNavigationFailure(failure)) {
+      ElMessage.error('路由导航失败')
+    }
   }
 }
 </script>

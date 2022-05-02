@@ -1,19 +1,28 @@
 <template>
-	<div id="app" style="background-color:#F5F5F5;">
+	<div 
+    id="app" 
+    style="background-color: #F5F5F5;">
   <el-container>
-    <el-header v-if="$route.path!='/login'" style="padding: 0">
+    <el-header 
+      v-if="$route.path!='/login'" 
+      style="padding: 0">
       <top-nav />
     </el-header>
-		<el-main style="padding: 0;overflow-y: hidden;min-height: 78vh;">
+		<el-main class="main">
 			<router-view/>
 		</el-main>
-    <el-footer v-if="$route.path!='/login'" style="background-color: #F0F8FF; height:100%">
-      <p style="margin:0px; padding:30px 0px 40px 0px">
+    <el-footer 
+      v-if="$route.path!='/login'" 
+      class="footer">
+      <p>
         Copyright ©2022 同济大学校内二手交易平台
       </p>
 	</el-footer>
   </el-container>
-	<el-backtop v-if="$route.path!='/login'" :bottom="100" :right="40">
+	<el-backtop 
+    v-if="$route.path!='/login'" 
+    :bottom="100" 
+    :right="40">
 	</el-backtop>
   </div>
 </template>
@@ -32,5 +41,21 @@
 ::-webkit-scrollbar {
   width: 0 !important;
   height: 0;
+}
+</style>
+
+<style scoped>
+.main {
+  padding: 0;
+  overflow-y: hidden;
+  min-height: 78vh;  
+}
+.footer {
+  background-color: #F0F8FF;
+  height: 100%;
+}
+.footer p {
+  margin: 0;
+  padding: 30px 0 40px;
 }
 </style>

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue'
 import { NButton, NIcon } from 'naive-ui'
-import { Search, Reading, Monitor, MagicStick, Bicycle, Odometer, Position, Food, OfficeBuilding, FirstAidKit, Suitcase, Star, Clock, User, CirclePlus, Lock, PieChart, Files, Message, Help } from '@element-plus/icons-vue'
+import { Search, Reading, Monitor, MagicStick, Bicycle, Odometer, Position, Food, OfficeBuilding, FirstAidKit, Suitcase, Star, Clock, Lock, PieChart, Files, Message, Help } from '@element-plus/icons-vue'
 import { ElMessage } from 'element-plus'
 import axios from 'axios'
 import { useRouter } from 'vue-router'
@@ -10,7 +10,6 @@ const router = useRouter()
 
 // 用户ID
 const userID = ref(window.sessionStorage.getItem('uid'))
-userID.value = userID.value ? userID.value : '0'
 
 // 浏览者身份
 const identity = computed(() => {

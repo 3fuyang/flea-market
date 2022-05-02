@@ -80,9 +80,9 @@ export default {
         }
       ).then(()=>{
         //设置登录状态为false
-        window.sessionStorage.setItem('uid','0');
         this.loginStatus=false;
         this.$router.push('/home');
+        window.sessionStorage.setItem('uid','0');
         ElMessage({
           type:'success',
           message:'注销成功!',

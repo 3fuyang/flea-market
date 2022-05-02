@@ -4,6 +4,7 @@ const app = express()
 const loginAPI = require('./routes/login')
 const homeAPI = require('./routes/home')
 const detailsAPI = require('./routes/details')
+
 const securityAPI = require('./routes/User/security')
 const chatAPI = require('./routes/User/chat')
 const historyAPI = require('./routes/User/history')
@@ -15,6 +16,8 @@ const resultAPI = require('./routes/result')
 const confirmAPI = require('./routes/User/confirm')
 const orderAPI = require('./routes/User/order')
 const tradeAPI = require('./routes/User/trade')
+
+const reportAPI = require('./routes/Admin/report')
 
 app
   // 配置图片等静态资源  
@@ -33,7 +36,8 @@ app
   .use('/api', resultAPI)
   .use('/api', confirmAPI)
   .use('/api', orderAPI)
-  .use('/api', tradeAPI)  
+  .use('/api', tradeAPI) 
+  .use('/api', reportAPI) 
 
 // 启动服务器
 const server = app.listen(8082, () => {

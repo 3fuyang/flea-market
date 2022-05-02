@@ -93,10 +93,9 @@ router.beforeEach((to, from, next) => {
 			next({ path: '/login'})
 		}
 	}
-	// 兜底
+	// /login页面
 	else {
-		router.go(-1)
-		next(false)
+		next()
 	}
 })
 

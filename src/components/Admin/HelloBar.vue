@@ -6,13 +6,13 @@
     :src="'https://naive-ui-admin.vercel.app/assets/schoolboy.9f04cdf7.png'"/>
   <section class="txt-box">
     <p class="hello-text">
-      早安，Adam Marlowe，开始您一天的工作吧！
+      早安，{{props.adminName}}，开始您一天的工作吧！
     </p>
     <p class="quote">知者反失。</p>
   </section>
   <section class="jobs">
     <p class="job-label">待办</p>
-    <p class="job-num">{{remainedNum}}/{{taskNum}}</p>
+    <p class="job-num">{{remainedNum}}/{{props.taskNum}}</p>
   </section>    
   <section class="jobs">
     <p class="job-label">消息</p>
@@ -26,18 +26,15 @@
 </template>
 
 <script setup>
-import { ref, computed, onBeforeMount } from 'vue'
+import { computed } from 'vue'
 
 const props = defineProps({
-  completedNum: Number
+  adminName: String,
+  completedNum: Number,
+  taskNum: Number
 })
 
-const taskNum = ref(0)
-const remainedNum = computed(() => taskNum.value - props.completedNum)
-onBeforeMount(() => {
-  // 调用接口：传入（管理员ID） 返回（待办数目）
-  taskNum.value = 22
-})
+const remainedNum = computed(() => props.taskNum - props.completedNum)
 
 </script>
 

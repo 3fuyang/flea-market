@@ -20,6 +20,9 @@ npm run build
 
 ### Customize configuration
 See [Configuration Reference](https://cli.vuejs.org/config/).
+
+```
+
 flea-market // 前端根目录
 ├─ .git
 ├─ .gitignore

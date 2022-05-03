@@ -21,17 +21,24 @@
 </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import axios from 'axios'
 import { onBeforeMount, ref } from 'vue'
 import { useRouter } from 'vue-router'
 
-const recommendList = ref([])
+// 商品简要信息
+interface RecommendedItem {
+  goodID: string
+  imageURL: string
+  goodPrice: string
+  goodTitle: string
+}
+const recommendList = ref<RecommendedItem[]>([])
 onBeforeMount(() => {
   // 调用接口：传入（null） 返回（8个商品的简要信息：商品ID，商品价格，商品图片(任意一张)，商品标题）
   axios.get(`/api/getRecommendList`)
-    .then(res => {
-      res.data.forEach(item => {
+    .then((res) => {
+      res.data.forEach((item: any) => {
         recommendList.value.push({
           goodID: item.good_id,
           imageURL: `http://127.0.0.1:8082/public/images/${item.images.split(';')[0]}`,
@@ -44,7 +51,7 @@ onBeforeMount(() => {
 
 // 导航至详情页函数
 const router = useRouter()
-function navigateDetails(id) {
+function navigateDetails(id: string) {
   router.push({
     path: '/details',
     query: {

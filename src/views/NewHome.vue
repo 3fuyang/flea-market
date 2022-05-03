@@ -5,22 +5,15 @@ import { Search, Reading, Monitor, MagicStick, Bicycle, Odometer, Position, Food
 import { ElMessage } from 'element-plus'
 import axios from 'axios'
 import { useRouter } from 'vue-router'
+import { useUserStore } from '../stores/user'
+import { storeToRefs } from 'pinia'
 
+// router实例
 const router = useRouter()
 
-// 用户ID
-const userID = ref(window.sessionStorage.getItem('uid'))
-
-// 浏览者身份
-const identity = computed(() => {
-  if (userID.value.length === 1) {
-    return 'visitor'
-  } else if (userID.value.length === 7) {
-    return 'member'
-  } else {
-    return 'admin'
-  }
-})
+// user仓库
+const userStore = useUserStore()
+const { userID, nickname, identity } = storeToRefs(userStore)
 
 // 流行关键词
 const popularKeywords = [

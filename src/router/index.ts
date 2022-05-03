@@ -1,6 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router'
 
 const NewHome = () => import('../views/NewHome.vue')
+// 没有使用ts编写的组件会报找不到类型声明的错误
 const Result = () => import('../views/NewResult.vue')
 const NewLogin = () => import('../views/NewLogin.vue')
 const Details = () => import('../views/Details.vue')
@@ -21,27 +22,27 @@ const DealReport = () => import("../views/Administrator/DealingReports.vue")
 const routes = [
 	{ path: '/', 			redirect: '/home' }, // 重定向到首页
 	{ path: '/home', 		component: NewHome },
-	{ path: '/result',		component: Result},
+	{ path: '/result',		component: Result },
 	{ path: '/login', 		component: NewLogin },
-	{ path: '/details',		component: Details},
+	{ path: '/details',		component: Details },
 
 	{ path: '/info', 		component: Information },
 	{ path: '/history', 	component: History },
 	{ path: '/favorite', 	component: Favorite },
-  { path: '/goods',		component: Goods},
+  { path: '/goods',		component: Goods },
 	{ path: '/order', 		component: Order },
-  { path: '/chat',		component: Chat},
-  { path: '/confirm',		component: NewConfirm},
-	{ path: '/security',	component: Security},
-  { path: '/shoppingcart',component: ShoppingCart},
-  { path: '/trade',		component: Trade},
+  { path: '/chat',		component: Chat },
+  { path: '/confirm',		component: NewConfirm },
+	{ path: '/security',	component: Security },
+  { path: '/shoppingcart',component: ShoppingCart },
+  { path: '/trade',		component: Trade },
 
 	{ path: '/admin/report', component: DealReport },
 
 ]
 
 const router = createRouter({
-  history: createWebHistory(import.meta.env.BASE_URL,),
+  history: createWebHistory(import.meta.env.BASE_URL),
   routes
 })
 

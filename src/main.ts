@@ -7,11 +7,10 @@ import VueAxios from 'vue-axios'
 import axios from 'axios'
 import TopNav from './components/TopNav.vue'
 import { createPinia } from 'pinia'
-import { createPersistPlugin } from 'pinia-persist-plugin'
+import piniaPersist from 'pinia-plugin-persist'
 
 const pinia = createPinia()
-const plugin = createPersistPlugin()
-pinia.use(plugin)
+pinia.use(piniaPersist)
 
 createApp(App)
   .use(router)

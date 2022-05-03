@@ -4,7 +4,7 @@
     style="background-color: #F5F5F5;">
   <el-container>
     <el-header 
-      v-if="$route.path != '/login' && $route.path != '/newlogin'" 
+      v-if="$route.path != '/login'" 
       style="padding: 0">
       <top-nav />
     </el-header>
@@ -12,7 +12,7 @@
 			<router-view/>
 		</el-main>
     <el-footer 
-      v-if="$route.path!='/login' && $route.path != '/newlogin'" 
+      v-if="$route.path!='/login'" 
       class="footer">
       <p>
         Copyright ©2022 同济大学校内二手交易平台
@@ -20,7 +20,7 @@
 	</el-footer>
   </el-container>
 	<el-backtop 
-    v-if="$route.path!='/login' && $route.path != '/newlogin'" 
+    v-if="$route.path!='/login'" 
     :bottom="100" 
     :right="40">
 	</el-backtop>

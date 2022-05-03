@@ -1,6 +1,6 @@
 import { defineStore } from "pinia"
 
-export const useUser = defineStore({
+export const useUserStore = defineStore({
   id: 'user',
   state: () => ({
     userID: '',
@@ -25,9 +25,11 @@ export const useUser = defineStore({
   },
   persist: {
     enabled: true,
-    strategies: [{
-      key: 'user',
-      storage: sessionStorage
-    }]
+    strategies: [
+      {
+        key: 'user',
+        storage: sessionStorage
+      }
+    ]
   }
 })

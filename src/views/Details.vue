@@ -122,7 +122,7 @@
 	</div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { computed, onMounted, onUpdated, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import GoodSellerPanel from '../components/Goods/GoodSellerPanel.vue'

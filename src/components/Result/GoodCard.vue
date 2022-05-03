@@ -25,16 +25,16 @@
 </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 
-const props = defineProps({
-  goodID: String,
-  title: String,
-  price: String,
-  images: Array
-})
+const props = defineProps<{
+  goodID: string
+  title: string
+  price: string
+  images: string[]
+}>()
 
 // 商品标题
 const goodTitle = ref(props.title)
@@ -43,7 +43,7 @@ const goodPrice = ref(props.price)
 // 当前展示的大号图片序号
 const currImageIndex = ref(0)
 // 图片集合
-const imageCollection = ref([])
+const imageCollection = ref<string[]>([])
 imageCollection.value = props.images.map(item => `http://127.0.0.1:8082/public/images/${item}`)
 // 展示大图的URL
 const currImageURL = computed(() => {
@@ -51,19 +51,19 @@ const currImageURL = computed(() => {
 })
 
 // 由于要监听多个元素的同一事件，需手写一个含有全局计时器的防抖函数
-let globalTimer = { timer: null }
-const debounce = (fn, delay) => {
-	return (...args) => {
-		globalTimer.timer = setTimeout(() => {
+let globalTimer: number | null | undefined
+const debounce = (fn: (...args: any[]) => void, delay: number) => {
+	return (...args: any[]) => {
+		globalTimer = setTimeout(() => {
 			fn(...args)
-			clearTimeout(globalTimer.timer)
-			globalTimer.timer = null
+			clearTimeout(globalTimer as number)
+			globalTimer = null
 		}, delay)
 	}
 }
 
 // 鼠标悬浮到小图时，显示大图
-const showBigImg = (id) => {
+const showBigImg = (id: number) => {
 	currImageIndex.value = id
 }
 
@@ -75,7 +75,7 @@ onMounted(() => {
 	Array.from(subImages).forEach((subImg) => {
 		subImg.addEventListener('mouseenter', (e) => {
 			// 加上防抖
-			debounceShowBigImg(Number.parseInt(e.target.id.substring(2)))
+			debounceShowBigImg(Number.parseInt((e.target as HTMLElement).id.substring(2)))
 		})
 	})
 })

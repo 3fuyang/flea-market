@@ -37,10 +37,10 @@
 </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { ElMessage } from 'element-plus'
 import { onBeforeMount, ref } from 'vue'
-import { onBeforeRouteUpdate, useRouter, useRoute, isNavigationFailure } from 'vue-router'
+import { onBeforeRouteUpdate, useRouter, useRoute, isNavigationFailure, type LocationQueryValue } from 'vue-router'
 import { cloneDeep } from 'lodash'
 import FilterTable from '../components/Result/FilterTable.vue'
 import RecommendList from '../components/Result/RecommendList.vue'
@@ -48,13 +48,13 @@ import ResultList from '../components/Result/ResultList.vue'
 
 const router = useRouter()
 // 用户输入的搜索关键字
-const keywords = ref('')
+const keywords = ref<string | undefined>('')
 onBeforeMount(() => {
   let queryValue = useRoute().query.keywords
-  keywords.value = queryValue ? queryValue : ''
+  keywords.value = queryValue?.toString() ? queryValue.toString() : ''
 })
 onBeforeRouteUpdate((to) => {
-  keywords.value = to.query.keywords
+  keywords.value = to.query.keywords?.toString()
 })
 // 流行的关键词列表
 const popularKeywords = [
@@ -67,7 +67,7 @@ const popularKeywords = [
   '机械键盘'
 ]
 // 使用流行关键词搜索
-async function queryByPupular(item) {
+async function queryByPupular(item: string) {
   const newQuery = cloneDeep(router.currentRoute.value.query)
   newQuery.keywords = item 
   const failure = await router.push({
@@ -80,12 +80,12 @@ async function queryByPupular(item) {
 }
 // 使用关键词搜索
 async function queryByKeywords() {
-  if (!keywords.value.length) {
+  if (!(keywords.value as string).length) {
     ElMessage.warning('亲，请输入关键词哦。')
     return false
   } else {
     const newQuery = cloneDeep(router.currentRoute.value.query)
-    newQuery.keywords = keywords.value  
+    newQuery.keywords = keywords.value as LocationQueryValue
     const failure = await router.push({
       path: '/result',
       query: newQuery

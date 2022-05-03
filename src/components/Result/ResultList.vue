@@ -20,15 +20,23 @@
 </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import axios from 'axios'
 import { ref, computed } from 'vue'
 import { useRoute, onBeforeRouteUpdate } from 'vue-router'
+import type { RouteLocationNormalized } from 'vue-router'
 import { NPagination } from 'naive-ui'
 import GoodCard from './GoodCard.vue'
 
+// 结果商品类型
+interface ResultGood {
+  goodID: string,
+  price: string,
+  title: string,
+  images: string[]
+}
 // 结果商品
-const resultGoods = ref([])
+const resultGoods = ref<ResultGood[]>([])
 // 当前页码
 const page = ref(1)
 // 商品视图
@@ -38,16 +46,21 @@ const resultGoodsView = computed(() => {
   return resultGoods.value.slice(begin, end)
 })
 
+interface RequestBody {
+  keywords: string
+  filters?: any
+}
+
 // 解析query参数
-const parseQuery = (route) => {
+const parseQuery = (route: RouteLocationNormalized) => {
   resultGoods.value = []
   // 提取关键字
   let keywords = route.query.keywords
   // campus, category, minPrice, maxPrice, onShelfTime, score
   // 提取筛选条件
-  let filters = route.query.filters ? JSON.parse(route.query.filters) : null
+  let filters = route.query.filters ? JSON.parse(route.query.filters as string) : null
   // 请求体
-  let body = { keywords }
+  let body: RequestBody = { keywords: keywords as string }
   // 解析filters
   if (filters) {
     for(let property in filters) {
@@ -63,7 +76,7 @@ const parseQuery = (route) => {
   // 发送请求，获取新数据
   axios.post('/api/getResult', body)
     .then(res => {
-      res.data && res.data.forEach(item => {
+      res.data && res.data.forEach((item: any) => {
         resultGoods.value.push({
           goodID: item.good_id,
           price: Number.parseFloat(item.price).toFixed(2),

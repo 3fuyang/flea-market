@@ -87,9 +87,9 @@
 </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { onMounted, ref } from 'vue'
-import { isNavigationFailure, onBeforeRouteUpdate, useRouter } from 'vue-router'
+import { isNavigationFailure, onBeforeRouteUpdate, useRouter, type LocationQuery } from 'vue-router'
 import { cloneDeep } from 'lodash'
 import { ElMessage } from 'element-plus'
 
@@ -98,7 +98,15 @@ const router = useRouter()
 // 关键词，作为路由query参数传递
 const keywords = ref('')
 // 已启用的筛选条件，它用来作为路由query参数传递
-const filters = ref({
+const filters = ref<{
+  [index: string]: string[] | string | number | undefined 
+  campus: string[]
+  category: string[]
+  onShelfTime: string
+  minPrice: undefined | number
+  maxPrice: undefined | number
+  score: string[]
+}>({
   campus: [],
   category: [],
   onShelfTime: '',
@@ -107,10 +115,21 @@ const filters = ref({
   score: []
 })
 // 价格上、下限
-const minPrice = ref(undefined)
-const maxPrice = ref(undefined)
+const minPrice = ref<number | undefined>(undefined)
+const maxPrice = ref<number | undefined>(undefined)
 // 筛选条件，它与模板中的视图相绑定
-const filterTable = ref({
+interface filterItem {
+  label: string
+  value: string
+  selected: boolean
+}
+const filterTable = ref<{
+  [index: string]: filterItem[]
+  campus: filterItem[]
+  category: filterItem[]
+  onShelfTime: filterItem[]
+  score: filterItem[]
+}>({
   campus: 
     [
       {
@@ -226,7 +245,7 @@ const filterTable = ref({
 })
 
 // 获取并解析路由信息函数
-function getAndParseQuery(args = undefined) {
+function getAndParseQuery(args: LocationQuery | undefined = undefined) {
   // 获取query
   let query
   if (args) {
@@ -240,9 +259,9 @@ function getAndParseQuery(args = undefined) {
     //console.log(query)
   }
   // 提取关键词
-  keywords.value = query.keywords ? query.keywords : ''
+  keywords.value = query.keywords?.toString() ? query.keywords?.toString() : ''
   // 提取筛选条件到filters中，若无，则filters不变(延续之前的状态)
-  filters.value = query.filters ? JSON.parse(query.filters) : filters.value    
+  filters.value = query.filters ? JSON.parse(query.filters.toString()) : filters.value    
   //console.log(`目前的filters为:`)
   //console.log(filters.value)
 
@@ -259,7 +278,7 @@ function getAndParseQuery(args = undefined) {
       continue
     }
     for (let obj of filterTable.value[property]) {
-      if (filters.value[property] && filters.value[property].indexOf(obj.value) >= 0) {
+      if (filters.value[property] && (filters.value[property] as string[]).indexOf(obj.value) >= 0) {
         obj.selected = true
       } else {
         obj.selected = false
@@ -298,33 +317,33 @@ async function navigate () {
 }
 
 // 启用筛选函数，工作正常，但是路由不改变
-async function applyFilter(key, value) {
+async function applyFilter(key: string, value: string) {
   // 根据筛选条件的类型，将其应用到filterTable和filters上
-  if(key === 'onShelfTime'){
+  if (key === 'onShelfTime') {
     let index = filterTable.value.onShelfTime.findIndex((obj) => {
       return obj.selected
     })
-    if(index >= 0){
+    if (index >= 0) {
       filterTable.value.onShelfTime[index].selected = false
     }
     filters.value[key] = value
-  }else{
-    filters.value[key] ? filters.value[key].push(value) : filters.value[key] = [value]
+  } else {
+    filters.value[key] ? (filters.value[key] as string[]).push(value) : filters.value[key] = [value]
   }
   navigate()
 }
 
 // 取消筛选条件函数
-async function removeFilter(key, value) {
+async function removeFilter(key: string, value: string) {
   // 修改 filters 即可
   if(key === 'onShelfTime'){
     filters.value[key] = ''
   }else{
-    let index = filters.value[key].findIndex((item) => {
+    let index = (filters.value[key] as string[]).findIndex((item) => {
       return item === value
     })
     if(index >= 0){
-      filters.value[key].splice(index, 1)
+      (filters.value[key] as string[]).splice(index, 1)
     }
   }
   navigate()
@@ -332,7 +351,7 @@ async function removeFilter(key, value) {
 
 // 应用价格区间函数
 async function applyPriceFilter(){
-  if (minPrice.value > maxPrice.value) {
+  if ((minPrice.value as number) > (maxPrice.value as number)) {
     [minPrice.value, maxPrice.value] = [maxPrice.value, minPrice.value]
   }
   filters.value.maxPrice = maxPrice.value
@@ -348,13 +367,12 @@ async function removePriceFilter(){
 }
 
 // 防抖
-const debounce = (fn, delay) => {
-  let timer
-	return (...args) => {
+const debounce = (fn: (...args: any[]) => void, delay: number) => {
+  let timer: number | undefined
+	return (...args: any[]) => {
 		timer = setTimeout(() => {
 			fn(...args)
 			clearTimeout(timer)
-			timer = null
 		}, delay)
 	}
 }

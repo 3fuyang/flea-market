@@ -5,8 +5,12 @@
     <el-page-header @back="$router.push('/home')" title="返回首页">
     </el-page-header>
     <h2>用户登录</h2>
-    <el-form :model="loginForm" status-icon ref="loginForm" label-width="100px"
-              style="margin-left: 7%; margin-right: 10%" :rules="rules">
+    <el-form 
+      :model="loginForm" 
+      status-icon 
+      ref="loginForm" 
+      label-width="100px"
+      style="margin-left: 7%; margin-right: 10%" :rules="rules">
       <el-form-item label="类型" prop="type" style="text-align:left;">
         <el-radio-group v-model="loginForm.type" style="margin-left:20px;">
           <el-radio-button label="用户"></el-radio-button>
@@ -27,7 +31,9 @@
     </el-form>
   </el-card>
   <!--注册窗口-->
-  <el-card v-else-if="!isRegistered&&!moreInfo" style="margin-left: 33%; margin-right: 33%; margin-top: 5%;background-color: rgba(255,255,255,0.5)">
+  <el-card 
+    v-else-if="!isRegistered&&!moreInfo" 
+    style="margin-left: 33%; margin-right: 33%; margin-top: 5%;background-color: rgba(255,255,255,0.5)">
     <el-page-header @back="cancelRegister()" title="取消注册"/>
     <h2>用户注册</h2>
     <el-form :model="registerForm" status-icon ref="registerForm" label-width="80px"
@@ -60,8 +66,12 @@
   <el-card v-else-if="!isRegistered&&moreInfo" style="margin-left: 33%; margin-right: 33%; margin-top: 10%;background-color: rgba(255,255,255,0.5)">
     <el-page-header @back="lastStage()" title="上一步"/>
     <h2>完善用户信息</h2>
-    <el-form :model="infoForm" ref="infoForm" status-icon label-width="100px"
-              style="margin-left: 7%; margin-right: 13%; text-align: left" :rules="rules">
+    <el-form 
+      :model="infoForm" 
+      ref="infoForm" 
+      status-icon 
+      label-width="100px"
+      style="margin-left: 7%; margin-right: 13%; text-align: left" :rules="rules">
       <el-form-item label="性别" prop="gender">
         <el-radio-group v-model="infoForm.gender">
           <el-radio label="男"></el-radio>

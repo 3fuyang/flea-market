@@ -11,7 +11,7 @@
 </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import TradeOrders from '../../components/Trade/TradeOrders.vue'
 import { NDialogProvider } from 'naive-ui'
 </script>

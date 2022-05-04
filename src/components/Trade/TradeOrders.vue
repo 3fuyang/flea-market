@@ -96,16 +96,32 @@
 </article>
 </template>
 
-<script setup>
-import { onBeforeMount, ref, h, computed } from 'vue'
+<script setup lang="ts">
+import { ref, h, computed } from 'vue'
 import { ChatDotRound } from '@element-plus/icons-vue'
 import { useRouter } from 'vue-router'
 import { NTag, NButton, NPopover, NPagination, useDialog, NDescriptions, NDescriptionsItem, NRate, NEmpty, NGradientText } from 'naive-ui'
 import { Library } from '@vicons/ionicons5'
 import axios from 'axios'
 
+// 用户ID
 const userID = window.sessionStorage.getItem('uid')
-const orders = ref([])
+// 订单类型
+interface Order {
+  buyerId: string
+  buyerName: string
+  orderId: string
+  goodId: string
+  goodTitle: string
+  image: string
+  time: string
+  status: string
+  commentStars: string
+  comment: string
+  reported: string
+}
+// 订单数据
+const orders = ref<Order[]>([])
 
 const ordersView = computed(() => {
   let begin = (page.value - 1) * 4
@@ -117,9 +133,9 @@ const ordersView = computed(() => {
 const page = ref(1)
 
 // 计算订单能否被拒绝，只有生成订单三天以后才能运行
-const rejectable = (o) => Date.now() - Date.parse(o.time) >= 3*24*60*60*1000
+const rejectable = (o: Order) => Date.now() - Date.parse(o.time) >= 3*24*60*60*1000
 
-function rejectOrder(oid){
+function rejectOrder(oid: string){
   // 调用接口：传入（订单ID） 返回（null）
   axios.post(`/api/rejectOrder`, {orderID: oid})
     .then(() => {
@@ -128,9 +144,9 @@ function rejectOrder(oid){
     })
 }
 
-function contactBuyer(id) {
+function contactBuyer(id: string) {
   // 传入（买家ID） 返回（买家昵称，头像）
-  app.post(`/api/getBuyerAvatarAndName/${id}`)
+  axios.post(`/api/getBuyerAvatarAndName/${id}`)
     .then(res => {
       const {nickname, avatar} = res.data[0]
       const routeUrl = useRouter().resolve({
@@ -147,7 +163,7 @@ function contactBuyer(id) {
 }
 
 const dialog = useDialog()
-function checkEvaluation(oid) {
+function checkEvaluation(oid: string) {
   let index = orders.value.findIndex(item => item.orderId === oid)
   dialog.create({
     title: '买家评价',
@@ -171,7 +187,7 @@ function checkEvaluation(oid) {
                 NRate,
                 {
                   readonly: true,
-                  value: orders.value[index].commentStars,
+                  value: Number.parseFloat(orders.value[index].commentStars),
                   allowHalf: true
                 }
               )
@@ -191,27 +207,26 @@ function checkEvaluation(oid) {
     )
   })
 }
-onBeforeMount(() => {
-  // 调用接口：传入（用户ID） 返回（订单列表：订单ID，订单时间，商品名称，金额，卖家ID，订单状态，订单评价）
-  axios.get(`/api/getSoldOrders/${userID}`)
-    .then(res => {
-      res.data.forEach(item => {
-        orders.value.push({
-          buyerId: item.buyer,
-          buyerName: item.nickname,
-          orderId: new Array(12).join('0') + item.order_id,
-          goodId: item.good_id,
-          goodTitle: item.title,
-          image: `http://127.0.0.1:8082/public/images/${item.images.split(';')[0]}`,
-          time: item.generated_time.replace('T', ' '),
-          status: item.stat,
-          commentStars: item.rate,
-          comment: item.review,
-          reported: item.reported     
-        })
+
+// 调用接口：传入（用户ID） 返回（订单列表：订单ID，订单时间，商品名称，金额，卖家ID，订单状态，订单评价）
+axios.get(`/api/getSoldOrders/${userID}`)
+  .then(res => {
+    res.data.forEach((item: any) => {
+      orders.value.push({
+        buyerId: item.buyer,
+        buyerName: item.nickname,
+        orderId: new Array(12).join('0') + item.order_id,
+        goodId: item.good_id,
+        goodTitle: item.title,
+        image: `http://127.0.0.1:8082/public/images/${item.images.split(';')[0]}`,
+        time: item.generated_time.replace('T', ' '),
+        status: item.stat,
+        commentStars: item.rate,
+        comment: item.review,
+        reported: item.reported     
       })
-    })  
-})
+    })
+  })  
 </script>
 
 <style scoped>

@@ -43,7 +43,7 @@
           </span><br/>
           <div class="input">
             <el-input v-model="inputCAPTCHA" placeholder="输入6位短信验证码" maxlength="6" style="width: 150px;margin-left: 85px;"></el-input>
-            <el-button type="text" size="small" @click="getCAPTCHA(telNum,inputCAPTCHA)">获取短信验证码</el-button>
+            <el-button type="text" size="small" @click="getCAPTCHA(telNum)">获取短信验证码</el-button>
           </div><br/>
           <span><el-button type="primary" plain size="small" @click="identify(inputCAPTCHA)" style="margin-bottom: 120px;">验证</el-button></span>
         </el-card>
@@ -109,106 +109,104 @@
 </div>
 </template>
 
-<script>
-import { ElMessage } from 'element-plus';
+<script lang="ts" setup>
+import { ref } from 'vue'
+import { ElMessage } from 'element-plus'
 import { Message, Edit, CircleCheck } from '@element-plus/icons-vue'
-export default {
-    setup(){
-      return { Message, Edit, CircleCheck };  // Compostion API 语法，使得 el-step 能正常使用 icon 组件
-    },
-    created(){
-      //调用接口: 传入（用户id） 返回（绑定手机号）
-      this.axios.get('/api/usertel/'+this.userID).then((response) => {
-        this.telNum = response.data.toString();  
-      })      
-    },
-    components:{
-        
-    },
-    data(){
-        return{
-          userID: window.sessionStorage.getItem('uid'), // 用户ID
-          activePwd: 0,  // 修改密码步骤条当前激活步骤
-          telNum:'',  // 用户绑定手机
-          inputCAPTCHA:'',  // 输入验证码1
-          inputCAPTCHA_:'', // 输入验证码2
-          CAPTCHA:'', // 正确验证码
-          newPassWord:'',  // 新密码
-          confirm:'', // 确认新密码
-          activeTel: 0, // 修改手机号步骤条当前激活步骤
-          newTel:'',  // 新的手机号码
-        }
-    },
-    methods:{
-      //获取验证码
-      getCAPTCHA(tel){
-        //调用接口：传入（手机号码）  返回（验证码）
-        //console.log(tel);
-        this.CAPTCHA='123456';
-      },
-      //验证
-      identify(input){
-        if(input.length===6){
-          if(input===this.CAPTCHA){
-            this.activePwd++;
-          }
-        }else{
-          ElMessage.error('请输入6位验证码');
-        }
-      },
-      identifyAndModify(input){
-        if(this.newTel===''){
-          ElMessage.error('请输入新的手机号码');
-        }else if(this.newTel.length!==11){
-          ElMessage.error('手机号码应为11位');          
-        }else if(input.length===6){
-          if(input===this.CAPTCHA){
-            this.activeTel++;
-            //调用接口：传入（用户ID，新手机号码) 返回(success)
-            let id_tel = {
-              id: this.userID,
-              newtel: this.newTel,
-            }
-            this.axios.post('/api/modifyTel/',id_tel);
-            setTimeout(() => {
-              this.$router.go(0);                       
-            }, 3000)
-          }
-        }else{
-          ElMessage.error('请输入6位验证码');
-        }        
-      },
-      //修改密码
-      modifyPwd(){
-        const regNumber = /\d+/; //验证0-9的任意数字最少出现1次。
-        const regString = /[a-zA-Z]+/; //验证大小写26个字母任意字母最少出现1次。
-        if(this.newPassWord===''){
-          ElMessage.error('请输入新密码');
-        }else if(this.newPassWord.length<8){
-          ElMessage.error('密码应大于7位');
-        }else if(this.newPassWord.length>20){
-          ElMessage.error('密码应小于20位');
-        }else if(!regNumber.test(this.newPassWord) || !regString.test(this.newPassWord)){
-          ElMessage.error('密码应包含至少包含一位数字与一位字母');
-        }else if(this.confirm===''){
-          ElMessage.error('请确认新密码');
-        }else if(this.confirm!=this.newPassWord){
-          ElMessage.error('密码两次输入不一致!');
-        }else{
-          let id_pwd = {
-            id: this.userID,
-            newpassword: this.newPassWord,
-          }
-          // 调用接口：传入（用户ID、新密码） 返回（null）
-          this.axios.post('/api/modifyPassword/',id_pwd);           
-          this.activePwd++;
+import axios from 'axios'
+import { useRouter } from 'vue-router'
+
+const router = useRouter()
+
+const userID = ref(window.sessionStorage.getItem('uid')) // 用户ID
+const activePwd = ref(0)  // 修改密码步骤条当前激活步骤
+const telNum = ref('')  // 用户绑定手机
+const inputCAPTCHA = ref('')  // 输入验证码1
+const inputCAPTCHA_ = ref('') // 输入验证码2
+const CAPTCHA = ref('') // 正确验证码
+const newPassWord = ref('')  // 新密码
+const confirm = ref('') // 确认新密码
+const activeTel = ref(0) // 修改手机号步骤条当前激活步骤
+const newTel = ref('')  // 新的手机号码
+
+//调用接口: 传入（用户id） 返回（绑定手机号）
+axios.get(`/api/usertel/${userID.value}`)
+  .then((response) => {
+    telNum.value = response.data.toString()  
+  })
+
+//获取验证码
+function getCAPTCHA (tel: string) {
+  //调用接口：传入（手机号码）  返回（验证码）
+  //console.log(tel);
+  CAPTCHA.value = '123456'
+}
+//验证
+function identify (input: string) {
+  if (input.length === 6) {
+    if (input === CAPTCHA.value){
+      activePwd.value++;
+    }
+  } else {
+    ElMessage.error('请输入6位验证码')
+  }
+}
+
+function identifyAndModify (input: string) {
+  if (newTel.value ===' ') {
+    ElMessage.error('请输入新的手机号码')
+  } else if (newTel.value.length !== 11) {
+    ElMessage.error('手机号码应为11位')
+  } else if (input.length === 6) {
+    if (input === CAPTCHA.value) {
+      activeTel.value++
+      //调用接口：传入（用户ID，新手机号码) 返回(success)
+      let id_tel = {
+        id: userID.value,
+        newtel: newTel.value,
+      }
+      axios.post('/api/modifyTel/', id_tel)
+        .then(() => {
           setTimeout(() => {
-            this.$router.push('/login');
-            window.sessionStorage.setItem('uid','0');           
-          }, 1000)
-        }
-      },
-    },
+            router.go(0)                    
+          }, 3000)
+        })
+    }
+  }else{
+    ElMessage.error('请输入6位验证码')
+  }        
+}
+//修改密码
+function modifyPwd () {
+  const regNumber = /\d+/ //验证0-9的任意数字最少出现1次。
+  const regString = /[a-zA-Z]+/ //验证大小写26个字母任意字母最少出现1次。
+  if (newPassWord.value === '') {
+    ElMessage.error('请输入新密码')
+  } else if (newPassWord.value.length < 8) {
+    ElMessage.error('密码应大于7位')
+  } else if (newPassWord.value.length > 20) {
+    ElMessage.error('密码应小于20位')
+  } else if (!regNumber.test(newPassWord.value) || !regString.test(newPassWord.value)) {
+    ElMessage.error('密码应包含至少包含一位数字与一位字母')
+  } else if (confirm.value === '') {
+    ElMessage.error('请确认新密码')
+  } else if (confirm.value !== newPassWord.value) {
+    ElMessage.error('密码两次输入不一致!')
+  } else {
+    const id_pwd = {
+      id: userID.value,
+      newpassword: newPassWord.value,
+    }
+    // 调用接口：传入（用户ID、新密码） 返回（null）
+    axios.post('/api/modifyPassword/',id_pwd)
+      .then(() => {
+        activePwd.value++
+        setTimeout(() => {
+          router.push('/login');
+          window.sessionStorage.setItem('uid','0')
+        }, 1000)
+      })       
+  }
 }
 </script>
 

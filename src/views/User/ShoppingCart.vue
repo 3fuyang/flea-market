@@ -65,161 +65,161 @@
 </div>
 </template>
 
-<script>
+<script lang="ts" setup>
 import {ElMessageBox,ElMessage} from "element-plus"
+import axios from 'axios'
+import { ref } from "vue"
+import { useRouter } from "vue-router"
 
-export default {
-    components:{
+const router = useRouter()
+
+const userID = ref(window.sessionStorage.getItem('uid')) // 用户ID
+// 购物车商品信息类型
+interface CartGood {
+  id: string
+  name: string
+  price: string
+  path: string
+}
+const tableData = ref<CartGood[]>([])  // 购物车数据
+const selectedData =  ref<CartGood[]>([]) //选中商品列表
+const selectedNum = ref(0)  // 选中商品数量
+const cost = ref<string | number>(0)  // 选中商品总金额
+
+// 调用接口：传入（用户ID） 返回（购物车数据：商品ID,图片url,名称,价格）
+axios.get(`/api/getCart/${userID}`)
+  .then((response)=>{
+    response.data.forEach((item: any) => {
+      tableData.value.push({
+        id: item.good_id,
+        name: item.title,
+        price: Number.parseFloat(item.price).toFixed(2),
+        path: `http://127.0.0.1:8082/public/images/${item.images.split(';')[0]}`
+      })
+    })
+  })
         
-    },
-
-    created(){
-      // 调用接口：传入（用户ID） 返回（购物车数据：商品ID,图片url,名称,价格）
-      this.axios.get('/api/getCart/'+this.userID)
-        .then((response)=>{
-          response.data.forEach(item => {
-            this.tableData.push({
-              id: item.good_id,
-              name: item.title,
-              price: Number.parseFloat(item.price).toFixed(2),
-              path: `http://127.0.0.1:8082/public/images/${item.images.split(';')[0]}`
-            })
-          })
+// 点击图片跳转商品详情页
+function jumpCard (itemID: string) {
+  router.push({
+    path:'/details',
+    query:{
+      gid:itemID,
+    }
+  })
+}
+// 当选中状态变化时，计算选中商品数与总金额
+function handleSelectionChange (selection: CartGood[]) {
+  // 先清零
+  selectedNum.value = 0;
+  cost.value = 0;
+  if (selection.length > 0) {
+    selectedData.value = selection
+    selectedNum.value = selection.length
+    for (let item of selectedData.value) {
+      cost.value += Number.parseFloat(item.price)
+    }
+    cost.value = cost.value.toFixed(2)
+  } else {
+    selectedData.value = []
+    selectedNum.value = 0
+    cost.value = 0
+  }
+}
+// 从购物车中删除商品
+function removeGoods (gid: string) {
+  ElMessageBox.confirm(
+    '将从购物车中删除这件商品,是否继续操作?',
+    '确认',
+    {
+      confirmButtonText: '继续',
+      cancelButtonText: '取消',
+      type: 'warning',
+    }
+  ).then(() => {
+    // 调用接口： 传入（用户ID,商品ID） 返回(null)
+    axios.get('/api/removeCart/' + userID + '/' + gid)
+      .then(() => {
+        let index = 0
+        for (let item of tableData.value) {
+          if (item.id === gid) {
+            break
+          } else {
+            index++
+          }
+        }
+        tableData.value.splice(index, 1)
+        ElMessage({
+          type: 'success',
+          message: '删除成功!'
         })
-    },
+      })
+  })        
+}
 
-    data(){
-        return{
-          userID: window.sessionStorage.getItem('uid'), // 用户ID
-          tableData: [],  // 购物车数据
-          selectedData: [], //选中商品列表
-          selectedNum: 0,  // 选中商品数量
-          cost: 0,  // 选中商品总金额
+// 批量移除商品
+function removeSelectedGoods () {
+  if(selectedData.value.length === 0){
+    ElMessage({
+      type: 'error',
+      message: '请选中商品！'
+    })    
+  }else{
+    ElMessageBox.confirm(
+      '将从购物车中删除选中商品,是否继续操作?',
+      '确认',
+      {
+        confirmButtonText: '继续',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }
+    ).then(()=>{
+      for (let sitem of selectedData.value) {
+        let index = 0
+        for (let item of tableData.value) {
+          if (item.id === sitem.id) {
+            // 调用接口： 传入（用户ID,商品ID） 返回(null)
+            axios.get(`/api/removeCart/${userID.value}/${sitem.id}`)
+            break
+          } else {
+            index++
+          }
         }
-    },
-    methods:{
-      // 点击图片跳转商品详情页
-      jumpCard(itemID){
-        this.$router.push({
-          path:'/details',
-          query:{
-            gid:itemID,
-          }
-        })
-      },
-      // 当选中状态变化时，计算选中商品数与总金额
-      handleSelectionChange(selection){
-        // 先清零
-        this.selectedNum = 0;
-        this.cost = 0;
-        if(selection){
-          this.selectedData = selection;
-          this.selectedNum = selection.length;
-          for(let item of this.selectedData){
-            this.cost+=Number(item.price);
-          }
-          this.cost = this.cost.toFixed(2);
-        }else{
-          this.selectedData = [];
-          this.selectedNum = 0;
-          this.cost = 0;
-        }
-      },
-      // 从购物车中删除商品
-      removeGoods(gid){
-        ElMessageBox.confirm(
-          '将从购物车中删除这件商品,是否继续操作?',
-          '确认',
-          {
-            confirmButtonText:'继续',
-            cancelButtonText:'取消',
-            type:'warning',
-          }
-        ).then(()=>{
-          // 调用接口： 传入（用户ID,商品ID） 返回(null)
-          this.axios.get('/api/removeCart/' + this.userID + '/' + gid)
-            .then(() => {
-              let index = 0
-              for(let item of this.tableData){
-                if(item.id===gid){
-                  break
-                }else{
-                  index++
-                }
-              }
-              this.tableData.splice(index,1)
-              ElMessage({
-                type:'success',
-                message:'删除成功!',
-              })
-            })
-        })        
-      },
-      // 批量移除商品
-      removeSelectedGoods(){
-        if(!this.selectedData.length){
-          ElMessage({
-            type:'error',
-            message:'请选中商品！',
-          });          
-        }else{
-          ElMessageBox.confirm(
-            '将从购物车中删除选中商品,是否继续操作?',
-            '确认',
-            {
-              confirmButtonText:'继续',
-              cancelButtonText:'取消',
-              type:'warning',
-            }
-          ).then(()=>{
-            for(let sitem of this.selectedData){
-              let index = 0;
-              for(let item of this.tableData){
-                if(item.id === sitem.id){
-                  // 调用接口： 传入（用户ID,商品ID） 返回(null)
-                  this.axios.get('/api/removeCart/' + this.userID + '/' + sitem.id);
-                  break;
-                }else{
-                  index++;
-                }
-              }
-              this.tableData.splice(index,1);
-            }    
-            this.selectedData=[];
-            this.selectedNum=0;
-            this.cost=0;   
-            ElMessage({
-              type:'success',
-              message:'删除成功!',
-            });
-          }) 
-        }       
-      },  
-      // 结算
-      jumpToConfirm(){
-        if(this.selectedData.length){
-          let goodsIDArray = '';  // 结算商品ID字符串，ID之间以'-'隔开，用以query传参给confirm页面
-          for(let item of this.selectedData){
-            if(!goodsIDArray){
-              goodsIDArray = item.id;
-            }else{
-              goodsIDArray += '-'+item.id;
-            }
-          }
-          this.$router.push({
-            path:'/confirm',
-            query:{
-              gid: goodsIDArray,
-            },
-          })
-        }else{
-          ElMessage({
-            type:'error',
-            message:'请选中商品！',
-          });
-        }
-      },   
-    },
+        tableData.value.splice(index, 1)
+      }    
+      selectedData.value = []
+      selectedNum.value = 0
+      cost.value = 0
+      ElMessage({
+        type: 'success',
+        message: '删除成功!'
+      })
+    }) 
+  }       
+}
+// 结算
+function jumpToConfirm () {
+  if (selectedData.value.length > 0) {
+    let goodsIDArray = ''  // 结算商品ID字符串，ID之间以'-'隔开，用以query传参给confirm页面
+    for (let item of selectedData.value) {
+      if (goodsIDArray.length === 0) {
+        goodsIDArray = item.id
+      } else {
+        goodsIDArray += `-${item.id}`
+      }
+    }
+    router.push({
+      path: '/confirm',
+      query: {
+        gid: goodsIDArray
+      }
+    })
+  }else{
+    ElMessage({
+      type: 'error',
+      message: '请选中商品！'
+    })
+  }
 }
 </script>
 

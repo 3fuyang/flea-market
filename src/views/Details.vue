@@ -212,7 +212,7 @@ axios.get(`/api/checkAvailable/${goodID.value}`)
 let globalTimer: number | null | undefined
 const debounce = (fn: (...args: any[]) => void, delay: number) => {
 	return (...args: any[]) => {
-		globalTimer = setTimeout(() => {
+		globalTimer = window.setTimeout(() => {
 			fn(...args)
 			clearTimeout(globalTimer as number)
 			globalTimer = null

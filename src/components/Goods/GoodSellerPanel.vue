@@ -59,7 +59,10 @@
           :show-arrow="false"
           :show-after="500"
           :offset="0">
-          <el-image class="img" :src="item.imgUrl"></el-image>          
+          <el-image
+            class="img"
+            :src="item.imgUrl"
+            @click="handleClickImage(item.goodID)"/>
         </el-tooltip>
         <p class="good-price">￥{{item.price}}</p>
       </div>
@@ -68,7 +71,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onBeforeMount } from 'vue'
+import { onUpdated, ref } from 'vue'
 import { ChatDotRound, RefreshLeft } from "@element-plus/icons-vue"
 import { useRouter } from 'vue-router'
 import axios from 'axios'
@@ -91,7 +94,7 @@ const sellerInfo = ref({
   score: ''
 }) // 卖家信息
 
-onBeforeMount(() => {
+function getSellerInfo () {
   // 调用接口：传入（卖家ID） 返回（卖家信息：卖家昵称、信誉、头像URL）
   axios.get(`/api/getSellerInfo/${props.sellerID}`)
     .then((res) => {     
@@ -102,9 +105,11 @@ onBeforeMount(() => {
         score: Number.parseFloat(res.data.score).toFixed(1)
       }
     })
+}
 
-  getTrends()
-})
+getSellerInfo()
+
+onUpdated(getSellerInfo)
 
 const router = useRouter()
 // 联系买家
@@ -160,7 +165,7 @@ const getPlacement = (index: number) => {
   }
 }
 // 获取趋势商品
-const getTrends = () => {
+function getTrends () {
   // 调用接口： 传入（null） 返回（随机四个商品的简要信息：ID、名称、价格、图片URL）
   trendGoods.value = []
   axios.get(`/api/getTrends`)
@@ -174,6 +179,18 @@ const getTrends = () => {
         })
       })
     })
+}
+
+getTrends()
+
+// 点击查看其他商品详情页
+function handleClickImage (gid: string) {
+  router.push({
+    path: '/details',
+    query: {
+      gid: gid
+    }
+  })
 }
 </script>
 

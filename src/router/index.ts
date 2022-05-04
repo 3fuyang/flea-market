@@ -19,31 +19,121 @@ const Trade = () => import("../views/User/Trade.vue")
 
 const DealReport = () => import("../views/Administrator/DealingReports.vue")
 
-const routes = [
-	{ path: '/', 			redirect: '/home' }, // 重定向到首页
-	{ path: '/home', 		component: Home },
-	{ path: '/result',		component: Result },
-	{ path: '/login', 		component: Login },
-	{ path: '/details',		component: Details },
+const NotFound = () => import('../views/NotFound.vue')
 
-	{ path: '/info', 		component: Information },
-	{ path: '/history', 	component: History },
-	{ path: '/favorite', 	component: Favorite },
-  { path: '/goods',		component: Goods },
-	{ path: '/order', 		component: Order },
-  { path: '/chat',		component: Chat },
-  { path: '/confirm',		component: Confirm },
-	{ path: '/security',	component: Security },
-  { path: '/shoppingcart',component: ShoppingCart },
-  { path: '/trade',		component: Trade },
-
-	{ path: '/admin/report', component: DealReport },
-
+// 公共路由
+export const publicRoutes = [
+	{
+		path: '/',
+		redirect: '/home'
+	},
+	{
+		name: 'home',
+		path: '/home',
+		component: Home
+	},
+	{
+		name: 'result',
+		path: '/result',
+		component: Result
+	},
+	{
+		name: 'details',
+		path: '/details',
+		component: Details
+	}
 ]
+
+// 普通会员权限路由
+export const memberRoutes = [
+	{
+		name: 'info',
+		path: '/info',
+		component: Information
+	},
+	{
+		name: 'history',
+		path: '/history',
+		component: History
+	},
+	{
+		name: 'favorite',
+		path: '/favorite',
+		component: Favorite
+	},
+	{
+		name: 'goods',
+		path: '/goods',
+		component: Goods
+	},
+	{
+		name: 'order',
+		path: '/order',
+		component: Order
+	},
+	{
+		name: 'chat',
+		path: '/chat',
+		component: Chat
+	},
+	{
+		name: 'confirm',
+		path: '/confirm',
+		component: Confirm
+	},
+	{
+		name: 'security',
+		path: '/security',
+		component: Security
+	},
+	{
+		name: 'shoppingcart',
+		path: '/shoppingcart',
+		component: ShoppingCart
+	},
+	{
+		name: 'trade',
+		path: '/trade',
+		component: Trade
+	}
+]
+
+// 管理员权限路由
+export const adminRoutes = [
+	{
+		name: 'report',
+		path: '/admin/report',
+		component: DealReport
+	}
+]
+
+// 登录路由
+export const loginRoutes = [
+	{
+		name: 'login',
+		path: '/login',
+		component: Login
+	}
+]
+
+// 末尾路由
+export const endRoutes = [
+	{
+		name: '404',
+		path: '/404',
+		component: NotFound
+	}	,
+	{
+		name: 'notFound',
+		path: '/:pathMatch(.*)',
+		redirect: '/404'
+	}
+]
+
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
-  routes
+  routes: [...publicRoutes, ...loginRoutes, ...endRoutes]
 })
 
 /* // 对所有人公开的路由

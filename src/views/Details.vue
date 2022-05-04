@@ -123,8 +123,8 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onUpdated, ref } from 'vue'
-import { useRouter } from 'vue-router'
+import { computed, ref } from 'vue'
+import { useRouter, onBeforeRouteUpdate } from 'vue-router'
 import GoodSellerPanel from '../components/Goods/GoodSellerPanel.vue'
 import Comments from '../components/Goods/Comments.vue'
 import { StarFilled, Star, Shop } from "@element-plus/icons-vue"
@@ -180,39 +180,45 @@ const imageCollection = ref<string[]>([])
 
 // 从queryString获取商品ID
 goodID.value = router.resolve(router.currentRoute.value).query.gid as string
-axios.get(`/api/checkAvailable/${goodID.value}`)
-	.then(res => {
-		if(!res.data){
-			ElMessage.error('该商品已下架！')
-			router.back()
-		}
-	})
-	.then(() => {
-		// 调用接口：传入（商品ID）返回（商品详情：卖家ID、卖家昵称、商品标题、商品类型、上架时间、收藏数、商品图片URL、价格、地址、简介）
-		axios.get(`/api/getGoods/${goodID.value}`)
-			.then(response => {
-				goodInfo.value = {
-					goodTitle: response.data.title,
-					onshelfTime: response.data.onshelf_time.substr(0, 19).replace('T', ' '),
-					sellerID: response.data.seller_id,
-					likes: response.data.likes,	
-					type: response.data.category,
-					campus: response.data.campus,
-					images: 
-						// 一件商品允许最少一张、最多三张图片
-						// 后端只返回图片名称，URL在前端编码
-						response.data.images.split(';')
-					,
-					price: Number.parseFloat(response.data.price).toFixed(2),
-					intro: response.data.intro
-				}
-				// 获取图片数组
-				imageCollection.value = goodInfo.value.images.map((name) => `http://127.0.0.1:8082/public/images/${name}`)
-				//console.log(imageCollection.value)
-				// 初始化当前展示大图为第一张图片
-				currImageIndex.value = 0			
-			})
-	})
+
+getGoodInfo()
+
+// 获取商品信息
+function getGoodInfo () {
+	axios.get(`/api/checkAvailable/${goodID.value}`)
+		.then(res => {
+			if(!res.data){
+				ElMessage.error('该商品已下架！')
+				router.back()
+			}
+		})
+		.then(() => {
+			// 调用接口：传入（商品ID）返回（商品详情：卖家ID、卖家昵称、商品标题、商品类型、上架时间、收藏数、商品图片URL、价格、地址、简介）
+			axios.get(`/api/getGoods/${goodID.value}`)
+				.then(response => {
+					goodInfo.value = {
+						goodTitle: response.data.title,
+						onshelfTime: response.data.onshelf_time.substr(0, 19).replace('T', ' '),
+						sellerID: response.data.seller_id,
+						likes: response.data.likes,	
+						type: response.data.category,
+						campus: response.data.campus,
+						images: 
+							// 一件商品允许最少一张、最多三张图片
+							// 后端只返回图片名称，URL在前端编码
+							response.data.images.split(';')
+						,
+						price: Number.parseFloat(response.data.price).toFixed(2),
+						intro: response.data.intro
+					}
+					// 获取图片数组
+					imageCollection.value = goodInfo.value.images.map((name) => `http://127.0.0.1:8082/public/images/${name}`)
+					//console.log(imageCollection.value)
+					// 初始化当前展示大图为第一张图片
+					currImageIndex.value = 0			
+				})
+		})
+}
 
 // 由于要监听多个元素的同一事件，需手写一个含有全局计时器的防抖函数
 let globalTimer: number | null | undefined
@@ -281,7 +287,12 @@ if (identity.value === 'member') {
 }
 initialize()
 
-onUpdated(initialize)
+onBeforeRouteUpdate((to) => {
+	console.log('调用beforeRouteUpdate守卫')
+	goodID.value = to.query.gid as string
+	getGoodInfo()
+	initialize()
+})
 
 // 收藏或取消收藏
 const changeLike = () => {

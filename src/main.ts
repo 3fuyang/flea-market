@@ -10,12 +10,13 @@ import piniaPluginPersistedstate from 'pinia-plugin-persistedstate'
 
 const app = createApp(App)
 
+// pinia实例
 const pinia = createPinia()
 pinia.use(piniaPluginPersistedstate)
 
 app
-  .use(pinia)
   .use(router)
+  .use(pinia)  
   .use(ElementPlus)
   .use(VueAxios, axios)
   .mount('#app')

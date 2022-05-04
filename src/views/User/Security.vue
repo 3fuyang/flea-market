@@ -115,10 +115,14 @@ import { ElMessage } from 'element-plus'
 import { Message, Edit, CircleCheck } from '@element-plus/icons-vue'
 import axios from 'axios'
 import { useRouter } from 'vue-router'
+import { useUserStore } from '@/stores/user'
+import { storeToRefs } from 'pinia'
+
+const userStore = useUserStore()
+const { userID } = storeToRefs(userStore)
 
 const router = useRouter()
 
-const userID = ref(window.sessionStorage.getItem('uid')) // 用户ID
 const activePwd = ref(0)  // 修改密码步骤条当前激活步骤
 const telNum = ref('')  // 用户绑定手机
 const inputCAPTCHA = ref('')  // 输入验证码1
@@ -202,8 +206,9 @@ function modifyPwd () {
       .then(() => {
         activePwd.value++
         setTimeout(() => {
-          router.push('/login');
-          window.sessionStorage.setItem('uid','0')
+          // 修改store state
+          userStore.logOut()
+          router.push('/login')
         }, 1000)
       })       
   }

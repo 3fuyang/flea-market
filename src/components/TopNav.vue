@@ -8,14 +8,29 @@
       </el-col>
       <el-col :offset="7" :span="9">
         <!--未登录状态的导航栏-->
-        <el-menu v-if="loginStatus===false" default-active='/home' mode="horizontal" background-color="#3399CC"
-                 text-color="#fff" active-text-color="#FFFFCC" style="border-bottom: 0;margin-left: 200px;" router>
+        <el-menu
+          v-if="identity === 'visitor'"
+          default-active='/home'
+          mode="horizontal"
+          background-color="#3399CC"
+          text-color="#fff"
+          active-text-color="#FFFFCC"
+          style="border-bottom: 0;margin-left: 200px;"
+          router>
           <el-menu-item index="/home">首页</el-menu-item>
           <el-menu-item index="/login">登录/注册</el-menu-item>
         </el-menu>
         <!--用户登录状态的导航栏-->
-        <el-menu v-else-if="userType==='user'" :default-active="$route.path" mode="horizontal" background-color="#3399CC"
-                 text-color="#fff" active-text-color="#FFFFCC" style="border-bottom: 0" router :unique-opened="true">
+        <el-menu
+          v-else-if="identity === 'member'"
+          :default-active="$route.path"
+          mode="horizontal"
+          background-color="#3399CC"
+          text-color="#fff"
+          active-text-color="#FFFFCC"
+          style="border-bottom: 0"
+          router
+          :unique-opened="true">
           <el-menu-item index="/home">首页</el-menu-item>
           <el-sub-menu index="0">
             <template #title>个人中心</template>
@@ -35,88 +50,66 @@
               <el-menu-item index="/trade">卖出闲置</el-menu-item>
               <el-menu-item index="/chat">我的消息</el-menu-item>
           </el-sub-menu>        
-          <el-menu-item :route="{ path: $route.path}" @click="logOut()">注销</el-menu-item>       
+          <el-menu-item :route="{ path: $route.path}" @click="logOut">注销</el-menu-item>       
       </el-menu>
       <!--管理员登录状态的导航栏-->
-      <el-menu v-else :default-active="$route.path" mode="horizontal" background-color="#3399CC"
-                text-color="#fff" active-text-color="#FFFFCC" style="border-bottom: 0;margin-left: 100px;" router>
+      <el-menu
+        v-else-if="identity === 'admin'"
+        :default-active="$route.path"
+        mode="horizontal"
+        background-color="#3399CC"
+        text-color="#fff"
+        active-text-color="#FFFFCC"
+        style="border-bottom: 0;margin-left: 100px;"
+        router>
         <el-menu-item index="/home">首页</el-menu-item>
           <el-sub-menu index="0">
             <template #title>管理员中心</template>
             <el-menu-item index="/admin/report">受理举报</el-menu-item>
           </el-sub-menu>
-        <el-menu-item @click="logOut()" :route="{ path: $route.path}">注销</el-menu-item>       
+        <el-menu-item @click="logOut" :route="{ path: $route.path}">注销</el-menu-item>       
       </el-menu>
       </el-col>
     </el-row>
   </div>
 </template>
 
-<script>
-import {ElMessage, ElMessageBox} from "element-plus"
-export default {
-  data(){
-      return{
-      user: null,
-      activeIndex: '',
-      loginStatus: false,
-      userType:'user',
-      }
-  },
-  created(){
-    this.getLoginStatus();
-  },
+<script lang="ts" setup>
+import { ElMessage, ElMessageBox } from "element-plus"
+import { useRouter } from "vue-router"
+import { useUserStore } from "@/stores/user"
+import { storeToRefs } from "pinia"
 
-  methods:{
-    logOut(){
-      //对话框询问
-      ElMessageBox.confirm(
-        '您的账号将注销登录,是否继续操作?',
-        '确认',
-        {
-          confirmButtonText:'继续',
-          cancelButtonText:'取消',
-          type:'warning',
-        }
-      ).then(()=>{
-        //设置登录状态为false
-        this.loginStatus=false;
-        this.$router.push('/home');
-        window.sessionStorage.setItem('uid','0');
-        ElMessage({
-          type:'success',
-          message:'注销成功!',
-        });
-      }).catch(()=>{
-        ElMessage({
-          type:'info',
-          message:'取消注销',
-        });
-      })
-    },
+const router = useRouter()
 
-    getLoginStatus() {
-      let status = window.sessionStorage.getItem('uid')
-      //console.log(status);
-      switch (status) {
-        case null:
-          window.sessionStorage.setItem('uid', '0')
-          break
-        case '0':
-          break
-        case undefined:
-          window.sessionStorage.setItem('uid', '0')
-          break
-        //若用户id不为0，则设定登录状态为true
-        default:
-          this.loginStatus = true
-          if(status.length!=7){
-            this.userType='admin';
-          }
-          break
-      }
-    },
-  },
+// 获取用户信息store
+const userStore = useUserStore()
+const { identity } = storeToRefs(userStore)
+
+function logOut () {
+  //对话框询问
+  ElMessageBox.confirm(
+    '您的账号将注销登录,是否继续操作?',
+    '确认',
+    {
+      confirmButtonText:'继续',
+      cancelButtonText:'取消',
+      type:'warning'
+    }
+  ).then(()=>{
+    //用store的actions设置登录状态为false
+    userStore.logOut()
+    router.push('/home')
+    ElMessage({
+      type:'success',
+      message:'注销成功!'
+    })
+  }).catch(() => {
+    ElMessage({
+      type:'info',
+      message:'取消注销'
+    })
+  })
 }
 </script>
 

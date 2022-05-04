@@ -103,9 +103,13 @@ import { useRouter } from 'vue-router'
 import { NTag, NButton, NPopover, NPagination, useDialog, NDescriptions, NDescriptionsItem, NRate, NEmpty, NGradientText } from 'naive-ui'
 import { Library } from '@vicons/ionicons5'
 import axios from 'axios'
+import { useUserStore } from '@/stores/user'
+import { storeToRefs } from 'pinia'
 
-// 用户ID
-const userID = window.sessionStorage.getItem('uid')
+// store
+const userStore = useUserStore()
+const { userID } = storeToRefs(userStore)
+
 // 订单类型
 interface Order {
   buyerId: string
@@ -209,7 +213,7 @@ function checkEvaluation(oid: string) {
 }
 
 // 调用接口：传入（用户ID） 返回（订单列表：订单ID，订单时间，商品名称，金额，卖家ID，订单状态，订单评价）
-axios.get(`/api/getSoldOrders/${userID}`)
+axios.get(`/api/getSoldOrders/${userID.value}`)
   .then(res => {
     res.data.forEach((item: any) => {
       orders.value.push({

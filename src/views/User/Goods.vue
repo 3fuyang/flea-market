@@ -13,21 +13,21 @@
           <el-tab-pane label="上架中" name="onShelf" lazy>
             <GoodsListTable 
               v-if="currentTab === 'onShelf'" 
-              :userId="(uid as string)" 
+              :userId="userID" 
               :goodsStatus="currentTab" 
               @check-info="checkGoodInfo"/>
           </el-tab-pane>
           <el-tab-pane label="已售出" name="soldOut" lazy>
             <GoodsListTable 
               v-if="currentTab === 'soldOut'" 
-              :userId="(uid as string)" 
+              :userId="userID" 
               :goodsStatus="currentTab" 
               @check-info="checkGoodInfo"/>
           </el-tab-pane>
           <el-tab-pane label="新添闲置" name="uploadGood" lazy>
             <UploadGoodModal 
               v-if="currentTab === 'uploadGood'" 
-              :userId="(uid as string)"/>
+              :userId="userID"/>
           </el-tab-pane>
         </el-tabs>
       </div>
@@ -50,11 +50,15 @@ import { ref } from 'vue'
 import GoodsListTable from '../../components/Goods/GoodsListTable.vue'
 import UploadGoodModal from '../../components/Goods/UploadGoodModal.vue'
 import GoodsInfoModal from '../../components/Goods/GoodsInfoModal.vue'
+import { useUserStore } from '@/stores/user'
+import { storeToRefs } from 'pinia'
+
+// store
+const userStore = useUserStore()
+const { userID } = storeToRefs(userStore)
 
 // 当前Tab页
 const currentTab = ref('onShelf')
-// 用户ID
-const uid = ref(window.sessionStorage.getItem('uid'))
 
 // 商品信息窗口开关
 const showInfoModal = ref(false)

@@ -3,8 +3,7 @@ import { defineStore } from "pinia"
 export const useUserStore = defineStore({
   id: 'user',
   state: () => ({
-    userID: '',
-    nickname: ''
+    userID: ''
   }),
   getters: {
     identity: (state) => {
@@ -18,18 +17,14 @@ export const useUserStore = defineStore({
     }
   },
   actions: {
+    // 登入
+    logIn (userID: string) {
+      this.userID = userID
+    },
+    // 登出
     logOut () {
       this.userID = ''
-      this.nickname = ''
     }
   },
-  persist: {
-    enabled: true,
-    strategies: [
-      {
-        key: 'user',
-        storage: sessionStorage
-      }
-    ]
-  }
+  persist: true
 })

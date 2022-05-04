@@ -1,3 +1,7 @@
+<script setup lang="ts">
+import TopNav from './components/TopNav.vue'
+</script>
+
 <template>
 	<div 
     id="app" 
@@ -5,7 +9,7 @@
   <el-container>
     <el-header 
       v-if="$route.path != '/login'" 
-      style="padding: 0">
+      style="padding: 0;">
       <top-nav />
     </el-header>
 		<el-main class="main">

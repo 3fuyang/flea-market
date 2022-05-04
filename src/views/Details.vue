@@ -123,17 +123,23 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted, onUpdated, ref } from 'vue'
+import { computed, onUpdated, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import GoodSellerPanel from '../components/Goods/GoodSellerPanel.vue'
 import Comments from '../components/Goods/Comments.vue'
 import { StarFilled, Star, Shop } from "@element-plus/icons-vue"
 import { ElMessage } from 'element-plus'
 import axios from 'axios'
+import { useUserStore } from '@/stores/user'
+import { storeToRefs } from 'pinia'
+
+// store
+const userStore = useUserStore()
+const { userID, identity } = storeToRefs(userStore)
 
 const goodID = ref('')	// 商品ID
-let userID = ''	// 用户ID
 const router = useRouter()
+
 // 商品详情类型
 interface GoodInfo {
 	goodTitle: string
@@ -146,6 +152,7 @@ interface GoodInfo {
 	price: string
 	intro: string
 }
+// 商品信息ref对象
 const goodInfo = ref<GoodInfo>(
 	{
 		goodTitle: '',
@@ -158,7 +165,7 @@ const goodInfo = ref<GoodInfo>(
 		price: '',
 		intro: ''
 	}
-)	// 商品详情
+)
 
 // 当前展示的大号图片序号
 const currImageIndex = ref(0)
@@ -171,7 +178,6 @@ const currImageURL = computed(() => {
 // 底部盒子中的缩略图
 const imageCollection = ref<string[]>([])
 
-// 挂载前，初始化数据
 // 从queryString获取商品ID
 goodID.value = router.resolve(router.currentRoute.value).query.gid as string
 axios.get(`/api/checkAvailable/${goodID.value}`)
@@ -233,19 +239,19 @@ const inCart = ref(false)
 // 挂载后，为DOM添加事件监听
 const initialize = () => {
 	// 对于用户账号
-	if(userID.length === 7){
+	if (identity.value === 'member') {
 		// 调用接口：传入（用户ID）	返回（用户是否将该商品收藏、加入购物车)
-		axios.post(`/api/checkCollected`, {userID: userID, goodID: goodID.value})
+		axios.post(`/api/checkCollected`, {userID: userID.value, goodID: goodID.value})
 			.then(res => {
 				liked.value = res.data
 			})
-		axios.post(`/api/checkInCart`, {userID: userID, goodID: goodID.value})
+		axios.post(`/api/checkInCart`, {userID: userID.value, goodID: goodID.value})
 			.then(res => {
 				inCart.value = res.data
 			})
 	}
 	// 对于管理员账号
-	else if(userID.length === 4){
+	else if (identity.value === 'admin') {
 		liked.value = false
 		inCart.value = false
 	}
@@ -262,33 +268,31 @@ const initialize = () => {
 		})
 	}, 100)
 }
-onMounted(() => {
-	// 从SessionStorage获取用户ID
-	userID = window.sessionStorage.getItem('uid') as string
-	if(userID.length === 7) {
-		let date = new Date()
-		date.setHours(date.getHours() + 8)
-		// 调用接口，加入浏览记录：传入（用户ID，商品ID，当前时间） 返回（null）
-		axios.post('/api/addTrack', {
-			userID,
-			goodID: goodID.value,
-			time: date.toISOString().slice(0, 19).replace('T', ' ')
-		})
-	}
-	initialize()
-})
+
+if (identity.value === 'member') {
+	let date = new Date()
+	date.setHours(date.getHours() + 8)
+	// 调用接口，加入浏览记录：传入（用户ID，商品ID，当前时间） 返回（null）
+	axios.post('/api/addTrack', {
+		userID: userID.value,
+		goodID: goodID.value,
+		time: date.toISOString().slice(0, 19).replace('T', ' ')
+	})
+}
+initialize()
+
 onUpdated(initialize)
 
 // 收藏或取消收藏
 const changeLike = () => {
-	if(userID.length !== 4 && userID.length !== 7){
+	if(identity.value === 'visitor'){
 		// 未登录，跳转到登录页面
 		router.push('/login')
-	}else{
+	} else {
 		let date = new Date()
 		date.setHours(date.getHours() + 8)
 		const data = {
-			userID,
+			userID: userID.value,
 			goodID: goodID.value,
 			time: date.toISOString().slice(0, 19).replace('T', ' ')
 		}
@@ -311,14 +315,14 @@ const changeLike = () => {
 
 // 跳转到付款页面
 const goConfirm = () => {
-	if (userID.length === 7) {
+	if (identity.value === 'member') {
 		router.push({
 			path: '/confirm',
 			query:{
 				gid: goodID.value,
 			}	
 		})
-	} else if (userID.length === 4) {
+	} else if (identity.value === 'admin') {
 		ElMessage.warning(`请使用普通账号执行该操作。`)
 	} else {
 		router.push(`/login`)
@@ -328,22 +332,22 @@ const goConfirm = () => {
 // 加入购物车
 const addToCart = () => {
 	// 用户未登录
-	if(userID === '0'){
+	if(identity.value === 'visitor'){
 		// 跳转到登录页面
 		router.push('/login')
 	}
 	// 管理员账号
-	else if(userID.length === 4){
+	else if(identity.value === 'admin'){
 		ElMessage.warning('请登录普通用户账号进行该操作！')
 	}
 	// 普通用户
-	else if(userID.length === 7){
+	else if(identity.value === 'member'){
 		if(!inCart.value){
 			let date = new Date()
 			date.setHours(date.getHours() + 8)			
 			// 调用接口-加入购物车：传入（用户ID，商品ID） 返回（添加结果）
 			const data = {
-				userID,
+				userID: userID.value,
 				goodID: goodID.value,
 				time: date.toISOString().slice(0, 19).replace('T', ' ')
 			}

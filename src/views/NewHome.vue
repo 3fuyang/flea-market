@@ -13,7 +13,7 @@ const router = useRouter()
 
 // user仓库
 const userStore = useUserStore()
-const { userID, nickname, identity } = storeToRefs(userStore)
+const { userID, identity } = storeToRefs(userStore)
 
 // 流行关键词
 const popularKeywords = [

@@ -42,6 +42,12 @@ import { ArrowLeft, Search, Close } from "@element-plus/icons-vue"
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import axios from 'axios'
+import { useUserStore } from '@/stores/user'
+import { storeToRefs } from 'pinia'
+
+// store
+const userStore = useUserStore()
+const { userID } = storeToRefs(userStore)
 
 const router = useRouter()
 
@@ -53,8 +59,6 @@ interface Favorite {
   path: string
 }
 
-// 用户ID
-const userID = ref(window.sessionStorage.getItem('uid'))
 // 收藏夹数据
 const favoriteData = ref<Favorite[]>([])
 // 搜索关键字
@@ -135,7 +139,7 @@ function deleteFavorite (gid: string) {
             index++
           }
         }
-        favoriteData.value.splice(index,1)
+        favoriteData.value.splice(index, 1)
 
         index= 0
         for (let item of showData.value) {

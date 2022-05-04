@@ -6,8 +6,12 @@ import type { FormInst, FormRules, FormItemRule } from 'naive-ui'
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { colleges } from './colleges'
+import { useUserStore } from '@/stores/user'
 
 const router = useRouter()
+
+// store
+const userStore = useUserStore()
 
 defineEmits<{
   (e: 'off-register'): void
@@ -111,7 +115,7 @@ function completeInfo () {
       axios.post('/api/register',reg_info)
         .then(() => {
           ElMessage.success('注册成功,1秒后将为您自动登录...')
-          window.sessionStorage.setItem('uid', registerData.value.userID)
+          userStore.logIn(registerData.value.userID)
           setTimeout(() => {
             router.push('/home')
           }, 1000)          

@@ -21,10 +21,14 @@ import { h, onBeforeMount, ref } from 'vue'
 import { Create } from '@vicons/ionicons5'
 import HelloBar from '../../components/Admin/HelloBar.vue'
 import axios from 'axios'
+import { useUserStore } from '@/stores/user'
+import { storeToRefs } from 'pinia'
 
-const adminID = window.sessionStorage.getItem('uid')
+const userStore = useUserStore()
+const { userID } = storeToRefs(userStore)
+
 const adminName = ref('')
-axios.get(`/api/getAdminName/${adminID}`)
+axios.get(`/api/getAdminName/${userID.value}`)
   .then(res => {
     adminName.value = res.data[0].nickname
   })
@@ -190,7 +194,7 @@ function banAccused(row: Report){
     userID: row.accused,
     reply: replys.value[row.orderId],
     replyTime: date.toISOString().slice(0, 19).replace('T', ' '),
-    replyer: adminID,
+    replyer: userID.value,
     orderID: row.orderId
   }
   // 调用接口：传入（被告者ID） 返回（null）
@@ -211,7 +215,7 @@ function refuseReport(row: Report) {
   let data = {
     reply: replys.value[row.orderId],
     replyTime: date.toISOString().slice(0, 19).replace('T', ' '),
-    replyer: adminID,
+    replyer: userID.value,
     orderID: row.orderId
   }
   // 调用接口，驳回举报：传入（订单ID，回复，回复者，回复时间） 返回（null）

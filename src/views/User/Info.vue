@@ -1,17 +1,21 @@
 <template>
   <div class="info">
     <el-row justify="center">
-      <info-panel v-if="(userID as string).length > 0" :userID="(userID as string)"/>
-      <comment-list v-if="(userID as string).length > 0" :userID="(userID as string)"/>
+      <info-panel v-if="identity === 'member'" :userID="userID"/>
+      <comment-list v-if="identity === 'member'" :userID="userID"/>
     </el-row>
   </div>  
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
 import InfoPanel from '../../components/UserInfo/InfoPanel.vue'
 import CommentList from '../../components/UserInfo/CommentList.vue'
-const userID = ref(window.sessionStorage.getItem('uid'))
+import { useUserStore } from '@/stores/user'
+import { storeToRefs } from 'pinia'
+
+// store
+const userStore = useUserStore()
+const { userID, identity } = storeToRefs(userStore)
 </script>
 
 <style scoped>

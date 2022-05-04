@@ -6,6 +6,10 @@ import axios from 'axios'
 import { ElMessage } from 'element-plus'
 import { useRouter } from 'vue-router'
 import { LockOpenOutline } from '@vicons/ionicons5'
+import { useUserStore } from '../../stores/user'
+
+// 获取store
+const userStore = useUserStore()
 
 // 定义事件
 defineEmits<{
@@ -61,10 +65,10 @@ function logIn (): void {
       switch (loginData.value.type) {
         case 'member':
           axios.post('/api/userlogin',id_pwd)
-            .then((is_e)=>{
+            .then((is_e) => {
               if (is_e.data) {
                 ElMessage.success('用户登录成功！')
-                window.sessionStorage.setItem('uid', loginData.value.userID)
+                userStore.logIn(loginData.value.userID)
                 router.push('/home')          
               } else {
                 ElMessage.error('账号或密码错误！')
@@ -73,11 +77,11 @@ function logIn (): void {
           break
         case 'admin':
           axios.post('/api/adminlogin', id_pwd).then((is_e)=>{
-            if(is_e.data){
+            if (is_e.data) {
               ElMessage.success('管理员登录成功！')
-              window.sessionStorage.setItem('uid', loginData.value.userID)
+              userStore.logIn(loginData.value.userID)
               router.push('/admin/report')
-            }else{
+            } else {
               ElMessage.error('账号或密码错误！')
             }
           })

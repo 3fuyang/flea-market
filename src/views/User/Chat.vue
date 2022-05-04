@@ -95,6 +95,12 @@ import { Promotion, Close } from "@element-plus/icons-vue"
 import { ref, onBeforeMount, onUnmounted } from "vue"
 import { useRoute } from 'vue-router'
 import axios from "axios"
+import { useUserStore } from '@/stores/user'
+import { storeToRefs } from 'pinia'
+
+// store
+const userStore = useUserStore()
+const { userID } = storeToRefs(userStore)
 
 const route = useRoute()
 let chatTimer: number | null | undefined
@@ -103,7 +109,7 @@ onBeforeMount(() => {
   getChatList(newOponent.oponentID as string, newOponent.oponentName as string, newOponent.avatar as string)
   // 设置定时器
   //chatListTimer = setInterval(getChatList, 2000)
-  chatTimer = setInterval(getMessage, 2000)
+  chatTimer = window.setInterval(getMessage, 2000)
 })
 
 onUnmounted(() => {
@@ -112,7 +118,6 @@ onUnmounted(() => {
   chatTimer = null
 })
 
-const userID = window.sessionStorage.getItem('uid')
 // 对方信息类型
 interface Oponent {
   uid: string
@@ -146,7 +151,7 @@ function closeChat(){
 function getChatList(newOponentID: string, newOponentName: string, newOponentAvatar: string){
   // 调用接口：传入（用户ID，聊天对象ID） 返回（聊天对象列表：ID，名称）
   const newList: Oponent[] = []
-  axios.get(`/api/getChatOponent/${userID}`)
+  axios.get(`/api/getChatOponent/${userID.value}`)
     .then(res => {
       res.data.forEach((item: any) => {
         newList.push({
@@ -182,13 +187,13 @@ function getMessage(oponentChanged = false){
   }
   let newMessage: Message[] = []
   // 调用接口：传入（用户ID，聊天对象ID） 返回（两人消息列表：时间、说话方、内容）
-  let a_user_id = userID, b_user_id = currOponent.value
+  let a_user_id = userID.value, b_user_id = currOponent.value
   if ((a_user_id as string) > b_user_id) {
     [a_user_id, b_user_id] = [b_user_id, a_user_id as string]
   }
   axios.get(`/api/getMessage/${a_user_id}/${b_user_id}`)
     .then((res) => {
-      let isSelfA = a_user_id === userID
+      let isSelfA = a_user_id === userID.value
       res.data.forEach((item: any) => {
         newMessage.push({
           day_time: item.date_time.substr(0, 19).replace('T', ' '),
@@ -206,14 +211,14 @@ function getMessage(oponentChanged = false){
 }
 // 发送消息
 function handleSendMessage () {
-  let a_user_id = userID, b_user_id = currOponent.value
+  let a_user_id = userID.value, b_user_id = currOponent.value
   if(a_user_id as string > b_user_id){
     [a_user_id, b_user_id] = [b_user_id, a_user_id as string]
   }
   const date = new Date(+ new Date() + 8 * 3600 * 1000).toISOString().slice(0, 19).replace('T', ' ')
   let message = {
     a_user_id, b_user_id, 
-    speaker: (userID as string) < currOponent.value ? '0' : '1',
+    speaker: userID.value < currOponent.value ? '0' : '1',
     date_time: date,
     details: textarea.value        
   }

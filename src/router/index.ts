@@ -1,9 +1,9 @@
 import { createRouter, createWebHistory } from 'vue-router'
 
-const NewHome = () => import('../views/NewHome.vue')
-// 没有使用ts编写的组件会报找不到类型声明的错误
+const Home = () => import('../views/NewHome.vue')
+
 const Result = () => import('../views/NewResult.vue')
-const NewLogin = () => import('../views/NewLogin.vue')
+const Login = () => import('../views/NewLogin.vue')
 const Details = () => import('../views/Details.vue')
 
 const Information = () => import("../views/User/Info.vue")
@@ -12,7 +12,7 @@ const Favorite = () => import("../views/User/Favorite.vue")
 const Goods = () => import("../views/User/Goods.vue")
 const Order = () => import("../views/User/Order.vue")
 const Chat = () => import("../views/User/Chat.vue")
-const NewConfirm = () => import("../views/User/NewConfirm.vue")
+const Confirm = () => import("../views/User/NewConfirm.vue")
 const Security = () => import("../views/User/Security.vue")
 const ShoppingCart = () => import("../views/User/ShoppingCart.vue")
 const Trade = () => import("../views/User/Trade.vue")
@@ -21,9 +21,9 @@ const DealReport = () => import("../views/Administrator/DealingReports.vue")
 
 const routes = [
 	{ path: '/', 			redirect: '/home' }, // 重定向到首页
-	{ path: '/home', 		component: NewHome },
+	{ path: '/home', 		component: Home },
 	{ path: '/result',		component: Result },
-	{ path: '/login', 		component: NewLogin },
+	{ path: '/login', 		component: Login },
 	{ path: '/details',		component: Details },
 
 	{ path: '/info', 		component: Information },
@@ -32,7 +32,7 @@ const routes = [
   { path: '/goods',		component: Goods },
 	{ path: '/order', 		component: Order },
   { path: '/chat',		component: Chat },
-  { path: '/confirm',		component: NewConfirm },
+  { path: '/confirm',		component: Confirm },
 	{ path: '/security',	component: Security },
   { path: '/shoppingcart',component: ShoppingCart },
   { path: '/trade',		component: Trade },
@@ -46,7 +46,7 @@ const router = createRouter({
   routes
 })
 
-// 对所有人公开的路由
+/* // 对所有人公开的路由
 const publicRoutes = ['/home', '/result', '/details']
 // 需对普通会员鉴权的路由
 const memberRoutes = ['/info', '/history', '/favorite', '/goods', '/order', '/chat', '/confirm', '/security', '/shoppingcart', '/trade']
@@ -98,6 +98,6 @@ router.beforeEach((to, from, next) => {
 	else {
 		next()
 	}
-})
+}) */
 
 export default router

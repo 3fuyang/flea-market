@@ -70,10 +70,14 @@ import {ElMessageBox,ElMessage} from "element-plus"
 import axios from 'axios'
 import { ref } from "vue"
 import { useRouter } from "vue-router"
+import { useUserStore } from '@/stores/user'
+import { storeToRefs } from "pinia"
 
 const router = useRouter()
+// store
+const userStore = useUserStore()
+const { userID } = storeToRefs(userStore)
 
-const userID = ref(window.sessionStorage.getItem('uid')) // 用户ID
 // 购物车商品信息类型
 interface CartGood {
   id: string
@@ -87,7 +91,7 @@ const selectedNum = ref(0)  // 选中商品数量
 const cost = ref<string | number>(0)  // 选中商品总金额
 
 // 调用接口：传入（用户ID） 返回（购物车数据：商品ID,图片url,名称,价格）
-axios.get(`/api/getCart/${userID}`)
+axios.get(`/api/getCart/${userID.value}`)
   .then((response)=>{
     response.data.forEach((item: any) => {
       tableData.value.push({
@@ -138,7 +142,7 @@ function removeGoods (gid: string) {
     }
   ).then(() => {
     // 调用接口： 传入（用户ID,商品ID） 返回(null)
-    axios.get('/api/removeCart/' + userID + '/' + gid)
+    axios.get(`/api/removeCart/${userID.value}/${gid}`)
       .then(() => {
         let index = 0
         for (let item of tableData.value) {

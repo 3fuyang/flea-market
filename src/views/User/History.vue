@@ -38,10 +38,15 @@ import { ElMessage, ElMessageBox } from 'element-plus'
 import { Delete } from "@element-plus/icons-vue"
 import axios from 'axios'
 import { useRouter } from 'vue-router'
+import { useUserStore } from '@/stores/user'
+import { storeToRefs } from 'pinia'
+
+// store
+const userStore = useUserStore()
+const { userID } = storeToRefs(userStore)
 
 const router = useRouter()
 
-const userID = ref(window.sessionStorage.getItem('uid')) // 用户ID
 // 浏览记录类型
 interface History {
   id: string
@@ -77,34 +82,34 @@ axios.get(`/api/getTrack/${userID.value}`)
 //点击卡片跳转商品详情页
 function jumpCard (itemID: string) {
   router.push({
-    path:'/details',
-    query:{
-      gid:itemID,
+    path: '/details',
+    query: {
+      gid: itemID,
     }
   })
 }
 // 清空浏览记录
 function clearHistory() {
   if (historyData.value.length === 0) {
-    ElMessage({type:'info',message:'您没有可清除的浏览记录。'})
+    ElMessage({ type: 'info', message: '您没有可清除的浏览记录。' })
   } else {
     ElMessageBox.confirm(
       '将清空您的所有浏览记录,是否继续操作?',
       '确认',
       {
-        confirmButtonText:'继续',
-        cancelButtonText:'取消',
-        type:'warning',
+        confirmButtonText: '继续',
+        cancelButtonText: '取消',
+        type: 'warning',
       }
     ).then(()=>{
       // 调用接口：传入（用户ID） 返回（null）
-      axios.get('/api/clearTrack/'+userID)
+      axios.get(`/api/clearTrack/${userID.value}`)
         .then(() => {
           dateArray.value = []
           historyData.value = []
           ElMessage({
-            type:'success',
-            message:'清除成功!',
+            type: 'success',
+            message: '清除成功!',
           })
         })
     })

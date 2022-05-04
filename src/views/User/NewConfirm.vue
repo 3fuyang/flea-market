@@ -51,9 +51,11 @@ import { useRouter } from 'vue-router'
 import axios from 'axios'
 import GoodMediaObject from '../../components/Confirm/GoodMediaObject.vue'
 import PayQRCode from '../../components/Confirm/PayQRCode.vue'
+import { useUserStore } from '@/stores/user'
+import { storeToRefs } from 'pinia'
 
-// 用户ID
-const userID = window.sessionStorage.getItem('uid')
+const userStore = useUserStore()
+const { userID } = storeToRefs(userStore)
 
 const router = useRouter()
 // 需要结算的商品ID集合
@@ -92,7 +94,7 @@ const userName = ref('')
 // 手机号
 const telNum = ref('')
 // 调用接口：传入（用户ID） 返回（用户昵称，绑定手机）
-axios.get(`/api/getBuyerInfo/${userID}`)
+axios.get(`/api/getBuyerInfo/${userID.value}`)
   .then(res => {
     userName.value = res.data[0].real_name
     telNum.value = res.data[0].telnum
@@ -104,7 +106,7 @@ const showQRModal = ref(false)
 function closeModal(paid: boolean) {
   showQRModal.value = false
   const order = {
-    buyer: userID,
+    buyer: userID.value,
     seller: '',
     goodID: '',
     price: 0,

@@ -55,7 +55,7 @@
 </Transition>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { ref, computed, onMounted, onBeforeUpdate } from 'vue'
 import { ElMessage } from 'element-plus'
 import axios from 'axios'
@@ -65,10 +65,10 @@ const props = defineProps({
   currOrderId: String,  // 当前订单 ID
   currOrderStatus: String, // 当前订单状态
 })
-const emits = defineEmits([
-  'close', 
-  'order-done'
-])
+const emits = defineEmits<{
+  (e: 'close'): void
+  (e: 'order-done', oid: string): void
+}>()
 
 const grade = ref(null) // 评分
 const evaluation = ref('') // 评价文本
@@ -132,8 +132,8 @@ function submitEvaluation(){
     axios.post(`/api/submitEvaluation`, data)
       .then(() => {
         // 触发事件，修改视图中订单状态为'已完成'
-        emits('order-done', props.currOrderId)
-        
+        emits('order-done', props.currOrderId as string)
+
         ElMessage({
           type: 'success',
           message: '谢谢您的评价！'

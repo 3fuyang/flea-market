@@ -32,7 +32,7 @@
               <el-rate
                 v-model="comment.rate"
                 disabled 
-                :show-score="comment.length"
+                :show-score="comment.rate !== 0"
                 text-color="#ff9900" 
                 style="width: 60%;float: left;height: auto;"/>
             </el-row>
@@ -58,8 +58,8 @@
 </el-card>
 </template>
 
-<script setup>
-import { ref, computed, onBeforeMount } from 'vue'
+<script lang="ts" setup>
+import { ref, computed } from 'vue'
 import '@/assets/fonts/font.css'
 
 defineProps({
@@ -70,8 +70,17 @@ defineProps({
 const pageSize = 3
 // 当前页码
 const currentPage = ref(1)
+
+// 评论类型
+interface Comment {
+  time: string
+  name: string
+  rate: number
+  avatar: string
+  text: string
+}
 // 全部评论
-const commentList = ref([])
+const commentList = ref<Comment[]>([])
 // 视口评论
 const selectComments = computed(() => {
   // 终点索引
@@ -80,51 +89,50 @@ const selectComments = computed(() => {
   let begin = end - pageSize
   return commentList.value.slice(begin, end)
 })
-onBeforeMount(() => {
-  // 调用接口：传入（用户ID） 返回（用户作为卖家收到的评论列表：评论时间、买家头像URL、买家ID、买家昵称、内容、评分）
-  commentList.value = [
-    {
+
+// 调用接口：传入（用户ID） 返回（用户作为卖家收到的评论列表：评论时间、买家头像URL、买家ID、买家昵称、内容、评分）
+commentList.value = [
+  {
     time: "2022-01-07 09:55",
     name: "王大队长",
     rate: 4.6,
     avatar:
       "https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png",
     text: "有人说，有人在饭里下了毒，我们都不敢吃。",
-    },
-    {
-      time: "2022-01-07 09:55",
-      rate: 3.6,
-      name: "司令员",
-      avatar:
-        "https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png",
-      text: "我信，我非常相信。你要是没下毒，你就把这碗鸡汤喝了。你看你每天忙里忙完的，多辛苦呀，喝完鸡汤算什么呀，你要是不喝，就说明你真的下毒了。",
-    },
-    {
-      time: "2022-01-07 09:55",
-      name: "王大队长",
-      rate: 3.8,
-      avatar:
-        "https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png",
-      text: "有人说，有人在饭里下了毒，我们都不敢吃。",
-    },
-    {
-      time: "2022-01-07 09:55",
-      rate: 3.6,
-      name: "司令员",
-      avatar:
-        "https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png",
-      text: "我信，我非常相信。你要是没下毒，你就把这碗鸡汤喝了。你看你每天忙里忙完的，多辛苦呀，喝完鸡汤算什么呀，你要是不喝，就说明你真的下毒了。",
-    },
-    {
-      time: "2022-01-07 09:55",
-      name: "王大队长",
-      rate: 3.8,
-      avatar:
-        "https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png",
-      text: "有人说，有人在饭里下了毒，我们都不敢吃。",
-    }
-  ]
-})
+  },
+  {
+    time: "2022-01-07 09:55",
+    rate: 3.6,
+    name: "司令员",
+    avatar:
+      "https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png",
+    text: "我信，我非常相信。你要是没下毒，你就把这碗鸡汤喝了。你看你每天忙里忙完的，多辛苦呀，喝完鸡汤算什么呀，你要是不喝，就说明你真的下毒了。",
+  },
+  {
+    time: "2022-01-07 09:55",
+    name: "王大队长",
+    rate: 3.8,
+    avatar:
+      "https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png",
+    text: "有人说，有人在饭里下了毒，我们都不敢吃。",
+  },
+  {
+    time: "2022-01-07 09:55",
+    rate: 3.6,
+    name: "司令员",
+    avatar:
+      "https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png",
+    text: "我信，我非常相信。你要是没下毒，你就把这碗鸡汤喝了。你看你每天忙里忙完的，多辛苦呀，喝完鸡汤算什么呀，你要是不喝，就说明你真的下毒了。",
+  },
+  {
+    time: "2022-01-07 09:55",
+    name: "王大队长",
+    rate: 3.8,
+    avatar:
+      "https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png",
+    text: "有人说，有人在饭里下了毒，我们都不敢吃。",
+  }
+]
 </script>
 
 <style scoped>

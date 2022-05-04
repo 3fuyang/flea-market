@@ -46,7 +46,7 @@
 </Transition>
 </template>
 
-<script setup>
+<script lang="ts" setup>
 import { ref, onMounted, onUpdated } from 'vue'
 import { ElMessage } from 'element-plus'
 import axios from 'axios'
@@ -109,7 +109,7 @@ function reportOrder(){
     // 调用接口：传入（订单ID，举报理由）
     axios.post(`/api/reportOrder`, body)
       .then(() => {
-        props.reported  = true
+        reported.value  = true
         ElMessage({
           type: 'success',
           message: '举报成功，敬请等待管理员回复！'

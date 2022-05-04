@@ -147,10 +147,10 @@
 </div>
 </template>
 
-<script setup>
-import { ref, computed, onMounted, onUpdated, watch } from 'vue'
+<script setup lang="ts">
+import { ref, computed, onUpdated, watch } from 'vue'
 import { useRouter } from 'vue-router'
-import { ElMessage, ElMessageBox } from 'element-plus'
+import { ElMessage, ElMessageBox, type UploadFile, type UploadInstance, type UploadRawFile } from 'element-plus'
 import { Close } from '@element-plus/icons-vue'
 import axios from 'axios'
 const props = defineProps({
@@ -161,8 +161,20 @@ const props = defineProps({
 const emits = defineEmits([
   'close',
 ])
-
-const goodInfo = ref({
+// 商品信息类型
+interface goodInfo {
+  [index: string]: string
+  title: string
+  type: string
+  name: string
+  keywords: string
+  campus: string
+  intro: string
+  price: string
+  detail: string
+}
+// 商品信息
+const goodInfo = ref<goodInfo>({
   title: '', // 标题
   type: '',  // 类型
   name: '',  // 名称
@@ -171,10 +183,21 @@ const goodInfo = ref({
   intro: '', // 简介(包含交易要求)
   price: '',  // 价格
   detail: '',  // 交易细节
-})  // 商品信息
+})
+// 商品原信息副本
+interface PreInfo extends goodInfo {
+  [index: string]: string
+  images: string
+}
+const goodPreInfo = ref<PreInfo>()  // 商品原信息副本
+
+// 商品类型选项
 const typeOptions = ["图书音像", "电子产品", "美妆个护", "运动户外", "生活电器", "其他"]
+// 校区选项
 const campusOptions = ["四平路校区", "嘉定校区", "沪西校区", "沪北校区"]
-function getGoodInfo(){
+
+// 从后端获取商品信息
+function getGoodInfo() {
   // 调用接口：传入（商品ID）返回（商品详细信息）
   axios.get(`/api/getGoods/${props.goodId}`)
     .then((res) => {
@@ -186,41 +209,39 @@ function getGoodInfo(){
         keywords: data.keywords,
         campus: data.campus,
         intro: data.intro,
-        price: Number.parseFloat(data.price),
+        price: Number.parseFloat(data.price).toFixed(2),
         detail: data.detail,
         images: data.images        
       }
-      imgLocalUrl.value = data.images.split(';').map(name => `http://127.0.0.1:8082/public/images/${name}`)
+      imgLocalUrl.value = data.images.split(';').map((name: string) => `http://127.0.0.1:8082/public/images/${name}`)
       imgServerName.value = data.images.split(';')
-      for(let property in goodPreInfo.value) {
+      for (let property in goodPreInfo.value) {
         goodInfo.value[property] = goodPreInfo.value[property]
       }
     })
 }
-onMounted(()=>{
-  getGoodInfo()
-})
-onUpdated(()=>{
-  getGoodInfo()
-})
+
+getGoodInfo()
+
+onUpdated(getGoodInfo)
 
 const edited = ref(false)  // 信息编辑标志
+
 // 检查商品信息是否有修改
-const goodPreInfo = ref(null)  // 商品原信息副本
-watch(goodInfo, ()=>{
-  for(const property in goodInfo.value){
-    if(goodInfo.value[property] !== goodPreInfo.value[property]){
+watch(goodInfo, () => {
+  for (const property in goodInfo.value) {
+    if (goodPreInfo.value && goodInfo.value[property] !== goodPreInfo.value[property]) {
       edited.value = true
       break
-    }else{
+    } else {
       continue
     }
   }
 }, { deep: true })
 
 const active = ref(0)  // 步骤条激活标号
-const buttonInfo = computed(()=>{
-  switch(active.value){
+const buttonInfo = computed(() => {
+  switch (active.value) {
     case 0:
     case 1:
       return '下一条'
@@ -231,135 +252,135 @@ const buttonInfo = computed(()=>{
   }
 }) // 'nextStep'按钮的显示文本
 // 上一步
-function preStep(){
-  if(active.value > 0){
+function preStep() {
+  if (active.value > 0) {
     --active.value
     return
   }
 }
 // 下一步
-function nextStep(){
-  switch(active.value){
+function nextStep () {
+  switch (active.value) {
     case 0:
-      if(goodInfo.value.title == ""){
+      if (goodInfo.value.title == "") {
         ElMessage.error('标题不可为空!')
         break
-      }else if(goodInfo.value.type == ""){
+      } else if (goodInfo.value.type == "") {
         ElMessage.error('商品类型不可为空!')
         break
-      }else if(goodInfo.value.name == ""){
+      } else if (goodInfo.value.name == "") {
         ElMessage.error('商品名称不可为空')
         break
-      }else if(goodInfo.value.keywords == ""){
+      } else if (goodInfo.value.keywords == "") {
         ElMessage.error('关键词不可为空!')
         break
-      }else if(goodInfo.value.campus == ""){
+      } else if (goodInfo.value.campus == "") {
         ElMessage.error('校区不可为空!')
         break
-      }else{
+      } else {
         ++active.value
         break
       }
     case 1:
-      if(goodInfo.value.intro == ""){
+      if (goodInfo.value.intro == "") {
         ElMessage.error('商品简介不可为空!')
         break
-      }else if(imgServerName.value === ''){
+      } else if (imgServerName.value.length === 0) {
         ElMessage.error('请为商品上传实物图!')
         break
-      }else{
+      } else {
         goodInfo.value.images = imgServerName.value.join(';')
         ++active.value
         break
       }
     case 2:
-      if(goodInfo.value.price === 0){
+      if (Number.parseFloat(goodInfo.value.price) === 0) {
         ElMessage.error('商品价格不能为零!')
         break
-      }else if(goodInfo.value.detail === ''){
+      } else if (goodInfo.value.detail === '') {
         ElMessage.error('请指定商品交易细节!')
         break
-      }else{
-        if(edited.value){
+      } else {
+        if (edited.value) {
           ++active.value
           break
-        }else{
+        } else {
           ElMessage.warning('没有需要提交的修改！')
           break
         }
       }
     case 3:
       ElMessageBox.confirm('确认要修改商品信息吗？','提示')
-      .then(() => {
-        // 调用接口-添加商品：传入（商品信息） 返回（商品ID）
-        let date = new Date()
-        date.setHours(date.getHours() + 8)
-        let modifiedGood = [
-          goodInfo.value.price,
-          goodInfo.value.type,
-          goodInfo.value.name,
-          goodInfo.value.title,
-          goodInfo.value.keywords,
-          goodInfo.value.campus,
-          goodInfo.value.intro,
-          goodInfo.value.detail,
-          imgServerName.value.join(';'),
-          props.goodId
-        ]
-        axios.post('/api/modifyGood', modifiedGood)
-          .then(() => {
-            emits('close')
-            ElMessage({
-                type: 'success',
-                message: '修改成功'
+        .then(() => {
+          // 调用接口-添加商品：传入（商品信息） 返回（商品ID）
+          let date = new Date()
+          date.setHours(date.getHours() + 8)
+          let modifiedGood = [
+            goodInfo.value.price,
+            goodInfo.value.type,
+            goodInfo.value.name,
+            goodInfo.value.title,
+            goodInfo.value.keywords,
+            goodInfo.value.campus,
+            goodInfo.value.intro,
+            goodInfo.value.detail,
+            imgServerName.value.join(';'),
+            props.goodId
+          ]
+          axios.post('/api/modifyGood', modifiedGood)
+            .then(() => {
+              emits('close')
+              ElMessage({
+                  type: 'success',
+                  message: '修改成功'
+              })
+              // 刷新当前页面
+              const router = useRouter()
+              router.go(0)
             })
-            // 刷新当前页面
-            const router = useRouter()
-            router.go(0)
-          })
-      })
-      .catch(() => {
-        ElMessage.info('取消修改!')
-        edited.value = false
-      })
+        })
+        .catch(() => {
+          ElMessage.info('取消修改!')
+          edited.value = false
+        })
       break
   } 
 }
 
-const upload = ref(null) // 使用ref获取el-upload元素
+const upload = ref<UploadInstance | null>(null) // 使用ref获取el-upload元素
 // 注意：不需要额外添加头部声明content-type, 否则会引发后端报错: 
 // Error: Multipart: Boundary not found
 //const headers = {'content-type': 'multipart/form-data'} // 请求头, 固定数据类型
-const imgLocalUrl = ref([]) // 上传图片后返回的本地 url
-const imgServerName = ref([]) // 上传图片后返回的服务端 url(只取名称)
+const imgLocalUrl = ref<string[]>([]) // 上传图片后返回的本地 url
+const imgServerName = ref<string[]>([]) // 上传图片后返回的服务端 url(只取名称)
 const limitMax = 2200*1900 // 允许上传的最大尺寸
 // on-exceed hook
-function handleExceed(){
+function handleExceed () {
   ElMessage.warning('只能为商品上传最多三张图片!')
   return false
 }
 // before-upload hook
-function handleBeforeUpload(file){
-  if(file.size > limitMax){
+function handleBeforeUpload (file: UploadRawFile) {
+  if (file.size > limitMax) {
     ElMessage.error('大小超出限制')
     return false
-  }else{
+  } else {
     imgLocalUrl.value = []
   }
 }
 // 手动上传文件
-function submitUpload(){
-  upload.value.submit()
+function submitUpload () {
+  upload.value && upload.value.submit()
 }
 // on-success hook
-function handleOnSuccess(res, file){
+function handleOnSuccess (res: any, file: UploadFile) {
   // 生成预览图
-  imgLocalUrl.value.push(URL.createObjectURL(file.raw))
+  imgLocalUrl.value.push(URL.createObjectURL(file.raw as UploadRawFile))
   // 获取服务端返回的文件名
   imgServerName.value.push(res[0].path.split('/')[3])
 }
 // on-error hook
-function handleOnError(err){
+function handleOnError (err: Error) {
   console.log(err)
 }
 </script>

@@ -8,7 +8,7 @@
       :seller-name="item.sellerName"
       :good-title="item.goodTitle"
       :image="item.image"
-      :price="item.price"/>
+      :price="Number.parseFloat(item.price)"/>
   </el-scrollbar>
   <div class="price-box">
     <p class="price-label">
@@ -44,7 +44,7 @@
 </Teleport>
 </template>
 
-<script setup>
+<script lang="ts" setup>
 import { ElMessage } from 'element-plus'
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
@@ -57,15 +57,24 @@ const userID = window.sessionStorage.getItem('uid')
 
 const router = useRouter()
 // 需要结算的商品ID集合
-const goodsID = ref(router.currentRoute.value.query.gid.split('-'))
+const goodsID = ref((router.currentRoute.value.query.gid as string).split('-'))
+// 商品类型
+interface Good {
+  goodID: string
+  sellerID: string
+  sellerName: string
+  image: string
+  goodTitle: string
+  price: string
+}
 // 商品简要信息
-const goodsInfo = ref([])
+const goodsInfo = ref<Good[]>([])
 // 总金额
 const totalPrice = ref(0)
 // 调用接口：传入（ID集合）返回（商品信息列表）
 axios.post(`/api/goodsToConfirm`, goodsID.value)
-  .then(res => {
-    res.data.forEach(info => {
+  .then((res: any) => {
+    res.data.forEach((info: any) => {
       goodsInfo.value.push({
         goodID: info.good_id,
         sellerID: info.seller_id,
@@ -92,7 +101,7 @@ axios.get(`/api/getBuyerInfo/${userID}`)
 const showQRModal = ref(false)  
 
 // 关闭付款窗口，根据参数paid改变订单的相应状态
-function closeModal(paid) {
+function closeModal(paid: boolean) {
   showQRModal.value = false
   const order = {
     buyer: userID,
@@ -103,12 +112,12 @@ function closeModal(paid) {
     stat: paid ? '待确认' : '待付款'
   }
   const promises = []
-  for(let item of goodsInfo.value){
+  for (let item of goodsInfo.value) {
     let date = new Date()
 		date.setHours(date.getHours() + 8)
     order.seller = item.sellerID
     order.goodID = item.goodID
-    order.price = item.price
+    order.price = Number.parseFloat(item.price)
     order.generatedTime = date.toISOString().slice(0, 19).replace('T', ' ')
     // 调用接口：传入（用户ID，商品ID，下单时间） 返回（null）
     promises.push(axios.post(`/api/generateOrder`, order))
@@ -119,7 +128,7 @@ function closeModal(paid) {
         window.setTimeout(() => router.push('/order'), 500)
     })
     .catch(err => {
-      console.err(err)
+      console.log(err)
     })  
 }
 

@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { NCard, NForm, NFormItem, NInput, NButton, FormRules, FormItemRule, FormInst } from 'naive-ui'
+import { NCard, NForm, NFormItem, NInput, NButton } from 'naive-ui'
+import type { FormRules, FormItemRule, FormInst } from 'naive-ui'
 import { ref } from 'vue'
 import axios from 'axios'
 import { ElMessage } from 'element-plus'
@@ -41,7 +42,7 @@ function getCAPTCHA () {
     }
   },
   (rule) => {
-    return keys.includes(rule?.key)
+    return keys.includes(rule?.key as string)
   })
 }
 
@@ -126,7 +127,7 @@ function completeModify () {
         newpassword: modifyData.value.password,
       }
       // 调用接口：传入（用户ID、新密码） 返回（null）
-      this.axios.post('/api/modifyPassword/', id_pwd)
+      axios.post('/api/modifyPassword/', id_pwd)
         .then(() => {
           ElMessage.success('修改成功，请重新登录！')
           emits('close-retrieve')
@@ -194,7 +195,7 @@ const modifyRules: FormRules = {
       path="userID">
       <n-input
         v-model:value="retrieveData.userID"
-        :placeholder="null"
+        :placeholder="''"
         class="input"
         />
     </n-form-item>
@@ -203,7 +204,7 @@ const modifyRules: FormRules = {
       path="telNum">
       <n-input
         v-model:value="retrieveData.telNum"
-        :placeholder="null"
+        :placeholder="''"
         class="input"
         />
     </n-form-item>
@@ -212,7 +213,7 @@ const modifyRules: FormRules = {
       path="CAPTCHA">
       <n-input
         v-model:value="retrieveData.CAPTCHA"
-        :placeholder="null"
+        :placeholder="''"
         class="input"
         />
     </n-form-item> 
@@ -253,7 +254,7 @@ const modifyRules: FormRules = {
       path="password">
       <n-input
         v-model:value="modifyData.password"
-        :placeholder="null"
+        :placeholder="''"
         class="input"
         />
     </n-form-item>
@@ -262,7 +263,7 @@ const modifyRules: FormRules = {
       path="telNum">
       <n-input
         v-model:value="retrieveData.telNum"
-        :placeholder="null"
+        :placeholder="''"
         class="input"
         />
     </n-form-item>
@@ -271,7 +272,7 @@ const modifyRules: FormRules = {
       path="CAPTCHA">
       <n-input
         v-model:value="retrieveData.CAPTCHA"
-        :placeholder="null"
+        :placeholder="''"
         class="input"
         />
     </n-form-item> 

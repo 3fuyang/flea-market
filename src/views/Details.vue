@@ -26,7 +26,7 @@
 							class="sub-image"
 							v-for="(image, index) of imageCollection"
 							:src="image"
-							:id="index"/>
+							:id="index.toString()"/>
 					</div>
 					<p class="declaration">商品类型：{{goodInfo.type}}</p>
 				</div>
@@ -134,7 +134,31 @@ import axios from 'axios'
 const goodID = ref('')	// 商品ID
 let userID = ''	// 用户ID
 const router = useRouter()
-const goodInfo = ref({sellerID: ''})	// 商品详情
+// 商品详情类型
+interface GoodInfo {
+	goodTitle: string
+	onshelfTime: string
+	sellerID: string
+	likes: number
+	type: string
+	campus: string
+	images: string[]
+	price: string
+	intro: string
+}
+const goodInfo = ref<GoodInfo>(
+	{
+		goodTitle: '',
+		onshelfTime: '',
+		sellerID: '',
+		likes: 0,
+		type: '',
+		campus: '',
+		images: [],
+		price: '',
+		intro: ''
+	}
+)	// 商品详情
 
 // 当前展示的大号图片序号
 const currImageIndex = ref(0)
@@ -145,11 +169,11 @@ const currImageURL = computed(() => {
 })
 
 // 底部盒子中的缩略图
-const imageCollection = ref([])
+const imageCollection = ref<string[]>([])
 
 // 挂载前，初始化数据
 // 从queryString获取商品ID
-goodID.value = router.resolve(router.currentRoute.value).query.gid
+goodID.value = router.resolve(router.currentRoute.value).query.gid as string
 axios.get(`/api/checkAvailable/${goodID.value}`)
 	.then(res => {
 		if(!res.data){
@@ -185,19 +209,19 @@ axios.get(`/api/checkAvailable/${goodID.value}`)
 	})
 
 // 由于要监听多个元素的同一事件，需手写一个含有全局计时器的防抖函数
-let globalTimer = { timer: null }
-const debounce = (fn, delay) => {
-	return (...args) => {
-		globalTimer.timer = setTimeout(() => {
+let globalTimer: number | null | undefined
+const debounce = (fn: (...args: any[]) => void, delay: number) => {
+	return (...args: any[]) => {
+		globalTimer = setTimeout(() => {
 			fn(...args)
-			clearTimeout(globalTimer.timer)
-			globalTimer.timer = null
+			clearTimeout(globalTimer as number)
+			globalTimer = null
 		}, delay)
 	}
 }
 
 // 鼠标悬浮到小图时，显示大图
-const showBigImg = (id) => {
+const showBigImg = (id: number) => {
 	currImageIndex.value = id
 }
 
@@ -233,14 +257,14 @@ const initialize = () => {
 		Array.from(subImages).forEach((subImg) => {
 			subImg.addEventListener('mouseenter', (e) => {
 				// 加上防抖
-				debounceShowBigImg(Number.parseInt(e.target.id))
+				debounceShowBigImg(Number.parseInt((e.target as HTMLElement).id))
 			})
 		})
 	}, 100)
 }
 onMounted(() => {
 	// 从SessionStorage获取用户ID
-	userID = window.sessionStorage.getItem('uid')	
+	userID = window.sessionStorage.getItem('uid') as string
 	if(userID.length === 7) {
 		let date = new Date()
 		date.setHours(date.getHours() + 8)

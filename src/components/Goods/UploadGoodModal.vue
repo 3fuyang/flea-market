@@ -146,11 +146,13 @@
 </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { computed, ref } from 'vue'
 import { useRouter } from 'vue-router'
-import { ElMessage, ElMessageBox } from 'element-plus'
+import { ElMessage, ElMessageBox, type UploadFile } from 'element-plus'
+import type { UploadInstance, UploadRawFile } from 'element-plus'
 import axios from 'axios'
+
 const props = defineProps({
   userId: String, // 用户ID
 })
@@ -166,53 +168,59 @@ const goodInfo = ref({
   price: '',  // 价格
   detail: '',  // 交易细节
 })
+// 类型选项
 const typeOptions = ["图书音像", "电子产品", "美妆个护", "运动户外", "生活电器", "其他"]
+// 校区选项
 const campusOptions = ["四平路校区", "嘉定校区", "沪西校区", "沪北校区"]
 
-const active = ref(0)  // 步骤条激活标号
-const buttonInfo = computed(()=>{
+// 步骤条激活标号
+const active = ref(0)
+// 'nextStep'按钮的显示文本
+const buttonInfo = computed(() => {
   return active.value < 3 ? "下一步" : "发布"
-}) // 'nextStep'按钮的显示文本
+})
+
 // 上一步
-function preStep(){
-  if(active.value > 0){
+function preStep() {
+  if (active.value > 0) {
     --active.value
     return
   }
 }
+
 // 下一步
-function nextStep(){
-  switch(active.value){
+function nextStep() {
+  switch (active.value) {
     case 0:
-      if(goodInfo.value.title == ""){
+      if (goodInfo.value.title == "") {
         ElMessage.error('标题不可为空!')
-      }else if(goodInfo.value.type == ""){
+      } else if (goodInfo.value.type == "") {
         ElMessage.error('商品类型不可为空!')
-      }else if(goodInfo.value.name == ""){
+      } else if (goodInfo.value.name == "") {
         ElMessage.error('商品名称不可为空')
-      }else if(goodInfo.value.keywords == ""){
+      } else if (goodInfo.value.keywords == "") {
         ElMessage.error('关键词不可为空!')
-      }else if(goodInfo.value.campus == ""){
+      } else if (goodInfo.value.campus == "") {
         ElMessage.error('校区不可为空!')
-      }else{
+      } else {
         ++active.value
       }
       break
     case 1:
-      if(goodInfo.value.intro == ""){
+      if (goodInfo.value.intro == "") {
         ElMessage.error('商品简介不可为空!')
-      }else if(imgServerName.value.length === 0){
+      } else if (imgServerName.value.length === 0) {
         ElMessage.error('请为商品上传实物图!')
-      }else{
+      } else {
         ++active.value
       }
       break
     case 2:
-      if(goodInfo.value.price === 0){
+      if (Number.parseFloat(goodInfo.value.price) === 0) {
         ElMessage.error('商品价格不能为零!')
-      }else if(goodInfo.value.detail === ''){
+      } else if (goodInfo.value.detail === '') {
         ElMessage.error('请指定商品交易细节!')
-      }else{
+      } else {
         ++active.value
       }
       break
@@ -252,39 +260,39 @@ function nextStep(){
 }
 
 // 使用ref获取el-upload元素
-const upload = ref(null) 
+const upload = ref<UploadInstance | null>(null) 
 // 注意：不需要额外添加头部声明content-type, 否则会引发后端报错: 
 // Error: Multipart: Boundary not found
 //const headers = {'content-type': 'multipart/form-data'} // 请求头, 固定数据类型
-const imgLocalUrl = ref([]) // 上传图片后返回的本地 url
-const imgServerName = ref([]) // 上传图片后返回的服务端名称
+const imgLocalUrl = ref<string[]>([]) // 上传图片后返回的本地 url
+const imgServerName = ref<string[]>([]) // 上传图片后返回的服务端名称
 const limitMax = 2200*1900 // 允许上传的最大尺寸
 // on-exceed hook
-function handleExceed(){
+function handleExceed () {
   ElMessage.warning('只能为商品上传最多三张图片!')
   return false
 }
 // before-upload hook
-function handleBeforeUpload(file){
-  if(file.size > limitMax){
+function handleBeforeUpload (file: UploadRawFile) {
+  if (file.size > limitMax) {
     ElMessage.error('大小超出限制')
     return false
   }
 }
 // 手动上传文件
-function submitUpload(){
-  upload.value.submit()
+function submitUpload () {
+  upload.value && upload.value.submit()
 }
 // on-success hook
-function handleOnSuccess(res, file){
-  imgLocalUrl.value.push(URL.createObjectURL(file.raw))
+function handleOnSuccess (res: any, file: UploadFile) {
+  imgLocalUrl.value.push(URL.createObjectURL(file.raw as UploadRawFile))
   // 后端的文件信息逐个以数组的形式返回
   imgServerName.value.push(res[0].path.split('/')[3])
   // 前端访问图片时，使用node.js配置公共资源
   // 注意：图片统一存储在服务器 ./pulic/images 目录下，用名称区分
 }
 // on-error hook
-function handleOnError(err){
+function handleOnError (err: Error) {
   console.log(err)
 }
 </script>

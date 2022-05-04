@@ -36,120 +36,122 @@
 </div>
 </template>
 
-<script>
-import {ElMessage, ElMessageBox} from 'element-plus'
-import { ArrowLeft, Search, Close } from "@element-plus/icons-vue";
-export default {
-  components:{
-      ArrowLeft, Search, Close
-  },
+<script setup lang="ts">
+import { ElMessage, ElMessageBox } from 'element-plus'
+import { ArrowLeft, Search, Close } from "@element-plus/icons-vue"
+import { ref } from 'vue'
+import { useRouter } from 'vue-router'
+import axios from 'axios'
 
-  created(){
-    // 调用接口：传入（用户ID） 返回（收藏夹数据:商品ID、图片url、名称、价格）
-    this.axios.get('/api/getCollection/'+this.userID)
-      .then((response)=>{
-        response.data.forEach(item => {
-          this.favoriteData.push({
-            id: item.good_id,
-            name: item.title,
-            price: Number.parseFloat(item.price).toFixed(2),
-            path: `http://127.0.0.1:8082/public/images/${item.images.split(';')[0]}`
-          })
-        })
-      })    
-    /* this.favoriteData=[
-      { id:'0',name:'大学物理学 (附)网络课程&配套习题',price:'15.00',path: ("/src/assets/physics.png")},
-      { id:'1',name:'Apple iPad Pro 11英寸平板电脑',price:'3499.00',path: ("/src/assets/ipad.png")},
-      { id:'2',name:'派克威雅XL系列 樱花粉特别款礼盒',price:'198.00',path: ("/src/assets/pen.png")},
-      { id:'3',name:'Ecovas智能家用空气净化器 机器智能',price:'3399.00',path: ("/src/assets/philips.png")},
-      { id:'4',name:'传奇武夷山 大红袍茶叶',price:'149.00',path: ("/src/assets/tea.png")},
-    ]; */
-    this.showData = this.favoriteData;
-  },
-  
-  data(){
-    return{
-      userID: window.sessionStorage.getItem('uid'), // 用户ID
-      favoriteData: [],  // 收藏夹数据
-      keyWord: '',  // 搜索关键字
-      searching: 0,  // 标志是否显示搜索结果，0 为不显示，1 为显示
-      showData: [], // 展示数据
-    }
-  },
+const router = useRouter()
 
-  methods:{
-    //点击卡片跳转商品详情页
-    jumpCard(itemID){
-      this.$router.push({
-        path:'/details',
-        query:{
-          gid:itemID,
-        }
+// 收藏夹类型
+interface Favorite {
+  id: string
+  name: string
+  price: string
+  path: string
+}
+
+// 用户ID
+const userID = ref(window.sessionStorage.getItem('uid'))
+// 收藏夹数据
+const favoriteData = ref<Favorite[]>([])
+// 搜索关键字
+const keyWord = ref('')
+// 是否开启搜索
+const searching = ref(0)
+// 搜索视图
+const showData = ref<Favorite[]>([])
+
+// 调用接口：传入（用户ID） 返回（收藏夹数据:商品ID、图片url、名称、价格）
+axios.get(`/api/getCollection/${userID.value}`)
+  .then((response) => {
+    response.data.forEach((item: any) => {
+      favoriteData.value.push({
+        id: item.good_id,
+        name: item.title,
+        price: Number.parseFloat(item.price).toFixed(2),
+        path: `http://127.0.0.1:8082/public/images/${item.images.split(';')[0]}`
       })
-    },
-    // 搜索收藏
-    searchFavorite(){
-      if(this.keyWord!=''){
-        this.searching = 1;
-        this.showData=[];
-        for(let item of this.favoriteData){
-          if(new RegExp(this.keyWord,"img").test(item.name)){
-            this.showData.push(item)
+    })
+    showData.value = [...favoriteData.value]
+  })
+
+// 点击卡片跳转商品详情页
+function jumpCard(itemID: string) {
+  router.push({
+    path:'/details',
+    query:{
+      gid:itemID,
+    }
+  })
+}
+
+// 搜索收藏
+function searchFavorite() {
+  if (keyWord.value !== '') {
+    searching.value = 1
+    showData.value = []
+    for (let item of favoriteData.value) {
+      if (new RegExp(keyWord.value, "img").test(item.name)) {
+        showData.value.push(item)
+      }
+    }
+  } else {
+    ElMessage.error('请输入关键字进行搜索')
+  }      
+}
+
+// 取消搜素
+function cancelSearch() {
+  searching.value = 0
+  showData.value = [...favoriteData.value]
+}
+
+// 取消收藏
+function deleteFavorite (gid: string) {
+  ElMessageBox.confirm(
+    '将从收藏夹中删除这件商品,是否继续操作?',
+    '确认',
+    {
+      confirmButtonText:'继续',
+      cancelButtonText:'取消',
+      type:'warning',
+    }
+  ).then(()=>{
+    // 调用接口： 传入（用户ID,商品ID） 返回(null)
+    const data = {
+      userID: userID.value,
+      goodID: gid
+    }
+    axios.post('/api/cancelCollection', data)
+      .then(() => {
+        let index = 0
+        for (let item of favoriteData.value) {
+          if (item.id === gid) {
+            break
+          } else {
+            index++
           }
         }
-      }else{
-        ElMessage.error('请输入关键字进行搜索');
-      }      
-    },
-    cancelSearch(){
-      this.searching = 0;
-      this.showData = this.favoriteData;
-    },
-    // 取消收藏
-    deleteFavorite(gid){
-      ElMessageBox.confirm(
-        '将从收藏夹中删除这件商品,是否继续操作?',
-        '确认',
-        {
-          confirmButtonText:'继续',
-          cancelButtonText:'取消',
-          type:'warning',
-        }
-      ).then(()=>{
-        // 调用接口： 传入（用户ID,商品ID） 返回(null)
-        let data = {
-          userID: this.userID,
-          goodID: gid
-        }
-        this.axios.post('/api/cancelCollection', data)
-          .then(() => {
-            let index = 0;
-            for(let item of this.favoriteData){
-              if(item.id===gid){
-                break;
-              }else{
-                index++;
-              }
-            }
-            this.favoriteData.splice(index,1);
+        favoriteData.value.splice(index,1)
 
-            index= 0;
-            for(let item of this.showData){
-              if(item.id===gid){
-                break;
-              }else{
-                index++;
-              }
-            }
-            this.showData.splice(index,1);        
-            ElMessage({
-              type:'success',
-              message:'删除成功!',
-            });
-          })
-      })      
-    },
-  },
+        index= 0
+        for (let item of showData.value) {
+          if (item.id === gid) {
+            break
+          } else {
+            index++
+          }
+        }
+        showData.value.splice(index, 1)
+        ElMessage({
+          type:'success',
+          message:'删除成功!',
+        })
+      })
+  })      
 }
 </script>
 

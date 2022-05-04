@@ -25,7 +25,7 @@
 </section>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { computed } from 'vue'
 
 const props = defineProps({
@@ -34,7 +34,8 @@ const props = defineProps({
   taskNum: Number
 })
 
-const remainedNum = computed(() => props.taskNum - props.completedNum)
+// 剩余待办数量
+const remainedNum = computed(() => (props.taskNum as number) - (props.completedNum as number))
 
 </script>
 

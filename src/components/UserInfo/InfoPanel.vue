@@ -106,7 +106,7 @@
     </el-card>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { onBeforeMount, ref, watch } from 'vue'
 import { ElMessageBox, ElMessage } from 'element-plus'
 import "@/assets/fonts/font.css"
@@ -114,31 +114,53 @@ import axios from 'axios'
 const props = defineProps({
   userID: String  // 用户ID
 })
-
-const userInfo = ref(null)
-const newInfo = ref({})
-onBeforeMount(() => {
-  // 调用接口：传入（用户ID） 返回（用户信息：头像URL、昵称、签名、学院、性别、生日）
-  axios.get(`/api/getUserInfo/${props.userID}`)
-    .then((res) => {
-      const data = res.data[0]
-      userInfo.value = {
-        userID: props.userID,
-        nickName: data.nickname,
-        selfIntro: data.biography,
-        college: data.college,
-        gender: data.gender,
-        birthday: data.birthday,
-        avatar: `http://127.0.0.1:8082/public/avatars/${data.avatar}`,
-        sellerRate: 4
-      }
-    })
-    .then(() => {
-      for(let property in userInfo.value){
-        newInfo.value[property] = userInfo.value[property]
-      }  
-    })
+// 用户新信息类型
+interface NewInfo {
+  [index: string]: string | number
+  userID: string
+  nickName: string
+  selfIntro: string
+  college: string
+  gender: string
+  birthday: string
+}
+// 用户原信息类型
+interface UserInfo extends NewInfo {
+  avatar: string
+  sellerRate: number
+}
+// 原信息
+const userInfo = ref<UserInfo>()
+// 新信息
+const newInfo = ref<NewInfo>({
+  userID: '',
+  nickName: '',
+  selfIntro: '',
+  college: '',
+  gender: '',
+  birthday: '',
 })
+
+// 调用接口：传入（用户ID） 返回（用户信息：头像URL、昵称、签名、学院、性别、生日）
+axios.get(`/api/getUserInfo/${props.userID}`)
+  .then((res: any) => {
+    const data = res.data[0]
+    userInfo.value = {
+      userID: props.userID as string,
+      nickName: data.nickname,
+      selfIntro: data.biography,
+      college: data.college,
+      gender: data.gender,
+      birthday: data.birthday,
+      avatar: `http://127.0.0.1:8082/public/avatars/${data.avatar}`,
+      sellerRate: 4
+    }
+  })
+  .then(() => {
+    for(let property in userInfo.value){
+      newInfo.value[property] = userInfo.value[property]
+    }  
+  })
 
 const collegeOptions = [
   {
@@ -178,8 +200,8 @@ const changingInfo = ref(false)
 const edited = ref(false)
 // 检验是否存在修改
 watch(newInfo, () => {
-  for(let property in newInfo.value){
-    if(newInfo.value[property] !== userInfo.value[property]){
+  for (let property in newInfo.value) {
+    if (newInfo.value[property] !== (userInfo.value as UserInfo)[property]) {
       edited.value = true
       break
     }
@@ -195,12 +217,12 @@ const resetEdit = () => {
   changingInfo.value = false
   edited.value = false
   // 恢复修改后的用户信息
-  for(let property in userInfo.value){
+  for (let property in userInfo.value) {
     newInfo.value[property] = userInfo.value[property]
   }  
 }
 const cancelEdit= () => {
-  if(edited.value){
+  if (edited.value) {
     ElMessageBox.confirm(
       '不会保存已做的修改，是否确定取消编辑？',
       '提示'
@@ -213,7 +235,7 @@ const cancelEdit= () => {
 }
 // 保存修改
 const changeInfoConfirm = () => {
-  if(edited.value){
+  if (edited.value) {
     ElMessageBox.confirm(
       "确认要修改个人信息吗?",
       "提示"
@@ -244,8 +266,8 @@ const changeInfoConfirm = () => {
       axios.post(`api/modifyUserInfo`, newInfo.value)
         .then(() => {
           // 修改视图
-          for(let property in newInfo.value){
-            userInfo.value[property] = newInfo.value[property]
+          for (let property in newInfo.value) {
+            (userInfo.value as UserInfo)[property] = newInfo.value[property]
           }
           changingInfo.value = false
           edited.value = false

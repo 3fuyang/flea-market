@@ -1,20 +1,17 @@
 <template>
   <div class="info">
     <el-row justify="center">
-      <info-panel v-if="userID.length > 0" :userID="userID"/>
-      <comment-list v-if="userID.length > 0" :userID="userID"/>
+      <info-panel v-if="(userID as string).length > 0" :userID="(userID as string)"/>
+      <comment-list v-if="(userID as string).length > 0" :userID="(userID as string)"/>
     </el-row>
   </div>  
 </template>
 
-<script setup>
-import { onMounted, ref } from 'vue'
+<script setup lang="ts">
+import { ref } from 'vue'
 import InfoPanel from '../../components/UserInfo/InfoPanel.vue'
 import CommentList from '../../components/UserInfo/CommentList.vue'
-const userID = ref('')
-onMounted(() => {
-  userID.value = window.sessionStorage.getItem('uid')
-})
+const userID = ref(window.sessionStorage.getItem('uid'))
 </script>
 
 <style scoped>

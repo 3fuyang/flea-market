@@ -65,61 +65,72 @@
 </div>
 </template>
 
-<script setup>
-import { ref, onMounted } from 'vue'
+<script setup lang="ts">
+import { ref } from 'vue'
 import { StarFilled, Avatar } from '@element-plus/icons-vue'
 import { useRouter } from 'vue-router'
 import { ElMessageBox, ElMessage } from 'element-plus'
 import { NEllipsis } from 'naive-ui'
 import axios from 'axios'
 
+const router = useRouter()
+
 const props = defineProps({
   userId: String,
   goodsStatus: String,
 })
-defineEmits([
-  'check-info',
-])
-const goodsListView = ref([])
-const router = useRouter()
 
-onMounted(()=>{
-  // 根据 props 中的商品状态，调用不同的接口
-  if(props.goodsStatus === 'onShelf'){
-    // 调用接口：传入（用户ID） 返回（上架中商品列表）
-    axios.get(`/api/onShelfGoods/${props.userId}`)
-      .then((res) => {
-        res.data.forEach(item => {
-          goodsListView.value.push({
-            id: item.good_id,
-            name: item.title,
-            price: Number.parseFloat(item.price).toFixed(2),
-            browsed: item.browsed,
-            likes: item.likes,
-            image: `http://127.0.0.1:8082/public/images/${item.images.split(';')[0]}`
-          })
+defineEmits<{
+  (e: 'check-info', gid: string): void
+}>()
+
+// 商品信息类型
+interface GoodInfo {
+  id: string
+  name: string
+  price: string
+  browsed: number
+  likes: number
+  image: string
+}
+// 商品视图
+const goodsListView = ref<GoodInfo[]>([])
+
+// 根据 props 中的商品状态，调用不同的接口
+if (props.goodsStatus === 'onShelf') {
+  // 调用接口：传入（用户ID） 返回（上架中商品列表）
+  axios.get(`/api/onShelfGoods/${props.userId}`)
+    .then((res) => {
+      res.data.forEach((item: any) => {
+        goodsListView.value.push({
+          id: item.good_id,
+          name: item.title,
+          price: Number.parseFloat(item.price).toFixed(2),
+          browsed: item.browsed,
+          likes: item.likes,
+          image: `http://127.0.0.1:8082/public/images/${item.images.split(';')[0]}`
         })
       })
-  }else if(props.goodsStatus === 'soldOut'){
-    // 调用接口：传入（用户ID） 返回（已售出商品列表）
-    axios.get(`/api/soldGoods/${props.userId}`)
-      .then((res) => {
-        res.data.forEach(item => {
-          goodsListView.value.push({
-            id: item.good_id,
-            name: item.title,
-            price: Number.parseFloat(item.price).toFixed(2),
-            browsed: item.browsed,
-            likes: item.likes,
-            image: `http://127.0.0.1:8082/public/images/${item.images.split(';')[0]}`
-          })
+    })
+} else if (props.goodsStatus === 'soldOut') {
+  // 调用接口：传入（用户ID） 返回（已售出商品列表）
+  axios.get(`/api/soldGoods/${props.userId}`)
+    .then((res) => {
+      res.data.forEach((item: any) => {
+        goodsListView.value.push({
+          id: item.good_id,
+          name: item.title,
+          price: Number.parseFloat(item.price).toFixed(2),
+          browsed: item.browsed,
+          likes: item.likes,
+          image: `http://127.0.0.1:8082/public/images/${item.images.split(';')[0]}`
         })
-      })    
-  }
-})
+      })
+    })    
+}
 
 // 点击图片缩略图跳转商品详情页面
-function jumpToDetail(goodId){
+function jumpToDetail (goodId: string) {
   router.push({
     path:'/details',
     query:{
@@ -129,16 +140,15 @@ function jumpToDetail(goodId){
 }
 
 // 下架商品
-function pullOffGood(goodId){
+function pullOffGood (goodId: string) {
   // 显示确认对话框
   ElMessageBox.confirm(
-    '您确定要下架该商品吗?',
-    '系统不会保存该商品的信息。',
+    '您确定要下架该商品吗?系统不会保存该商品的信息。',
     '提示',
     {
-      confirmButtonText:'确定',
-      cancelButtonText:'取消',
-      type:'warning',
+      confirmButtonText: '确定',
+      cancelButtonText: '取消',
+      type: 'warning',
     }
   ).then(()=>{
     // 调用接口：传入（商品ID）返回（下架结果）

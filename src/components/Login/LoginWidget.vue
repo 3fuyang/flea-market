@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { NCard, NForm, NFormItem, NInput, NRadioGroup, NButton, NRadioButton, FormRules, FormItemRule, NIcon, FormInst } from 'naive-ui'
+import { NCard, NForm, NFormItem, NInput, NRadioGroup, NButton, NRadioButton, NIcon } from 'naive-ui'
+import type { FormInst, FormRules, FormItemRule } from 'naive-ui'
 import { ref } from 'vue'
 import axios from 'axios'
 import { ElMessage } from 'element-plus'
@@ -148,7 +149,7 @@ function logIn (): void {
       path="userID">
       <n-input
         v-model:value="loginData.userID"
-        :placeholder="null"
+        :placeholder="''"
         class="input"
         />
     </n-form-item>
@@ -157,7 +158,7 @@ function logIn (): void {
       path="password">
       <n-input
         v-model:value="loginData.password"
-        :placeholder="null"
+        :placeholder="''"
         class="input"
         type="password"
         show-password-on="click"         

@@ -15,7 +15,7 @@
 </article>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { NButton, NDataTable, NDescriptions, NDescriptionsItem, NIcon, NInput, NTag } from 'naive-ui'
 import { h, onBeforeMount, ref } from 'vue'
 import { Create } from '@vicons/ionicons5'
@@ -29,9 +29,22 @@ axios.get(`/api/getAdminName/${adminID}`)
     adminName.value = res.data[0].nickname
   })
 
-const rowKey = row => row.orderId
+// 举报类型
+interface Report {
+  no: number
+  reporter: string
+  accused: string
+  orderId: string
+  goodTitle: string
+  tradeTime: string
+  reason: string
+  state: string
+}
+const rowKey = (row: Report) => row.orderId
 
-const replys = ref({})
+const replys = ref<{
+  [index: string]: string
+}>({})
 const createColumns = () => [
   {
     title: 'No',
@@ -52,7 +65,7 @@ const createColumns = () => [
   {
     title: '状态',
     key: 'state',
-    render(row) {
+    render(row: Report) {
       return h(
         NTag, 
         {
@@ -78,7 +91,7 @@ const createColumns = () => [
       }
     ),
     expandable: () => true,
-    renderExpand: (rowData) => {
+    renderExpand: (rowData: Report) => {
       return h(
         'div',
         {
@@ -163,14 +176,14 @@ const createColumns = () => [
   }
 ]
 
-const columns = ref([])
-const reports = ref([])
+const columns = ref<any[]>([])
+const reports = ref<Report[]>([])
 const pagination = ref({
   pageSize: 8
 })
 const completed = ref(0)
 
-function banAccused(row){
+function banAccused(row: Report){
   let date = new Date()
   date.setHours(date.getHours() + 8)
   let data = {
@@ -191,7 +204,7 @@ function banAccused(row){
 }
 
 // 驳回举报
-function refuseReport(row) {
+function refuseReport(row: Report) {
   // 封装请求body
   let date = new Date()
   date.setHours(date.getHours() + 8)
@@ -218,7 +231,7 @@ onBeforeMount(() => {
   let counter = 0
   axios.post(`/api/getReports`)
     .then(res => {
-      res.data.forEach(item => {
+      res.data.forEach((item: any) => {
         reports.value.push({
           no: ++counter,
           reporter: item.buyer,
@@ -230,7 +243,7 @@ onBeforeMount(() => {
           state: item.stat,
         })
       })
-      reports.value.forEach((rowData) => {
+      reports.value.forEach((rowData: Report) => {
         replys.value[rowData.orderId] = '您的举报已收悉，管理员已对被举报者作出封禁处理，感谢您的监督。'
       })
     })

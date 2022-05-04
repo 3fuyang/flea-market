@@ -27,7 +27,7 @@
             <el-rate
               v-model="comment.rate"
               disabled 
-              :show-score="comment.length"
+              :show-score="comment.rate > 0"
               text-color="#ff9900" 
               style="width: 60%;float: left;height: auto;"/>
           </el-row>
@@ -52,7 +52,7 @@
 </div>        
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { ref, computed, onBeforeMount } from 'vue'
 import '@/assets/fonts/font.css'
 
@@ -64,8 +64,17 @@ const props = defineProps({
 const pageSize = 3
 // 当前页码
 const currentPage = ref(1)
+
+// 评论类型
+interface Comment {
+  time: string
+  name: string
+  rate: number
+  avatar: string
+  text: string
+}
 // 全部评论
-const commentList = ref([])
+const commentList = ref<Comment[]>([])
 // 视口评论
 const selectComments = computed(() => {
   // 终点索引

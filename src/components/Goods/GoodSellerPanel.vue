@@ -67,7 +67,7 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { ref, onBeforeMount } from 'vue'
 import { ChatDotRound, RefreshLeft } from "@element-plus/icons-vue"
 import { useRouter } from 'vue-router'
@@ -77,7 +77,12 @@ const props = defineProps({
   sellerID: String
 })
 
-const sellerInfo = ref({}) // 卖家信息
+const sellerInfo = ref({
+  sellerName: '',
+  avatarUrl: '',
+  reputation: '',
+  score: ''
+}) // 卖家信息
 const userID = window.sessionStorage.getItem('uid')
 onBeforeMount(() => {
   // 调用接口：传入（卖家ID） 返回（卖家信息：卖家昵称、信誉、头像URL）
@@ -97,7 +102,7 @@ onBeforeMount(() => {
 const router = useRouter()
 // 联系买家
 const concactSeller = () => {
-  if (userID.length === 7) {
+  if ((userID as string).length === 7) {
     // 在新窗口打开聊天页面。
     const routeUrl = router.resolve({
       path:'/chat',
@@ -108,7 +113,7 @@ const concactSeller = () => {
       }
     })
     window.open(routeUrl .href, '_blank')
-  } else if (userID.length === 4) {
+  } else if ((userID as string).length === 4) {
     ElMessage.warning(`请使用普通账号执行该操作。`)
   } else {
     router.push(`/login`)
@@ -116,7 +121,7 @@ const concactSeller = () => {
 }
 
 // 前往趋势商品详情页
-const goToDetail= (id) => {
+const goToDetail= (id: string) => {
   router.push({
     path: '/details',
     query: {
@@ -125,10 +130,17 @@ const goToDetail= (id) => {
   })
 }
 
+// 趋势商品类型
+interface TrendGood {
+  goodID: string
+  goodTitle: string
+  price: string
+  imgUrl: string
+}
 // 趋势商品
-const trendGoods = ref([])
+const trendGoods = ref<TrendGood[]>([])
 // 计算tip位置
-const getPlacement = index => {
+const getPlacement = (index: number) => {
   switch(index){
     case 0:
       return 'left-start'
@@ -146,7 +158,7 @@ const getTrends = () => {
   trendGoods.value = []
   axios.get(`/api/getTrends`)
     .then(res => {
-      res.data.forEach(item => {
+      res.data.forEach((item: any) => {
         trendGoods.value.push({
           goodID: item.good_id,
           goodTitle: item.title,

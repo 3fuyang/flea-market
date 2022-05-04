@@ -43,7 +43,7 @@
 </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { ref } from 'vue'
 import OrderListTable from '../../components/Order/OrderListTable.vue'
 import ReportModal from '../../components/Order/ReportModal.vue'
@@ -54,7 +54,21 @@ import { ElMessage } from 'element-plus'
 
 const userID = window.sessionStorage.getItem('uid')
 
-const orderList = ref([])  // 订单原始数据
+// 订单类型
+interface Order {
+  sellerId: string
+  orderId: string
+  goodId: string
+  goodName: string
+  image: string
+  time: string
+  status: string
+  commentStars: number
+  price: string
+  comment: string
+  reported: string
+}
+const orderList = ref<Order[]>([])  // 订单原始数据
 const showReport = ref(false) // 举报窗口开关
 const showEvaluate = ref(false)  // 评价窗口开关
 const showQR = ref(false) // 付款窗口开关
@@ -66,7 +80,7 @@ const currentOrderReported = ref(false) // 当前订单是否已被举报
 // 调用接口：传入（用户ID） 返回（订单列表：订单ID，订单时间，商品名称，金额，卖家ID，订单状态，订单评价）
 axios.get(`/api/getOrders/${userID}`)
   .then(res => {
-    res.data.forEach(item => {
+    res.data.forEach((item: any) => {
       orderList.value.push({
         sellerId: item.seller_id,
         orderId: new Array(12).join('0') + item.order_id,
@@ -84,14 +98,14 @@ axios.get(`/api/getOrders/${userID}`)
   })
 
 // 打开举报窗口
-function showReportModal(oid, orp){
+function showReportModal(oid: string, orp: string){
   currentOrderId.value = oid
   currentOrderReported.value = orp === '未举报' ? false : true
   showReport.value = true
 }
 
 // 关闭举报窗口
-function closeReport(mode, oid) {
+function closeReport(mode: string, oid: string) {
   if (mode === 'reported') {
     let index = orderList.value.findIndex(item => item.orderId === oid)
     if (index >= 0) {
@@ -102,14 +116,14 @@ function closeReport(mode, oid) {
 }
 
 // 打开评价窗口
-function showEvaluateModal(oid, ost){
+function showEvaluateModal(oid: string, ost: string){
   currentOrderId.value = oid
   currentOrderStatus.value = ost
   showEvaluate.value = true  
 }
 
 // 关闭评价窗口
-function completeOrder(oid) {
+function completeOrder(oid: string) {
   // 更改视图中订单的状态为“已完成”
   let index = orderList.value.findIndex((item) => item.orderId === oid)
   if (index >= 0) {
@@ -118,19 +132,19 @@ function completeOrder(oid) {
 }
 
 // 打开付款窗口
-function showQRModal(oid, price) {
+function showQRModal(oid: string, price: number) {
   showQR.value = true
   currentOrderId.value = oid
   currentOrderPrice.value = price
 }
 
 // 关闭付款窗口
-function closeQRModal(paid) {
+function closeQRModal(paid: boolean) {
   if (paid) {
     axios.post(`/api/payOrder`, {orderID: currentOrderId.value})
       .then(() => {
-        let index = orderList.value.findIndex(item => item.orderID === currentOrderId.value)
-        if (index >=0 ) {
+        let index = orderList.value.findIndex(item => item.orderId === currentOrderId.value)
+        if (index >= 0) {
           orderList.value[index].status = '待确认'
         }
         ElMessage.success(`付款成功，交易完成后记得确认完成订单哦~`)

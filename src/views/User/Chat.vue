@@ -89,7 +89,7 @@
 </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { NScrollbar, NIcon, NAvatar, NTag, NInput, NButton } from "naive-ui"
 import { Promotion, Close } from "@element-plus/icons-vue"
 import { ref, onBeforeMount, onUnmounted } from "vue"
@@ -97,11 +97,10 @@ import { useRoute } from 'vue-router'
 import axios from "axios"
 
 const route = useRoute()
-let chatTimer
+let chatTimer: number | null | undefined
 onBeforeMount(() => {
   let newOponent = route.query
-  console.log(newOponent)
-  getChatList(newOponent.oponentID, newOponent.oponentName, newOponent.avatar)
+  getChatList(newOponent.oponentID as string, newOponent.oponentName as string, newOponent.avatar as string)
   // 设置定时器
   //chatListTimer = setInterval(getChatList, 2000)
   chatTimer = setInterval(getMessage, 2000)
@@ -109,19 +108,31 @@ onBeforeMount(() => {
 
 onUnmounted(() => {
   // 清除定时器
-  clearInterval(chatTimer)
+  clearInterval(chatTimer as number)
   chatTimer = null
 })
 
 const userID = window.sessionStorage.getItem('uid')
-const oponentList = ref([])
+// 对方信息类型
+interface Oponent {
+  uid: string
+  uname: string
+  avatar: string
+}
+const oponentList = ref<Oponent[]>([])
 const currOponent = ref('我的聊天')
 const currOponentName = ref('')
-const messageData = ref([])
+// 消息类型
+interface Message {
+  day_time: string
+  speaker: number
+  details: string
+}
+const messageData = ref<Message[]>([])
 const textarea = ref('')
 
 // 切换聊天对象
-function changeOponent(oponentID,oponentName){
+function changeOponent(oponentID: string, oponentName: string){
   currOponent.value = oponentID
   currOponentName.value = oponentName
   getMessage(true)
@@ -132,12 +143,12 @@ function closeChat(){
   currOponentName.value = ''
 }
 // 获取聊天对象列表
-function getChatList(newOponentID = null, newOponentName = null, newOponentAvatar = null){
+function getChatList(newOponentID: string, newOponentName: string, newOponentAvatar: string){
   // 调用接口：传入（用户ID，聊天对象ID） 返回（聊天对象列表：ID，名称）
-  const newList = []
+  const newList: Oponent[] = []
   axios.get(`/api/getChatOponent/${userID}`)
     .then(res => {
-      res.data.forEach((item) => {
+      res.data.forEach((item: any) => {
         newList.push({
           uid: item.user_id,
           uname: item.nickname,
@@ -146,12 +157,12 @@ function getChatList(newOponentID = null, newOponentName = null, newOponentAvata
       })
     })
     .then(() => {
-      if(newList.length !== oponentList.value.length){
+      if (newList.length !== oponentList.value.length) {
         oponentList.value = newList
       }
-      if(newOponentID){
+      if (newOponentID) {
         let index = oponentList.value.findIndex(item => item.uid === newOponentID)
-        if(index >= 0){
+        if (index >= 0) {
           oponentList.value.splice(index, 1)
         }
         oponentList.value.unshift({
@@ -166,19 +177,19 @@ function getChatList(newOponentID = null, newOponentName = null, newOponentAvata
 }
 // 获取消息列表
 function getMessage(oponentChanged = false){
-  if(oponentChanged){
+  if (oponentChanged) {
     messageData.value = []
   }
-  let newMessage = []
+  let newMessage: Message[] = []
   // 调用接口：传入（用户ID，聊天对象ID） 返回（两人消息列表：时间、说话方、内容）
   let a_user_id = userID, b_user_id = currOponent.value
-  if(a_user_id > b_user_id){
-    [a_user_id, b_user_id] = [b_user_id, a_user_id]
+  if ((a_user_id as string) > b_user_id) {
+    [a_user_id, b_user_id] = [b_user_id, a_user_id as string]
   }
   axios.get(`/api/getMessage/${a_user_id}/${b_user_id}`)
     .then((res) => {
       let isSelfA = a_user_id === userID
-      res.data.forEach((item) => {
+      res.data.forEach((item: any) => {
         newMessage.push({
           day_time: item.date_time.substr(0, 19).replace('T', ' '),
           // 0 表示对方，1 表示该用户
@@ -188,21 +199,21 @@ function getMessage(oponentChanged = false){
       })
     })
     .then(() => {
-      if(oponentChanged || newMessage.length !== messageData.value.length){
+      if (oponentChanged || newMessage.length !== messageData.value.length) {
         messageData.value = newMessage
       }
     })
 }
 // 发送消息
-function handleSendMessage(){
+function handleSendMessage () {
   let a_user_id = userID, b_user_id = currOponent.value
-  if(a_user_id > b_user_id){
-    [a_user_id, b_user_id] = [b_user_id, a_user_id]
+  if(a_user_id as string > b_user_id){
+    [a_user_id, b_user_id] = [b_user_id, a_user_id as string]
   }
   const date = new Date(+ new Date() + 8 * 3600 * 1000).toISOString().slice(0, 19).replace('T', ' ')
   let message = {
     a_user_id, b_user_id, 
-    speaker: userID < currOponent.value ? '0' : '1',
+    speaker: (userID as string) < currOponent.value ? '0' : '1',
     date_time: date,
     details: textarea.value        
   }

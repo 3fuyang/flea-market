@@ -18,8 +18,8 @@
             v-model="category" 
             placeholder="Select">
             <el-option
-              v-for="item in categories"
-              :key="item.index"
+              v-for="(item, index) in categories"
+              :key="index"
               :value="item"
             >
             </el-option>
@@ -101,7 +101,7 @@
               查看评价
             </span>            
             <span v-else-if="order.status === '待付款'" class="Option point"
-            @click="payOrder(order.orderId, order.price)">
+            @click="payOrder(order.orderId, Number.parseFloat(order.price))">
               <el-icon :size="13" class="Icon"><Wallet/></el-icon>
               去付款
             </span>  
@@ -117,7 +117,7 @@
 </div>
 </template>
 
-<script setup>
+<script lang="ts" setup>
 // 在<script setup>中，this.$router 不能使用
 // 需要引入 useRouter()，生成 router 实例
 import { useRouter } from 'vue-router'
@@ -126,30 +126,104 @@ import { ElMessage, ElMessageBox } from "element-plus"
 import { Service, ChatDotRound, Edit, Wallet, CircleCheck } from '@element-plus/icons-vue'
 import axios from 'axios'
 
-const props = defineProps({
-  orderList: Array, // 订单原始数据
-})
+// 订单类型
+interface Order {
+  sellerId: string
+  orderId: string
+  goodId: string
+  goodName: string
+  image: string
+  time: string
+  status: string
+  commentStars: number
+  price: string
+  comment: string
+  reported: string
+}
+
+const props = defineProps<{
+  orderList: Order[]
+}>()
 
 const categories = ['全部订单', '待付款', '待确认', '待评价', '已完成', '已取消'] // 订单状态
 const category = ref('全部订单') // 当前订单分类
 const columns = ['','订单详情','', '金额', '状态', '操作'] // 表头
+
 const rawOrderList = ref(props.orderList)
-const orderListView = computed(()=>{
-  if(category.value === '全部订单'){
+
+const orderListView = computed(() => {
+  if (category.value === '全部订单') {
     return rawOrderList.value
-  }else{
-    return rawOrderList.value.filter((item)=>{
+  } else {
+    return rawOrderList.value.filter((item) => {
       return item.status === category.value
     })
   }
 }) // 订单视图
+
 const router = useRouter()
 
-const emits = defineEmits({
-  'show-report-modal': null,  // 举报窗口展示
-  'show-evaluate-modal': null,  // 评价窗口展示
-  'show-pay-modal': null, //付款窗口展示
-})
+const emits = defineEmits<{
+  (e: 'show-report-modal', oid: string, orp: string): void
+  (e: 'show-evaluate-modal', oid: string, ost: string): void
+  (e: 'show-pay-modal', oid: string, price: number): void
+}>()
+
+// 联系卖家
+function contactSeller (sid: string) {
+  // 在新窗口打开聊天页面。
+  axios.get(`/api/sellerAvatarAndName/${sid}`)
+    .then(res => {
+      const routeUrl = router.resolve({
+        path:'/chat',
+        query: {
+          oponentID: sid,
+          oponentName: res.data[0].nickname,
+          avatar: `http://127.0.0.1:8082/public/avatars/${res.data[0].avatar}`
+        }
+      })
+      window.open(routeUrl .href, '_blank')  
+    })
+}
+
+// 付款
+function payOrder (oid: string, price: number) {
+  emits('show-pay-modal', oid, price)
+}
+
+// 确认收货
+function confirmReceipt (oid: string) {
+  ElMessageBox.confirm(
+    '请确保已收到并检验过货物，是否确定完成订单?',
+    '提示',
+    {
+      confirmButtonText:'确定',
+      cancelButtonText:'取消',
+      type:'warning',
+    }
+  ).then(() => {
+    // 调用接口：传入（订单ID）返回（确定结果）
+    axios.post(`/api/completeOrder`, { orderID: oid})
+      .then(() => {
+        // 从视图中修改订单状态
+        for(let item of orderListView.value){
+          if (item.orderId === oid){
+            item.status = '待评价'
+            break
+          }else{
+            continue
+          }
+        }
+        ElMessage({
+          type:'success',
+          message:'感谢您的购物!',
+        })
+      })
+  }).catch(() => {
+    // 取消
+    return false
+  })  
+}
 
 // 删除订单
 /* function deleteOrder(orderId){
@@ -175,62 +249,6 @@ const emits = defineEmits({
     // 取消删除
   })  
 } */
-
-// 联系卖家
-function contactSeller(sid){
-  // 在新窗口打开聊天页面。
-  axios.get(`/api/sellerAvatarAndName/${sid}`)
-    .then(res => {
-      const routeUrl = router.resolve({
-        path:'/chat',
-        query: {
-          oponentID: sid,
-          oponentName: res.data[0].nickname,
-          avatar: `http://127.0.0.1:8082/public/avatars/${res.data[0].avatar}`
-        }
-      })
-      window.open(routeUrl .href, '_blank')  
-    })
-}
-
-// 付款
-function payOrder(oid, price){
-  emits('show-pay-modal', oid, price)
-}
-
-// 确认收货
-function confirmReceipt(oid){
-  ElMessageBox.confirm(
-    '请确保已收到并检验过货物，是否确定完成订单?',
-    '提示',
-    {
-      confirmButtonText:'确定',
-      cancelButtonText:'取消',
-      type:'warning',
-    }
-  ).then(()=>{
-    // 调用接口：传入（订单ID）返回（确定结果）
-    axios.post(`/api/completeOrder`, { orderID: oid})
-      .then(() => {
-        // 从视图中修改订单状态
-        for(let item of orderListView.value){
-          if (item.orderId === oid){
-            item.status = '待评价'
-            break
-          }else{
-            continue
-          }
-        }
-        ElMessage({
-          type:'success',
-          message:'感谢您的购物!',
-        })
-      })
-  }).catch(()=>{
-    // 取消
-    return false
-  })  
-}
 </script>
 
 <style scoped>

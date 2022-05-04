@@ -13,21 +13,21 @@
           <el-tab-pane label="上架中" name="onShelf" lazy>
             <GoodsListTable 
               v-if="currentTab === 'onShelf'" 
-              :userId="uid" 
+              :userId="(uid as string)" 
               :goodsStatus="currentTab" 
               @check-info="checkGoodInfo"/>
           </el-tab-pane>
           <el-tab-pane label="已售出" name="soldOut" lazy>
             <GoodsListTable 
               v-if="currentTab === 'soldOut'" 
-              :userId="uid" 
+              :userId="(uid as string)" 
               :goodsStatus="currentTab" 
               @check-info="checkGoodInfo"/>
           </el-tab-pane>
           <el-tab-pane label="新添闲置" name="uploadGood" lazy>
             <UploadGoodModal 
               v-if="currentTab === 'uploadGood'" 
-              :userId="uid"/>
+              :userId="(uid as string)"/>
           </el-tab-pane>
         </el-tabs>
       </div>
@@ -45,28 +45,28 @@
 </div>
 </template>
 
-<script setup>
-import { onMounted, ref } from 'vue'
+<script setup lang="ts">
+import { ref } from 'vue'
 import GoodsListTable from '../../components/Goods/GoodsListTable.vue'
 import UploadGoodModal from '../../components/Goods/UploadGoodModal.vue'
 import GoodsInfoModal from '../../components/Goods/GoodsInfoModal.vue'
 
-const currentTab = ref('')
-const uid = ref(null)
+// 当前Tab页
+const currentTab = ref('onShelf')
+// 用户ID
+const uid = ref(window.sessionStorage.getItem('uid'))
 
-onMounted(()=>{
-  // 获取用户ID
-  uid.value = window.sessionStorage.getItem('uid')
-  currentTab.value = 'onShelf'
-})
-
+// 商品信息窗口开关
 const showInfoModal = ref(false)
+// 当前选中商品ID
 const currentGoodId = ref('')
-function checkGoodInfo(gid){
+// 打开信息窗口
+function checkGoodInfo(gid: string) {
   currentGoodId.value = gid
   showInfoModal.value = true
 }
-function closeGoodInfo(){
+// 关闭信息窗口
+function closeGoodInfo() {
   currentGoodId.value = ''
   showInfoModal.value = false
 }

@@ -1,10 +1,11 @@
 <script setup lang="ts">
 import axios from 'axios'
 import { ElMessage } from 'element-plus'
-import { NCard, NForm, NFormItem, NInput, NButton, FormRules, FormItemRule, FormInst, NDatePicker, NSelect } from 'naive-ui'
+import { NCard, NForm, NFormItem, NInput, NButton, NDatePicker, NSelect } from 'naive-ui'
+import type { FormInst, FormRules, FormItemRule } from 'naive-ui'
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
-import colleges from './colleges'
+import { colleges } from './colleges'
 
 const router = useRouter()
 
@@ -43,7 +44,7 @@ function getCAPTCHA () {
     }
   },
   (rule) => {
-    return keys.includes(rule?.key)
+    return keys.includes(rule?.key as string)
   })
 }
 
@@ -104,7 +105,7 @@ function completeInfo () {
         telnum: registerData.value.telNum,
         gender: infoData.value.gender,
         college: infoData.value.college,
-        birthday: new Date(infoData.value.birthday).toISOString().slice(0, 10), 
+        birthday: new Date(infoData.value.birthday as number).toISOString().slice(0, 10), 
       }
       console.log(reg_info)
       axios.post('/api/register',reg_info)
@@ -234,7 +235,7 @@ const infoRules: FormRules = {
       path="userID">
       <n-input
         v-model:value="registerData.userID"
-        :placeholder="null"
+        :placeholder="''"
         class="input"
         />
     </n-form-item>
@@ -243,7 +244,7 @@ const infoRules: FormRules = {
       path="name">
       <n-input
         v-model:value="registerData.name"
-        :placeholder="null"
+        :placeholder="''"
         class="input"
         />
     </n-form-item>    
@@ -252,7 +253,7 @@ const infoRules: FormRules = {
       path="password">
       <n-input
         v-model:value="registerData.password"
-        :placeholder="null"
+        :placeholder="''"
         class="input"
         type="password"
         show-password-on="click"        
@@ -263,7 +264,7 @@ const infoRules: FormRules = {
       path="reenteredPassword">
       <n-input
         v-model:value="registerData.reenteredPassword"
-        :placeholder="null"
+        :placeholder="''"
         class="input"
         type="password"
         show-password-on="click"         
@@ -274,7 +275,7 @@ const infoRules: FormRules = {
       path="telNum">
       <n-input
         v-model:value="registerData.telNum"
-        :placeholder="null"
+        :placeholder="''"
         class="input"
         />
     </n-form-item>
@@ -283,7 +284,7 @@ const infoRules: FormRules = {
       path="CAPTCHA">
       <n-input
         v-model:value="registerData.CAPTCHA"
-        :placeholder="null"
+        :placeholder="''"
         class="input"
         />
     </n-form-item>         

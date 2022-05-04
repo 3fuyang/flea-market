@@ -26,7 +26,7 @@
 </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { Discount } from '@element-plus/icons-vue'
 const props = defineProps({
   goodID: String,

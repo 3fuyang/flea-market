@@ -7,6 +7,7 @@ import { ElMessage } from 'element-plus'
 import { useRouter } from 'vue-router'
 import { LockOpenOutline } from '@vicons/ionicons5'
 import { useUserStore } from '../../stores/user'
+import { memberRoutes, adminRoutes, loginRoutes, endRoutes } from "@/router"
 
 // 获取store
 const userStore = useUserStore()
@@ -69,6 +70,18 @@ function logIn (): void {
               if (is_e.data) {
                 ElMessage.success('用户登录成功！')
                 userStore.logIn(loginData.value.userID)
+                // 删除登录路由
+                loginRoutes.forEach((route) => {
+                  router.removeRoute(route.name)
+                })
+                // 添加普通会员路由
+                memberRoutes.forEach((route) => {
+                  router.addRoute(route)
+                })
+                // 将endRoutes移至尾部
+                endRoutes.forEach((route) => {
+                  router.addRoute(route)
+                })                
                 router.push('/home')          
               } else {
                 ElMessage.error('账号或密码错误！')
@@ -80,6 +93,17 @@ function logIn (): void {
             if (is_e.data) {
               ElMessage.success('管理员登录成功！')
               userStore.logIn(loginData.value.userID)
+              // 删除登录路由，添加管理员路由
+              loginRoutes.forEach((route) => {
+                router.removeRoute(route.name)
+              })
+              adminRoutes.forEach((route) => {
+                router.addRoute(route)
+              })
+              // 将endRoutes移至尾部
+              endRoutes.forEach((route) => {
+                router.addRoute(route)
+              })          
               router.push('/admin/report')
             } else {
               ElMessage.error('账号或密码错误！')

@@ -7,6 +7,7 @@ import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { colleges } from './colleges'
 import { useUserStore } from '@/stores/user'
+import { memberRoutes, adminRoutes, loginRoutes, endRoutes } from "@/router"
 
 const router = useRouter()
 
@@ -116,6 +117,18 @@ function completeInfo () {
         .then(() => {
           ElMessage.success('注册成功,1秒后将为您自动登录...')
           userStore.logIn(registerData.value.userID)
+          // 删除登录路由
+          loginRoutes.forEach((route) => {
+            router.removeRoute(route.name)
+          })
+          // 添加普通会员路由
+          memberRoutes.forEach((route) => {
+            router.addRoute(route)
+          })
+          // 将endRoutes移至尾部
+          endRoutes.forEach((route) => {
+            router.addRoute(route)
+          })          
           setTimeout(() => {
             router.push('/home')
           }, 1000)          

@@ -79,6 +79,7 @@ import { ElMessage, ElMessageBox } from "element-plus"
 import { useRouter } from "vue-router"
 import { useUserStore } from "@/stores/user"
 import { storeToRefs } from "pinia"
+import { memberRoutes, adminRoutes, loginRoutes, endRoutes } from "@/router"
 
 const router = useRouter()
 
@@ -96,9 +97,33 @@ function logOut () {
       cancelButtonText:'取消',
       type:'warning'
     }
-  ).then(()=>{
+  ).then(() => {
     //用store的actions设置登录状态为false
-    userStore.logOut()
+    const preIdentity = identity.value
+    userStore.logOut()    
+    // 移除权限路由
+    switch (preIdentity) {
+      case 'member':
+        memberRoutes.forEach((route) => {
+          router.removeRoute(route.name)
+        })
+        break
+      case 'admin':
+        adminRoutes.forEach((route) => {
+          router.removeRoute(route.name)
+        })
+        break
+      default:
+        break
+    }
+    // 添加登录路由
+    loginRoutes.forEach((route) => {
+      router.addRoute(route)
+    })
+    // 将endRoutes移至尾部
+    endRoutes.forEach((route) => {
+      router.addRoute(route)
+    })
     router.push('/home')
     ElMessage({
       type:'success',

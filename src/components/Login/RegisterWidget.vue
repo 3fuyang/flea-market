@@ -3,7 +3,7 @@ import axios from 'axios'
 import { ElMessage } from 'element-plus'
 import { NCard, NForm, NFormItem, NInput, NButton, NDatePicker, NSelect } from 'naive-ui'
 import type { FormInst, FormRules, FormItemRule } from 'naive-ui'
-import { ref } from 'vue'
+import { ref, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import { colleges } from './colleges'
 import { useUserStore } from '@/stores/user'
@@ -36,6 +36,19 @@ const hasCAPTCHA = ref(false)
 // 正确的验证码
 const ssrCAPTCHA = ref('')
 
+// 验证码倒计时
+const countDown = ref(300)
+
+watch(countDown, () => {
+  if (countDown.value === 0) {
+    ssrCAPTCHA.value = ''
+    hasCAPTCHA.value = false
+    window.clearInterval(timer)
+  }
+})
+
+let timer: number
+
 // 获取验证码
 function getCAPTCHA () {
   // 要应用的部分规则
@@ -46,6 +59,9 @@ function getCAPTCHA () {
       useCAPTCHA(registerData.value.telNum, 1)
         .then(code => { 
           if (code !== 'error' && code !== 'Wrong phone number') {
+            timer = window.setInterval(() => {
+              countDown.value--
+            }, 1000)
             ssrCAPTCHA.value = code 
             hasCAPTCHA.value = true
           } else {

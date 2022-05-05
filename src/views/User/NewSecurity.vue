@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { NTabs, NTabPane, NCard, NSteps, NStep, NForm, NFormItem, NInput, NButton, NGradientText, NIcon,
   type FormItemInst, type FormInst, type FormItemRule } from 'naive-ui'
-import { ref } from 'vue'
+import { ref, watch } from 'vue'
 import { CheckmarkCircle } from '@vicons/ionicons5'
 import { useRouter } from 'vue-router'
 import ModifyTelCard from '@/components/Security/ModifyTelCard.vue'
@@ -35,12 +35,27 @@ const passwordHasCaptcha = ref(false)
 // 修改验证码实际验证码
 const passwordRealCaptcha = ref('')
 
+// 验证码倒计时
+const countDown = ref(300)
+
+watch(countDown, () => {
+  if (countDown.value === 0) {
+    passwordRealCaptcha.value = ''
+    passwordHasCaptcha.value = false
+    window.clearInterval(timer)
+  }
+})
+
+let timer: number
 // 获取修改密码验证码
 function getPasswordCaptcha () {
   // 调用接口：传入（手机号） 返回（验证码）
   useCAPTCHA(telNum.value, 2)
     .then(code => { 
       if (code !== 'error' && code !== 'Wrong phone number') {
+        timer = window.setInterval(() => {
+          countDown.value--
+        }, 1000)
         passwordRealCaptcha.value = code 
         passwordHasCaptcha.value = true
       } else {

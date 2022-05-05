@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { ref } from 'vue'
+import { ref, watch } from 'vue'
 import {  type FormInst, type FormRules, type FormItemRule, NIcon, NButton, NForm, NFormItem, NSteps, NStep, NGradientText, NCard, NInput } from 'naive-ui'
 import { CheckmarkCircle } from '@vicons/ionicons5'
 import { useRouter } from 'vue-router'
@@ -34,14 +34,29 @@ const hasCAPTCHA = ref(false)
 // 服务端验证码
 const ssrCAPTCHA = ref('')
 
+// 验证码倒计时
+const countDown = ref(300)
+
+watch(countDown, () => {
+  if (countDown.value === 0) {
+    ssrCAPTCHA.value = ''
+    hasCAPTCHA.value = false
+    window.clearInterval(timer)
+  }
+})
+
 // 获取验证码
+let timer: number
 function getCAPTCHA () {
   telFormRef.value?.validate((errors) => {
     if (!errors) {
-      useCAPTCHA(props.telNum as string, 3)
+      useCAPTCHA(telFormModel.value.newTel, 3)
         .then(code => { 
           if (code !== 'error' && code !== 'Wrong phone number') {
-            ssrCAPTCHA.value = code 
+            timer = window.setInterval(() => {
+              countDown.value--
+            }, 1000)
+            ssrCAPTCHA.value = code
             hasCAPTCHA.value = true
           } else {
             console.log('获取验证码失败:', code)
@@ -158,7 +173,7 @@ function modifyTel () {
           type="info"
           :disabled="hasCAPTCHA"
           @click="getCAPTCHA">
-          接收验证码
+          {{ hasCAPTCHA ? `已发送(${countDown}s)` : '接收验证码' }}
         </n-button>
       </div>
     </div>

@@ -130,7 +130,16 @@ interface UserInfo extends NewInfo {
   sellerRate: number
 }
 // 原信息
-const userInfo = ref<UserInfo>()
+const userInfo = ref<UserInfo>({
+  userID: '',
+  nickName: '',
+  selfIntro: '',
+  college: '',
+  gender: '',
+  birthday: '',
+  avatar: '',
+  sellerRate: 0
+})
 // 新信息
 const newInfo = ref<NewInfo>({
   userID: '',
@@ -145,16 +154,15 @@ const newInfo = ref<NewInfo>({
 axios.get(`/api/getUserInfo/${props.userID}`)
   .then((res: any) => {
     const data = res.data[0]
-    userInfo.value = {
-      userID: props.userID as string,
-      nickName: data.nickname,
-      selfIntro: data.biography,
-      college: data.college,
-      gender: data.gender,
-      birthday: data.birthday,
-      avatar: `http://127.0.0.1:8082/public/avatars/${data.avatar}`,
-      sellerRate: 4
-    }
+    userInfo.value.userID = props.userID as string,
+    userInfo.value.nickName = data.nickname,
+    userInfo.value.selfIntro = data.biography,
+    userInfo.value.college = data.college,
+    userInfo.value.gender = data.gender,
+    userInfo.value.birthday = data.birthday,
+    userInfo.value.avatar = `http://127.0.0.1:8082/public/avatars/${data.avatar}`,
+    userInfo.value.sellerRate = 4
+    
   })
   .then(() => {
     for(let property in userInfo.value){

@@ -53,7 +53,7 @@ interface RequestBody {
 
 // 解析query参数
 const parseQuery = (route: RouteLocationNormalized) => {
-  resultGoods.value = []
+  resultGoods.value.length = 0
   // 提取关键字
   let keywords = route.query.keywords
   // campus, category, minPrice, maxPrice, onShelfTime, score

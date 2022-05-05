@@ -189,7 +189,17 @@ interface PreInfo extends goodInfo {
   [index: string]: string
   images: string
 }
-const goodPreInfo = ref<PreInfo>()  // 商品原信息副本
+const goodPreInfo = ref<PreInfo>({
+  title: '',
+  type: '',
+  name: '',
+  keywords: '',
+  campus: '',
+  intro: '',
+  price: '',
+  detail: '',
+  images: ''
+})  // 商品原信息副本
 
 // 商品类型选项
 const typeOptions = ["图书音像", "电子产品", "美妆个护", "运动户外", "生活电器", "其他"]
@@ -202,19 +212,20 @@ function getGoodInfo() {
   axios.get(`/api/getGoods/${props.goodId}`)
     .then((res) => {
       let data = res.data
-      goodPreInfo.value = {
-        title: data.title,
-        type: data.category,
-        name: data.good_name,
-        keywords: data.keywords,
-        campus: data.campus,
-        intro: data.intro,
-        price: Number.parseFloat(data.price).toFixed(2),
-        detail: data.detail,
-        images: data.images        
-      }
-      imgLocalUrl.value = data.images.split(';').map((name: string) => `http://127.0.0.1:8082/public/images/${name}`)
-      imgServerName.value = data.images.split(';')
+      goodPreInfo.value.title = data.title
+      goodPreInfo.value.type = data.category
+      goodPreInfo.value.name = data.good_name
+      goodPreInfo.value.keywords = data.keywords
+      goodPreInfo.value.campus = data.campus
+      goodPreInfo.value.intro = data.intro
+      goodPreInfo.value.price = Number.parseFloat(data.price).toFixed(2)
+      goodPreInfo.value.detail = data.detail
+      goodPreInfo.value.images = data.images
+
+      imgLocalUrl.value.length = 0   
+      imgLocalUrl.value.push(...data.images.split(';').map((name: string) => `http://127.0.0.1:8082/public/images/${name}`))
+      imgServerName.value.length = 0
+      imgServerName.value.push(...data.images.split(';'))
       for (let property in goodPreInfo.value) {
         goodInfo.value[property] = goodPreInfo.value[property]
       }

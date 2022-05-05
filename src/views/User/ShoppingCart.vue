@@ -118,14 +118,15 @@ function handleSelectionChange (selection: CartGood[]) {
   selectedNum.value = 0;
   cost.value = 0;
   if (selection.length > 0) {
-    selectedData.value = selection
+    selectedData.value.length = 0
+    selectedData.value.push(...selection)
     selectedNum.value = selection.length
     for (let item of selectedData.value) {
       cost.value += Number.parseFloat(item.price)
     }
     cost.value = cost.value.toFixed(2)
   } else {
-    selectedData.value = []
+    selectedData.value.length = 0
     selectedNum.value = 0
     cost.value = 0
   }
@@ -191,7 +192,7 @@ function removeSelectedGoods () {
         }
         tableData.value.splice(index, 1)
       }    
-      selectedData.value = []
+      selectedData.value.length = 0
       selectedNum.value = 0
       cost.value = 0
       ElMessage({

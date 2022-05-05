@@ -154,7 +154,9 @@ function pullOffGood (goodId: string) {
     // 调用接口：传入（商品ID）返回（下架结果）
 
     // 从视图中删除商品
-    goodsListView.value = goodsListView.value.filter((item)=>{return item.id !== goodId})
+    const copy = goodsListView.value.filter((item)=>{return item.id !== goodId})
+    goodsListView.value.length = 0
+    goodsListView.value.push(...copy)
     ElMessage({
       type:'success',
       message:'下架成功!',

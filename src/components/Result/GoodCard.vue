@@ -44,7 +44,7 @@ const goodPrice = ref(props.price)
 const currImageIndex = ref(0)
 // 图片集合
 const imageCollection = ref<string[]>([])
-imageCollection.value = props.images.map(item => `http://127.0.0.1:8082/public/images/${item}`)
+imageCollection.value.push(...props.images.map(item => `http://127.0.0.1:8082/public/images/${item}`))
 // 展示大图的URL
 const currImageURL = computed(() => {
 	return imageCollection.value[currImageIndex.value]
@@ -54,7 +54,7 @@ const currImageURL = computed(() => {
 let globalTimer: number | null | undefined
 const debounce = (fn: (...args: any[]) => void, delay: number) => {
 	return (...args: any[]) => {
-		globalTimer = setTimeout(() => {
+		globalTimer = window.setTimeout(() => {
 			fn(...args)
 			clearTimeout(globalTimer as number)
 			globalTimer = null

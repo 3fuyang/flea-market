@@ -90,13 +90,14 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue'
 import { isNavigationFailure, onBeforeRouteUpdate, useRouter, type LocationQuery } from 'vue-router'
-import { cloneDeep } from 'lodash'
+import { cloneDeep, property } from 'lodash'
 import { ElMessage } from 'element-plus'
 
 const router = useRouter()
 
 // 关键词，作为路由query参数传递
 const keywords = ref('')
+
 // 已启用的筛选条件，它用来作为路由query参数传递
 const filters = ref<{
   [index: string]: string[] | string | number | undefined 
@@ -114,15 +115,18 @@ const filters = ref<{
   maxPrice: undefined,
   score: []
 })
+
 // 价格上、下限
 const minPrice = ref<number | undefined>(undefined)
 const maxPrice = ref<number | undefined>(undefined)
-// 筛选条件，它与模板中的视图相绑定
+
+// 筛选项类型
 interface filterItem {
   label: string
   value: string
   selected: boolean
 }
+// 筛选条件，它与模板中的视图相绑定
 const filterTable = ref<{
   [index: string]: filterItem[]
   campus: filterItem[]
@@ -261,10 +265,22 @@ function getAndParseQuery(args: LocationQuery | undefined = undefined) {
   // 提取关键词
   keywords.value = query.keywords?.toString() ? query.keywords?.toString() : ''
   // 提取筛选条件到filters中，若无，则filters不变(延续之前的状态)
-  filters.value = query.filters ? JSON.parse(query.filters.toString()) : filters.value    
+  if (query.filters) {
+    const queryFilters = JSON.parse(query.filters.toString())
+    for(let property in queryFilters) {
+      filters.value[property] = queryFilters[property]
+    }
+  } else {
+    filters.value.campus.length = 0
+    filters.value.category.length = 0
+    filters.value.onShelfTime = ''
+    filters.value.minPrice = undefined
+    filters.value.maxPrice = undefined
+    filters.value.score.length = 0
+  }
+  //filters.value = query.filters ? JSON.parse(query.filters.toString()) : filters.value    
   //console.log(`目前的filters为:`)
   //console.log(filters.value)
-
   // 根据query中filters的值操作filterTable中的selected属性
   for (let property in filterTable.value) {
     if (property === 'onShelfTime') {
@@ -370,7 +386,7 @@ async function removePriceFilter(){
 const debounce = (fn: (...args: any[]) => void, delay: number) => {
   let timer: number | undefined
 	return (...args: any[]) => {
-		timer = setTimeout(() => {
+		timer = window.setTimeout(() => {
 			fn(...args)
 			clearTimeout(timer)
 		}, delay)

@@ -79,7 +79,8 @@ axios.get(`/api/getCollection/${userID.value}`)
         path: `http://127.0.0.1:8082/public/images/${item.images.split(';')[0]}`
       })
     })
-    showData.value = [...favoriteData.value]
+    showData.value.length = 0
+    showData.value.push(...favoriteData.value)
   })
 
 // 点击卡片跳转商品详情页
@@ -96,7 +97,7 @@ function jumpCard(itemID: string) {
 function searchFavorite() {
   if (keyWord.value !== '') {
     searching.value = 1
-    showData.value = []
+    showData.value.length = 0
     for (let item of favoriteData.value) {
       if (new RegExp(keyWord.value, "img").test(item.name)) {
         showData.value.push(item)

@@ -105,8 +105,8 @@ function clearHistory() {
       // 调用接口：传入（用户ID） 返回（null）
       axios.get(`/api/clearTrack/${userID.value}`)
         .then(() => {
-          dateArray.value = []
-          historyData.value = []
+          dateArray.value.length = 0
+          historyData.value.length = 0
           ElMessage({
             type: 'success',
             message: '清除成功!',

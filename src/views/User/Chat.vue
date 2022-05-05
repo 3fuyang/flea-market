@@ -163,7 +163,8 @@ function getChatList(newOponentID: string, newOponentName: string, newOponentAva
     })
     .then(() => {
       if (newList.length !== oponentList.value.length) {
-        oponentList.value = newList
+        oponentList.value.length = 0
+        oponentList.value.push(...newList)
       }
       if (newOponentID) {
         let index = oponentList.value.findIndex(item => item.uid === newOponentID)
@@ -183,7 +184,7 @@ function getChatList(newOponentID: string, newOponentName: string, newOponentAva
 // 获取消息列表
 function getMessage(oponentChanged = false){
   if (oponentChanged) {
-    messageData.value = []
+    messageData.value.length = 0
   }
   let newMessage: Message[] = []
   // 调用接口：传入（用户ID，聊天对象ID） 返回（两人消息列表：时间、说话方、内容）
@@ -205,7 +206,8 @@ function getMessage(oponentChanged = false){
     })
     .then(() => {
       if (oponentChanged || newMessage.length !== messageData.value.length) {
-        messageData.value = newMessage
+        messageData.value.length = 0
+        messageData.value.push(...newMessage)
       }
     })
 }

@@ -71,7 +71,7 @@
 </template>
 
 <script setup lang="ts">
-import { onUpdated, ref } from 'vue'
+import { onBeforeUpdate, ref } from 'vue'
 import { ChatDotRound, RefreshLeft } from "@element-plus/icons-vue"
 import { useRouter } from 'vue-router'
 import axios from 'axios'
@@ -98,18 +98,31 @@ function getSellerInfo () {
   // 调用接口：传入（卖家ID） 返回（卖家信息：卖家昵称、信誉、头像URL）
   axios.get(`/api/getSellerInfo/${props.sellerID}`)
     .then((res) => {     
-      sellerInfo.value = {
-        sellerName: res.data.nickname,
-        avatarUrl: `http://127.0.0.1:8082/public/avatars/${res.data.avatar}`,
-        reputation: res.data.reputation,
-        score: Number.parseFloat(res.data.score).toFixed(1)
-      }
+        sellerInfo.value.sellerName = res.data.nickname
+        sellerInfo.value.avatarUrl = `http://127.0.0.1:8082/public/avatars/${res.data.avatar}`
+        sellerInfo.value.reputation = res.data.reputation
+        sellerInfo.value.score = Number.parseFloat(res.data.score).toFixed(1)
     })
 }
 
 getSellerInfo()
 
-onUpdated(getSellerInfo)
+onBeforeUpdate(() => {
+  console.log(`beforeUpdated, props.sellerID为: ${props.sellerID}`)
+  getSellerInfo()
+})
+
+/* let counterTracked = 0, counterTriggered = 0
+
+onRenderTracked(e => {
+  console.log(`第${++counterTracked}次调用onRenderTacked:`)
+  console.log(e)
+})
+
+onRenderTriggered(e => {
+  console.log(`第${++counterTriggered}次调用onRenderTriggered:`)
+  console.log(e)
+}) */
 
 const router = useRouter()
 // 联系买家
@@ -166,8 +179,9 @@ const getPlacement = (index: number) => {
 }
 // 获取趋势商品
 function getTrends () {
-  // 调用接口： 传入（null） 返回（随机四个商品的简要信息：ID、名称、价格、图片URL）
-  trendGoods.value = []
+  // 清空趋势商品数组
+  trendGoods.value.length = 0
+  // 调用接口： 传入（null） 返回（随机四个商品的简要信息：ID、名称、价格、图片URL）  
   axios.get(`/api/getTrends`)
     .then(res => {
       res.data.forEach((item: any) => {

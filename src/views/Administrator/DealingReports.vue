@@ -230,7 +230,7 @@ function refuseReport(row: Report) {
 }
 
 onBeforeMount(() => {  
-  columns.value = createColumns()
+  columns.value.push(...createColumns())
   // 调用接口：传入（管理员ID） 返回（待处理的举报列表：举报ID，举报者ID，被举报者ID，订单ID，举报时间，举报理由，处理状态）
   let counter = 0
   axios.post(`/api/getReports`)

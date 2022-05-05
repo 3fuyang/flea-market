@@ -53,10 +53,10 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onBeforeMount } from 'vue'
+import { ref, computed } from 'vue'
 import '@/assets/fonts/font.css'
 
-const props = defineProps({
+defineProps({
   userID: String
 })
 
@@ -83,9 +83,8 @@ const selectComments = computed(() => {
   let begin = end - pageSize
   return commentList.value.slice(begin, end)
 })
-onBeforeMount(() => {
   // 调用接口：传入（用户ID） 返回（用户作为卖家收到的评论列表：评论时间、买家头像URL、买家ID、买家昵称、内容、评分）
-  commentList.value = [
+  commentList.value.push(...[
     {
     time: "2022-01-07 09:55",
     name: "王大队长",
@@ -126,8 +125,7 @@ onBeforeMount(() => {
         "https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png",
       text: "有人说，有人在饭里下了毒，我们都不敢吃。",
     }
-  ]
-})
+  ])
 </script>
 
 <style scoped>

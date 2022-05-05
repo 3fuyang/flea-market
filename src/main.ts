@@ -7,6 +7,7 @@ import axios from 'axios'
 import { createPinia } from 'pinia'
 import piniaPluginPersistedstate from 'pinia-plugin-persistedstate'
 import router from './router'
+import VueCssDoodle from '@luxdamore/vue-css-doodle'
 
 const app = createApp(App)
 
@@ -19,4 +20,5 @@ app
   .use(router)  
   .use(ElementPlus)
   .use(VueAxios, axios)
+  .use(VueCssDoodle)
   .mount('#app')

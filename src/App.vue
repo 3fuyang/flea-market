@@ -7,30 +7,30 @@ import { NNotificationProvider } from 'naive-ui'
 	<div 
     id="app" 
     style="background-color: #F5F5F5;">
-  <el-container>
-    <el-header 
-      v-if="$route.path != '/login'" 
-      style="padding: 0;">
-      <top-nav />
-    </el-header>
-		<el-main class="main">
-      <n-notification-provider>
-			  <router-view/>
-      </n-notification-provider>
-		</el-main>
-    <el-footer 
+    <el-container style="overflow-x: hidden;">
+      <el-header 
+        v-if="$route.path != '/login'" 
+        style="padding: 0;">
+        <top-nav />
+      </el-header>      
+      <el-main class="main">
+        <n-notification-provider>
+          <router-view/>
+        </n-notification-provider>
+      </el-main>
+      <el-footer 
+        v-if="$route.path!='/login'" 
+        class="footer">
+        <p>
+          Copyright ©2022 同济大学校内二手交易平台
+        </p>
+      </el-footer>
+    </el-container>
+    <el-backtop 
       v-if="$route.path!='/login'" 
-      class="footer">
-      <p>
-        Copyright ©2022 同济大学校内二手交易平台
-      </p>
-	</el-footer>
-  </el-container>
-	<el-backtop 
-    v-if="$route.path!='/login'" 
-    :bottom="100" 
-    :right="40">
-	</el-backtop>
+      :bottom="100" 
+      :right="40">
+    </el-backtop>
   </div>
 </template>
 
@@ -55,7 +55,8 @@ import { NNotificationProvider } from 'naive-ui'
 .main {
   padding: 0;
   overflow-y: hidden;
-  min-height: 78vh;  
+  min-height: 78vh;
+  width: 100%;
 }
 .footer {
   background-color: #F0F8FF;

@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@element-plus/icons-vue": "^0.2.4",
+    "@luxdamore/vue-css-doodle": "^1.0.1",
     "axios": "^0.25.0",
     "element-plus": "^2.1.11",
     "lodash": "^4.17.21",

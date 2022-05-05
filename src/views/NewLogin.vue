@@ -142,7 +142,7 @@ function handleCloseRetrieve () {
   background-image: no-repeat;
   background-size: 100% 100%;
   font-size: 1rem;
-  height: 43.75em;
+  height: 45em;
   display: flex;
   flex-direction: column;
   justify-content: center;

@@ -92,7 +92,7 @@
 <script setup lang="ts">
 import { NScrollbar, NIcon, NAvatar, NTag, NInput, NButton } from "naive-ui"
 import { Promotion, Close } from "@element-plus/icons-vue"
-import { ref, onBeforeMount, onUnmounted } from "vue"
+import { ref, onBeforeMount, onUnmounted, nextTick } from "vue"
 import { useRoute } from 'vue-router'
 import axios from "axios"
 import { useUserStore } from '@/stores/user'
@@ -208,6 +208,14 @@ function getMessage(oponentChanged = false){
       if (oponentChanged || newMessage.length !== messageData.value.length) {
         messageData.value.length = 0
         messageData.value.push(...newMessage)
+      }
+      if (oponentChanged) {
+        // 如果切换对象，则初始化时将滚动条置于底部
+        nextTick(() => {
+          const scrollContainer = Array.from(document.getElementsByClassName('n-scrollbar-container'))[1]
+          const scrollContent = Array.from(document.getElementsByClassName('n-scrollbar-content'))[1]
+          scrollContainer.scrollTop = scrollContent.scrollHeight
+        })
       }
     })
 }

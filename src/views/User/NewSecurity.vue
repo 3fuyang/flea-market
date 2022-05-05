@@ -5,8 +5,13 @@ import { ref } from 'vue'
 import { CheckmarkCircle } from '@vicons/ionicons5'
 import { useRouter } from 'vue-router'
 import ModifyTelCard from '@/components/Security/ModifyTelCard.vue'
+import axios from 'axios'
+import { useUserStore } from '@/stores/user'
+import { storeToRefs } from 'pinia'
 
 const router = useRouter()
+
+const { userID } = storeToRefs(useUserStore())
 
 // 当前激活Tab名
 const currTab = ref('Security Center')
@@ -15,7 +20,11 @@ const currTab = ref('Security Center')
 const passwordStep = ref(1)
 
 // 旧手机号码
-const telNum = ref('12312341234')
+const telNum = ref('')
+axios.get(`/api/usertel/${userID.value}`)
+  .then((response) => {
+    telNum.value = response.data.toString()  
+  })
 
 // 修改密码填写验证码
 const passwordCaptcha = ref('')
@@ -109,9 +118,16 @@ const newPasswordRules = {
 function modifyPassword () {
   newPasswordRef.value?.validate((errors) => {
     if (!errors) {
-      // 调用接口
-      passwordStep.value++
-      window.setTimeout(() => router.push('/home'), 3000)
+      const id_pwd = {
+        id: userID.value,
+        newpassword: newPasswordModel.value.password,
+      }
+      // 调用接口：传入（用户ID、新密码） 返回（null）
+      axios.post('/api/modifyPassword/', id_pwd)
+        .then(() => {
+          passwordStep.value++
+          window.setTimeout(() => router.push('/home'), 3000)
+        })
     } else {
       console.log(errors)
     }

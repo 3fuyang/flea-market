@@ -37,10 +37,10 @@ const categories = [
 
 // 图片列表
 const imageList = [
-  { no:'1', path: "/src/assets/1.jpg"},
-  { no:'2', path: "/src/assets/2.png"},
-  { no:'3', path: "/src/assets/3.jpg"},
-  { no:'4', path: "/src/assets/4.png"}
+  { no:'1', path: "http://127.0.0.1:8082/public/home/1.jpg"},
+  { no:'2', path: "http://127.0.0.1:8082/public/home/2.png"},
+  { no:'3', path: "http://127.0.0.1:8082/public/home/3.jpg"},
+  { no:'4', path: "http://127.0.0.1:8082/public/home/4.png"}
 ]
 
 const campusList = [

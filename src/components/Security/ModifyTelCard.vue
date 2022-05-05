@@ -3,8 +3,13 @@ import { ref } from 'vue'
 import {  type FormInst, type FormRules, type FormItemRule, NIcon, NButton, NForm, NFormItem, NSteps, NStep, NGradientText, NCard, NInput } from 'naive-ui'
 import { CheckmarkCircle } from '@vicons/ionicons5'
 import { useRouter } from 'vue-router'
+import axios from 'axios'
+import { useUserStore } from '@/stores/user'
+import { storeToRefs } from 'pinia'
 
 const router = useRouter()
+
+const { userID } = storeToRefs(useUserStore())
 
 const props = defineProps({
   telNum: String
@@ -75,8 +80,16 @@ function modifyTel () {
   telFormRef.value?.validate((errors) => {
     if (!errors) {
       // 调用接口
-      telStep.value++
-      window.setTimeout(() => router.push('/home'), 3000)
+      //调用接口：传入（用户ID，新手机号码) 返回(success)
+      let id_tel = {
+        id: userID.value,
+        newtel: telFormModel.value.newTel,
+      }
+      axios.post('/api/modifyTel/', id_tel)
+        .then(() => {
+          telStep.value++
+          window.setTimeout(() => router.push('/home'), 3000)
+        })      
     }
   })
 }

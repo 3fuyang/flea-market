@@ -230,7 +230,7 @@ function nextStep() {
         // 调用接口-添加商品：传入（商品信息） 返回（商品ID）
         let date = new Date()
         date.setHours(date.getHours() + 8)
-        let newGood = [
+        const newGood = [
           props.userId,
           goodInfo.value.price,
           goodInfo.value.type,

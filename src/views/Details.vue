@@ -123,7 +123,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onBeforeUpdate, ref } from 'vue'
+import { computed, ref } from 'vue'
 import { useRouter, onBeforeRouteUpdate } from 'vue-router'
 import GoodSellerPanel from '../components/Goods/GoodSellerPanel.vue'
 import Comments from '../components/Goods/Comments.vue'

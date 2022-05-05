@@ -14,7 +14,7 @@ const Goods = () => import("../views/User/Goods.vue")
 const Order = () => import("../views/User/Order.vue")
 const Chat = () => import("../views/User/Chat.vue")
 const Confirm = () => import("../views/User/NewConfirm.vue")
-const Security = () => import("../views/User/Security.vue")
+const Security = () => import("../views/User/NewSecurity.vue")
 const ShoppingCart = () => import("../views/User/ShoppingCart.vue")
 const Trade = () => import("../views/User/Trade.vue")
 

@@ -7,7 +7,7 @@ import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { colleges } from './colleges'
 import { useUserStore } from '@/stores/user'
-import { memberRoutes, adminRoutes, loginRoutes, endRoutes } from "@/router"
+import { memberRoutes, loginRoutes, endRoutes } from "@/router"
 
 const router = useRouter()
 

@@ -19,6 +19,11 @@ export default defineConfig({
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/api/, ""),
       },
+      "/captcha": {
+        target: "http://utf8.api.smschinese.cn/",
+        changeOrigin: true,
+        rewrite: path => path.replace(/^\/captcha/, '')
+      }
     },
   },
   build: {

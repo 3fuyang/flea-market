@@ -6,6 +6,7 @@ import { useRouter } from 'vue-router'
 import axios from 'axios'
 import { useUserStore } from '@/stores/user'
 import { storeToRefs } from 'pinia'
+import { useCAPTCHA } from '@/composables/useCAPTCHA'
 
 const router = useRouter()
 
@@ -37,8 +38,15 @@ const ssrCAPTCHA = ref('')
 function getCAPTCHA () {
   telFormRef.value?.validate((errors) => {
     if (!errors) {
-      ssrCAPTCHA.value = '123456'
-      hasCAPTCHA.value = true
+      useCAPTCHA(props.telNum as string, 3)
+        .then(code => { 
+          if (code !== 'error' && code !== 'Wrong phone number') {
+            ssrCAPTCHA.value = code 
+            hasCAPTCHA.value = true
+          } else {
+            console.log('获取验证码失败:', code)
+          }
+        }) 
     } else {
       console.log(errors)
     }

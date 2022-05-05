@@ -8,6 +8,7 @@ import { useRouter } from 'vue-router'
 import { colleges } from './colleges'
 import { useUserStore } from '@/stores/user'
 import { memberRoutes, loginRoutes, endRoutes } from "@/router"
+import { useCAPTCHA } from '@/composables/useCAPTCHA'
 
 const router = useRouter()
 
@@ -42,8 +43,15 @@ function getCAPTCHA () {
   registerRef.value?.validate((errors) => {
     if (!errors) {
       // 调用接口：传入（手机号） 返回（验证码）
-      hasCAPTCHA.value = true
-      ssrCAPTCHA.value = '123456'
+      useCAPTCHA(registerData.value.telNum, 1)
+        .then(code => { 
+          if (code !== 'error' && code !== 'Wrong phone number') {
+            ssrCAPTCHA.value = code 
+            hasCAPTCHA.value = true
+          } else {
+            console.log('获取验证码失败:', code)
+          }
+        })
     } else {
       console.log(errors)
     }
@@ -313,6 +321,7 @@ const infoRules: FormRules = {
         @click="goFillInfo">下一步</n-button>
       <n-button
         type="success"
+        :disabled="hasCAPTCHA"
         @click="getCAPTCHA">获取验证码</n-button>
     </div>
   </template>

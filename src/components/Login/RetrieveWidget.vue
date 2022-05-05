@@ -4,6 +4,7 @@ import type { FormRules, FormItemRule, FormInst } from 'naive-ui'
 import { ref } from 'vue'
 import axios from 'axios'
 import { ElMessage } from 'element-plus'
+import { useCAPTCHA } from '@/composables/useCAPTCHA'
 
 // 定义事件
 const emits = defineEmits<{
@@ -35,8 +36,15 @@ function getCAPTCHA () {
   retrieveRef.value?.validate((errors) => {
     if (!errors) {
       // 调用接口：传入（手机号） 返回（验证码）
-      hasCAPTCHA.value = true
-      ssrCAPTCHA.value = '123456'
+      useCAPTCHA(retrieveData.value.telNum, 2)
+        .then(code => { 
+          if (code !== 'error' && code !== 'Wrong phone number') {
+            ssrCAPTCHA.value = code 
+            hasCAPTCHA.value = true
+          } else {
+            console.log('获取验证码失败:', code)
+          }
+        })
     } else {
       console.log(errors)
     }

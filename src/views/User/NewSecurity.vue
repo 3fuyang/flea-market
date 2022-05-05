@@ -8,6 +8,7 @@ import ModifyTelCard from '@/components/Security/ModifyTelCard.vue'
 import axios from 'axios'
 import { useUserStore } from '@/stores/user'
 import { storeToRefs } from 'pinia'
+import { useCAPTCHA } from '@/composables/useCAPTCHA'
 
 const router = useRouter()
 
@@ -36,8 +37,16 @@ const passwordRealCaptcha = ref('')
 
 // 获取修改密码验证码
 function getPasswordCaptcha () {
-  passwordHasCaptcha.value = true
-  passwordRealCaptcha.value = '123456'
+  // 调用接口：传入（手机号） 返回（验证码）
+  useCAPTCHA(telNum.value, 2)
+    .then(code => { 
+      if (code !== 'error' && code !== 'Wrong phone number') {
+        passwordRealCaptcha.value = code 
+        passwordHasCaptcha.value = true
+      } else {
+        console.log('获取验证码失败:', code)
+      }
+    })  
 }
 
 // 修改密码验证码ref对象
@@ -193,7 +202,7 @@ function modifyPassword () {
                 type="info"
                 :disabled="passwordHasCaptcha"
                 @click="getPasswordCaptcha">
-                {{passwordHasCaptcha ? '已发送验证码' : '获取验证码'}}
+                {{passwordHasCaptcha ? `已发送验证码` : '获取验证码'}}
               </n-button>
             </n-form-item>
             <n-button

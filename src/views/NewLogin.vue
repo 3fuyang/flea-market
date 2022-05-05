@@ -2,7 +2,93 @@
 import LoginWidget from '../components/Login/LoginWidget.vue'
 import RegisterWidget from '../components/Login/RegisterWidget.vue'
 import RetrieveWidget from '../components/Login/RetrieveWidget.vue'
-import { ref } from 'vue'
+import { useNotification, NButton, NSpace } from 'naive-ui'
+import { ref, h } from 'vue'
+import { ElMessage } from 'element-plus'
+import { memberRoutes, adminRoutes, loginRoutes, endRoutes } from "@/router"
+import { useUserStore } from '@/stores/user'
+import { useRouter } from 'vue-router'
+
+const router = useRouter()
+
+const userStore = useUserStore()
+
+const date = new Date()
+date.setHours(date.getHours() + 8)
+const notification = useNotification()
+notification.create({
+          title: "Welcome!",
+          description: 'From the Tongji Flea',
+          content: `普通用户测试账号: 1951001 qwe12345,
+管理员测试账号: 0001 qwe12345`,
+          duration: 10000,
+          action: () => h(
+            NSpace,
+            {
+              justify: 'center'
+            },
+            [
+              h(
+                NButton,
+                {
+                  type: 'success',
+                  size: 'tiny',
+                  secondary: true,
+                  onClick: () => {
+                    ElMessage.success('用户登录成功！')
+                    userStore.logIn('1951001')
+                    // 删除登录路由
+                    loginRoutes.forEach((route) => {
+                      router.removeRoute(route.name)
+                    })
+                    // 添加普通会员路由
+                    memberRoutes.forEach((route) => {
+                      router.addRoute(route)
+                    })
+                    // 将endRoutes移至尾部
+                    endRoutes.forEach((route) => {
+                      router.addRoute(route)
+                    })                
+                    router.push('/home')  
+                    notification.destroyAll()              
+                  }
+                },
+                {
+                  default: () => '用户快捷登录'
+                }                
+              ),
+              h(
+                NButton,
+                {
+                  type: 'info',
+                  size: 'tiny',
+                  secondary: true,
+                  onClick: () => {
+                    ElMessage.success('管理员登录成功！')
+                    userStore.logIn('0001')
+                    // 删除登录路由，添加管理员路由
+                    loginRoutes.forEach((route) => {
+                      router.removeRoute(route.name)
+                    })
+                    adminRoutes.forEach((route) => {
+                      router.addRoute(route)
+                    })
+                    // 将endRoutes移至尾部
+                    endRoutes.forEach((route) => {
+                      router.addRoute(route)
+                    })          
+                    router.push('/admin/report')
+                    notification.destroyAll()              
+                  }
+                },
+                {
+                  default: () => '管理员快捷登录'
+                }                
+              )              
+            ]
+          ),
+          meta: date.toISOString().slice(0, 19).replace('T', ' ')
+        })
 
 // 登录窗口开关
 const showLogin = ref(true)
@@ -34,18 +120,20 @@ function handleCloseRetrieve () {
 </script>
 
 <template>
-<div class="root-wrapper">
-  <LoginWidget 
-    v-if="showLogin"
-    @show-register="handleShowRegister"
-    @show-retrieve="handleShowRetrieve"/>
-  <RegisterWidget 
-    v-else-if="showRegister"
-    @off-register="handleOffRegister"/>
-  <RetrieveWidget
-    v-else-if="showRetrieve"
-    @close-retrieve="handleCloseRetrieve"/>
-</div>
+  <n-notification-provider>
+    <div class="root-wrapper">
+      <LoginWidget 
+        v-if="showLogin"
+        @show-register="handleShowRegister"
+        @show-retrieve="handleShowRetrieve"/>
+      <RegisterWidget 
+        v-else-if="showRegister"
+        @off-register="handleOffRegister"/>
+      <RetrieveWidget
+        v-else-if="showRetrieve"
+        @close-retrieve="handleCloseRetrieve"/>
+    </div>
+  </n-notification-provider>
 </template>
 
 <style scoped>

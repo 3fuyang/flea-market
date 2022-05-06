@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import TopNav from './components/TopNav.vue'
+import TopBar from './components/NewTopBar.vue'
 import { NNotificationProvider } from 'naive-ui'
 </script>
 
@@ -11,7 +11,7 @@ import { NNotificationProvider } from 'naive-ui'
       <el-header 
         v-if="$route.path != '/login'" 
         style="padding: 0;">
-        <top-nav />
+        <top-bar />
       </el-header>      
       <el-main class="main">
         <n-notification-provider>

@@ -42,6 +42,10 @@ export const publicRoutes = [
 		name: 'details',
 		path: '/details',
 		component: Details
+	},
+	{
+		path: '/topnav',
+		component: () => import('@/components/NewTopBar.vue')
 	}
 ]
 

@@ -103,7 +103,7 @@ function getSellerInfo () {
   axios.get(`/api/getSellerInfo/${props.sellerID}`)
     .then((res) => {     
         sellerInfo.value.sellerName = res.data.nickname
-        sellerInfo.value.avatarUrl = `http://127.0.0.1:8082/public/avatars/${res.data.avatar}`
+        sellerInfo.value.avatarUrl = `http://106.15.78.201:8082/public/avatars/${res.data.avatar}`
         sellerInfo.value.reputation = res.data.reputation
         sellerInfo.value.score = Number.parseFloat(res.data.score).toFixed(1)
         if (props.sellerID === userID.value) {
@@ -202,7 +202,7 @@ function getTrends () {
           goodID: item.good_id,
           goodTitle: item.title,
           price: Number.parseFloat(item.price).toFixed(2),
-          imgUrl: `http://127.0.0.1:8082/public/images/${item.images.split(';')[0]}`          
+          imgUrl: `http://106.15.78.201:8082/public/images/${item.images.split(';')[0]}`          
         })
       })
     })

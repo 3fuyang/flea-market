@@ -104,6 +104,7 @@ onBeforeRouteUpdate((to, from, next) => {
   display: flex;
   flex-direction: column;
   min-height: 44em;
+  z-index: 1;
 }
 .gl-wrapper{
   display: flex;

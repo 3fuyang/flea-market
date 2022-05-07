@@ -81,7 +81,7 @@ axios.post(`/api/goodsToConfirm`, goodsID.value)
         goodID: info.good_id,
         sellerID: info.seller_id,
         sellerName: info.nickname,
-        image: `http://127.0.0.1:8082/public/images/${info.images.split(';')[0]}`,
+        image: `http://106.15.78.201:8082/public/images/${info.images.split(';')[0]}`,
         goodTitle: info.title,
         price: Number.parseFloat(info.price).toFixed(2)
       })

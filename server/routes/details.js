@@ -50,7 +50,7 @@ app.get('/getSellerInfo/:user_id',(req,res) => {
   new Promise((resolve) => {
     // 获取昵称，头像URL
     connection.query(
-      "select nickname,avatar from useraccount where user_id ='"+ req.params.user_id + "'",
+      "select nickname,avatar from userAccount where user_id ='"+ req.params.user_id + "'",
       (err, result) => {
         if (err) throw err
         let sellerInfo =  JSON.parse(JSON.stringify(result))[0]

@@ -24,7 +24,7 @@ app.post('/userlogin', (req, res) => {
 app.post('/adminlogin', (req, res) => {
   let doesExist = false
   connection.query(
-    "select count(*) as cnt from adminaccount where user_id = '" + req.body.id + "' and mypassword = '" + req.body.password + "'", 
+    "select count(*) as cnt from adminAccount where user_id = '" + req.body.id + "' and mypassword = '" + req.body.password + "'", 
     (err, result) => {
       if (err) throw err
       doesExist = (result[0].cnt > 0) ? true : false

@@ -223,7 +223,7 @@ function getGoodInfo() {
       goodPreInfo.value.images = data.images
 
       imgLocalUrl.value.length = 0   
-      imgLocalUrl.value.push(...data.images.split(';').map((name: string) => `http://127.0.0.1:8082/public/images/${name}`))
+      imgLocalUrl.value.push(...data.images.split(';').map((name: string) => `http://106.15.78.201:8082/public/images/${name}`))
       imgServerName.value.length = 0
       imgServerName.value.push(...data.images.split(';'))
       for (let property in goodPreInfo.value) {

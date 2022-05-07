@@ -66,7 +66,7 @@
             round
             :size="58"
             :src="item.avatar"
-            fallback-src="http://127.0.0.1:8082/public/avatars/default.png"/>
+            fallback-src="http://106.15.78.201:8082/public/avatars/default.png"/>
           <div class="oponent-info">
             <p class="uname">{{item.uid}}&nbsp;{{item.uname}}</p>
           </div>
@@ -128,7 +128,7 @@
         </p>
       </div>
       <div class="empty-wrapper">
-        <img src="http://127.0.0.1:8082/public/images/quin.jpg"/>
+        <img src="http://106.15.78.201:8082/public/images/quin.jpg"/>
         <p class="dog">幸福往往是摸得透彻，而敬业的心却常常隐藏。</p>
       </div>
     </div> 
@@ -205,7 +205,7 @@ function getChatList(newOponentID: string, newOponentName: string, newOponentAva
         newList.push({
           uid: item.user_id,
           uname: item.nickname,
-          avatar: `http://127.0.0.1:8082/public/avatars/${item.avatar}`
+          avatar: `http://106.15.78.201:8082/public/avatars/${item.avatar}`
         })
       })
     })

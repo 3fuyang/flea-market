@@ -1,6 +1,5 @@
 // Confirm 页面
 const express = require('express')
-const { result } = require('lodash')
 const app = express()
 
 const connection = require('../../database/db')

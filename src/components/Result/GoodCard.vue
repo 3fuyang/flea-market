@@ -44,7 +44,7 @@ const goodPrice = ref(props.price)
 const currImageIndex = ref(0)
 // 图片集合
 const imageCollection = ref<string[]>([])
-imageCollection.value.push(...props.images.map(item => `http://127.0.0.1:8082/public/images/${item}`))
+imageCollection.value.push(...props.images.map(item => `http://106.15.78.201:8082/public/images/${item}`))
 // 展示大图的URL
 const currImageURL = computed(() => {
 	return imageCollection.value[currImageIndex.value]

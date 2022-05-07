@@ -158,7 +158,7 @@ function contactBuyer(id: string) {
         query: {
           oponentID: id,
           oponentName: nickname,
-          avatar: `http://127.0.0.1:8082/public/avatars/${avatar}`
+          avatar: `http://106.15.78.201:8082/public/avatars/${avatar}`
         }
       })
       // 在新页面打开聊天窗口
@@ -222,7 +222,7 @@ axios.get(`/api/getSoldOrders/${userID.value}`)
         orderId: new Array(12).join('0') + item.order_id,
         goodId: item.good_id,
         goodTitle: item.title,
-        image: `http://127.0.0.1:8082/public/images/${item.images.split(';')[0]}`,
+        image: `http://106.15.78.201:8082/public/images/${item.images.split(';')[0]}`,
         time: item.generated_time.replace('T', ' '),
         status: item.stat,
         commentStars: item.rate,

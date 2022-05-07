@@ -89,7 +89,7 @@ axios.get(`/api/getOrders/${userID.value}`)
         orderId: new Array(12).join('0') + item.order_id,
         goodId: item.good_id,
         goodName: item.title,
-        image: `http://127.0.0.1:8082/public/images/${item.images.split(';')[0]}`,
+        image: `http://106.15.78.201:8082/public/images/${item.images.split(';')[0]}`,
         time: item.generated_time.replace('T', ' '),
         status: item.stat,
         commentStars: 1,

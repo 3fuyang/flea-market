@@ -70,7 +70,7 @@ app.get('/getMessage/:a_user_id/:b_user_id',(req,res) => {
     req.params.a_user_id = temp
   }
   connection.query(
-    "select * from chatrecord where a_user_id ='"+ req.params.a_user_id + "' and b_user_id ='" + req.params.b_user_id + "' order by date_time asc",
+    "select * from chatRecord where a_user_id ='"+ req.params.a_user_id + "' and b_user_id ='" + req.params.b_user_id + "' order by date_time asc",
     (err, result) =>{
       if (err) throw err
       res.end(JSON.stringify(result))    

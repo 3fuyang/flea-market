@@ -17,6 +17,7 @@
         type="primary"
         plain
         size="small"
+        :disabled="userID === props.sellerID"
         @click="concactSeller">
         <el-icon>
           <chat-dot-round/>
@@ -71,21 +72,24 @@
 </template>
 
 <script setup lang="ts">
-import { onBeforeUpdate, ref } from 'vue'
+import { ref } from 'vue'
 import { ChatDotRound, RefreshLeft } from "@element-plus/icons-vue"
-import { useRouter } from 'vue-router'
+import { onBeforeRouteUpdate, useRouter } from 'vue-router'
 import axios from 'axios'
 import { ElMessage } from 'element-plus'
 import { useUserStore } from '@/stores/user'
 import { storeToRefs } from 'pinia'
+import { useMessage } from 'naive-ui'
 
 const props = defineProps({
   sellerID: String
 })
 
+const message = useMessage()
+
 // store
 const userStore = useUserStore()
-const { identity } = storeToRefs(userStore)
+const { identity, userID } = storeToRefs(userStore)
 
 const sellerInfo = ref({
   sellerName: '',
@@ -102,13 +106,21 @@ function getSellerInfo () {
         sellerInfo.value.avatarUrl = `http://127.0.0.1:8082/public/avatars/${res.data.avatar}`
         sellerInfo.value.reputation = res.data.reputation
         sellerInfo.value.score = Number.parseFloat(res.data.score).toFixed(1)
+        if (props.sellerID === userID.value) {
+          message.info(
+            '注意：你正在浏览自己的闲置物品',
+            {
+              keepAliveOnHover: true,
+            }
+          )
+        }
     })
 }
 
 getSellerInfo()
 
-onBeforeUpdate(() => {
-  console.log(`beforeUpdated, props.sellerID为: ${props.sellerID}`)
+onBeforeRouteUpdate(() => {
+  //console.log(`beforeUpdated, props.sellerID为: ${props.sellerID}`)
   getSellerInfo()
 })
 

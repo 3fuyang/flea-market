@@ -84,13 +84,15 @@
 						<el-row justify="space-around">
 							<el-col :span="10">
 								<button 
+									:disbled="userID === goodInfo.sellerID"
 									class="buy-it-now"
 									@click="goConfirm">
 									立即购买
 								</button>
 							</el-col>
 							<el-col :span="10">
-								<button 
+								<button
+									:disbaled="userID === goodInfo.sellerID"
 									class="add-to-cart"
 									@click="addToCart">
 									{{ inCart ? '已加入购物车' :'加入购物车' }}
@@ -102,9 +104,11 @@
 			</div>
 		</el-col>
 		<el-col :span="4">
+		<n-message-provider :max="1">
 		  <div class="seller-container">
 				<good-seller-panel v-if="goodInfo.sellerID" :sellerID="goodInfo.sellerID"/>
 			</div>
+		</n-message-provider>
 		</el-col>
 	</el-row>
 	<div class="bottom-box">
@@ -132,6 +136,7 @@ import { ElMessage } from 'element-plus'
 import axios from 'axios'
 import { useUserStore } from '@/stores/user'
 import { storeToRefs } from 'pinia'
+import { NMessageProvider } from 'naive-ui'
 
 // store
 const userStore = useUserStore()

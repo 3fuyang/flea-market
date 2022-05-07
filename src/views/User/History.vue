@@ -1,5 +1,5 @@
 <template>
-<div id="name">
+<div class="root">
   <span style="display: inline-block;color: #000000;margin: 20px 0px 0px 20px;font-size: 24px;font-weight: bold;">浏览记录</span><br/>
   <div style="text-align: right;">
   <el-button type="info"  style="width: 110px;margin-right: 200px;"
@@ -118,6 +118,9 @@ function clearHistory() {
 </script>
 
 <style scoped>
+.root {
+  width: 100%
+}
 .point{
   cursor: pointer;
 }

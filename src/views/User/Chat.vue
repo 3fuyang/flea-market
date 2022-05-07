@@ -1,5 +1,7 @@
 <template>
-  <css-doodle>
+  <css-doodle
+    class="sunset-avenue"
+    @click="updateDoodle">
     :doodle { @grid: 1x35 / 100vw 94vh; } 
     :container { 
         background: #ffcabb; 
@@ -283,20 +285,23 @@ function handleSendMessage () {
 
   textarea.value = ''
 }
+
+function updateDoodle (e: Event) {
+  (e.target as any).update()
+}
 </script>
 
 <style scoped>
+.sunset-avenue {
+  cursor: pointer;
+}
 .root {
   position: absolute;
   top: 80px;
-  width: 100%;
   z-index: 6;
   display: flex;
   justify-content: center;
   --blue: #4790DC;
-  background: linear-gradient(90deg, rgba(200, 200, 200, 0.1) 3%, transparent 0),
-  linear-gradient(rgba(200, 200, 200, 0.1) 3%, transparent 0);
-  background-size: 20px 20px;
 }
 .chat-wrapper {
   font-size: .8rem;

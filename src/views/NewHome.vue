@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue'
-import { NButton, NIcon } from 'naive-ui'
+import { NButton, NIcon, NInput } from 'naive-ui'
 import { Search, Reading, Monitor, MagicStick, Bicycle, Odometer, Position, Food, OfficeBuilding, FirstAidKit, Suitcase, Star, Clock, Lock, PieChart, Files, Message, Help } from '@element-plus/icons-vue'
 import { ElMessage } from 'element-plus'
 import axios from 'axios'
@@ -258,29 +258,26 @@ const adminButtons = [
 <template>
 <!--搜索框-->
 <el-container class="search-wrapper">
-  <el-input
+  <n-input
     class="search-input"
     v-model.trim="keyWord"
     placeholder="Type to Search."
     @keyup.enter="searchKeyWord">
     <template #prefix>
-      <el-icon 
-        :size="20" 
-        class="search-icon">
+      <n-icon>
         <Search/>
-      </el-icon>
+      </n-icon>
     </template>
     <template #suffix>
-      <el-button 
-        plain 
-        type="primary" 
+      <n-button 
+        secondary
+        type="info" 
         size="small" 
         round
-        class="search-btn" 
         @click="searchKeyWord"
-        >搜索</el-button>
+        >搜索</n-button>
     </template>      
-  </el-input>
+  </n-input>
 </el-container>
 
 <!--流行关键词-->
@@ -509,25 +506,22 @@ const adminButtons = [
 
 <style scoped>
 .search-wrapper {
-  height: 40px;
-  margin: 30px 33% 0 33%;
+  margin-top: 3em;
   display: flex;
   justify-content: center;
 }
 .search-input {
   width: 500px;
+  text-align: left;
 }
 .search-icon {
   margin-top: 6px;
   margin-right: 2px;
 }
-.search-btn {
-  margin-top: 5px;
-}
 .popular-wrapper {
   height: 30px;
   margin: 0px 33%;
-  margin-bottom: 10px;
+  margin-bottom: .6em;
   display: flex;
   justify-content: center;
 }
@@ -535,14 +529,18 @@ const adminButtons = [
   padding: 0;
   color: #3399CC;
 }
+.keywords:hover {
+  text-decoration: underline;
+}
 .menu-wrapper {
   height: 280px;
-  margin:0 13%;
   margin-bottom: 25px;
+  display: flex;
+  justify-content: center;
 }
 .category-menu {
   width: 133px;
-  margin-right:2px;
+  margin-right: 2px;
 }
 .top-carousel {
   width: 836.05px;
@@ -553,7 +551,9 @@ const adminButtons = [
 }
 .mid-wrapper {
   height: 240px;
-  margin: 5px 13%;
+  display: flex;
+  justify-content: center;
+  margin-bottom: 1.2em;
 }
 .winter-wrapper {
   width: 133px;
@@ -561,11 +561,10 @@ const adminButtons = [
   background-image: url('/src/assets/winter.jpg');
   background-repeat: no-repeat;
   background-size: 100% 100%;
-  opacity: .8;
   display: flex;
   flex-direction: column;
   align-items: center;
-  border-radius: .2em;
+  border-radius: .2em; 
 }
 .winter-text-one {
   font-size: 22px;
@@ -619,7 +618,6 @@ const adminButtons = [
   background-image: url('/src/assets/profile.png');
   background-repeat: no-repeat;
   background-size: 100% 100%;
-  opacity: .9;
   border-radius: .3em;
   width: 207px;
 }
@@ -675,7 +673,6 @@ const adminButtons = [
   background-image: url('/src/assets/panel.png');
   background-repeat: no-repeat;
   background-size: 100% 100%;
-  opacity: .9;
 }
 .panel {
   display: flex;

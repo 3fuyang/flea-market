@@ -1,5 +1,5 @@
 <template>
-<div id="name">
+<div class="root-wrapper">
   <span style="display: inline-block;color: #000000;margin: 20px 0px 0px 20px;font-size: 24px;font-weight: bold;">我的收藏</span><br/>
   <div style="text-align: right;margin-bottom: 10px;">     
   <el-button v-show="searching === 1" type="text"  round style="margin-right: 800px;"
@@ -161,6 +161,9 @@ function deleteFavorite (gid: string) {
 </script>
 
 <style scoped>
+.root-wrapper {
+  width: 100%;
+}
 .point{
   cursor: pointer;
 }

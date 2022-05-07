@@ -314,7 +314,6 @@ function logOut () {
       v-model:value="activeKey"
       mode="horizontal"
       :options="currOptions">
-      
     </n-menu>
   </div>
 </template>
@@ -328,6 +327,7 @@ function logOut () {
   background-color: #fff;
   align-items: center;
   padding-left: 2em;
+  border-bottom: 1px solid #f4f4f5;
 }
 .wave-wrapper {
   margin: 0;

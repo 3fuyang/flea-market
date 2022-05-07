@@ -120,7 +120,7 @@ function handleCloseRetrieve () {
 </script>
 
 <template>
-  <n-notification-provider>
+  <n-notification-provider class="full-width">
     <div class="root-wrapper">
       <LoginWidget 
         v-if="showLogin"
@@ -137,6 +137,9 @@ function handleCloseRetrieve () {
 </template>
 
 <style scoped>
+.full-width {
+  width: 100%;
+}
 .root-wrapper {
   background-image: url('../assets/lib.jpg');
   background-image: no-repeat;

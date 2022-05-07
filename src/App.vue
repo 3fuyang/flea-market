@@ -10,7 +10,7 @@ import { NNotificationProvider } from 'naive-ui'
     <el-container style="overflow-x: hidden;">
       <el-header 
         v-if="$route.path != '/login'" 
-        style="padding: 0;">
+        style="padding: 0;height: auto;">
         <top-bar />
       </el-header>      
       <el-main class="main">
@@ -57,13 +57,19 @@ import { NNotificationProvider } from 'naive-ui'
   overflow-y: hidden;
   min-height: 78vh;
   width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 .footer {
   background-color: #F0F8FF;
-  height: 100%;
+  height: 5em;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 .footer p {
   margin: 0;
-  padding: 30px 0 40px;
+  padding-top: 1.1em;
 }
 </style>

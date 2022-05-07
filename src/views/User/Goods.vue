@@ -77,6 +77,9 @@ function closeGoodInfo() {
 </script>
 
 <style scoped>
+.root-wrapper {
+  width: 100%;
+}
 .title{
   display: inline-block;
   color: #000000;

@@ -1,5 +1,5 @@
 <template>
-<div id="name">
+<div class="root">
   <span class="title">订单管理</span><br/>
   <el-row>
     <el-col :span="2"></el-col>
@@ -160,6 +160,9 @@ function closeQRModal(paid: boolean) {
 </script>
 
 <style scoped>
+.root {
+  width: 100%;
+}
 .title{
   display: inline-block;
   color: #000000;

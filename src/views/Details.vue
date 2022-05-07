@@ -374,6 +374,7 @@ const addToCart = () => {
 .root-container{
 	margin: .8em 0 .4em 0;
 	overflow: auto;
+	width: 100%;
 }
 .good-container{
 	background-color: #fff;

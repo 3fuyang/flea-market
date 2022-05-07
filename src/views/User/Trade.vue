@@ -18,6 +18,7 @@ import { NDialogProvider } from 'naive-ui'
 
 <style scoped>
 .root-wrapper{
+  width: 100%;
   display: flex;
   flex-direction: column;
   margin: 1rem 0;

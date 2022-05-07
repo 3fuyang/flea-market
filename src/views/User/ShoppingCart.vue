@@ -1,5 +1,5 @@
 <template>
-<div id="name">
+<div class="root">
   <span style="display: inline-block;color: #000000;margin: 20px 0px 10px 20px;font-size: 24px;font-weight: bold;">购物车</span><br/>
   <el-row>
   <el-col :span="2"></el-col>
@@ -229,6 +229,9 @@ function jumpToConfirm () {
 </script>
 
 <style scoped>
+.root {
+  width: 100%
+}
 .point{
   cursor: pointer;
 }

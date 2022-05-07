@@ -162,6 +162,7 @@ function closeQRModal(paid: boolean) {
 <style scoped>
 .root {
   width: 100%;
+  z-index: 1;
 }
 .title{
   display: inline-block;

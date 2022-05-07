@@ -23,6 +23,7 @@ import { NDialogProvider } from 'naive-ui'
   flex-direction: column;
   margin: 1rem 0;
   justify-content: center;
+  z-index: 1;
 }
 .total-title{
   align-self: center;

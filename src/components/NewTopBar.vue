@@ -3,13 +3,15 @@ import { NButton, NMenu, type MenuOption } from 'naive-ui'
 import { ref, computed, h } from 'vue'
 import { useUserStore } from '@/stores/user'
 import { storeToRefs } from 'pinia'
-import { RouterLink } from 'vue-router'
 import { ElMessage, ElMessageBox } from "element-plus"
-import { useRouter } from "vue-router"
+import { useRouter, RouterLink } from "vue-router"
 import { memberRoutes, adminRoutes, loginRoutes, endRoutes } from "@/router"
+
+const router = useRouter()
 
 const userStore = useUserStore()
 const { identity } = storeToRefs(userStore)
+
 const activeKey = ref<string | null>(null)
 
 // 当前选项
@@ -54,7 +56,7 @@ const visitorOptions: MenuOption[] = [
   },  
 ]
 
-// 会员选项
+// 普通会员选项
 const memberOptions: MenuOption[] = [
   {
     label: () =>
@@ -80,10 +82,14 @@ const memberOptions: MenuOption[] = [
             {
               to: {
                 name: 'info'
+              },
+              onClick: () => {
+                activeKey.value = 'info-center'
               }
             },
-            { default: () => '个人中心' }
-          )
+            { default: () => '用户信息' }
+          ),
+        key: 'info'
       },
       {
         label: () => 
@@ -92,10 +98,14 @@ const memberOptions: MenuOption[] = [
             {
               to: {
                 name: 'security'
+              },
+              onClick: () => {
+                activeKey.value = 'info-center'
               }
             },
             { default: () => '安全中心' }
-          )
+          ),
+        key: 'security'
       },      
     ]
   },
@@ -110,10 +120,14 @@ const memberOptions: MenuOption[] = [
             {
               to: {
                 name: 'shoppingcart'
+              },
+              onClick: () => {
+                activeKey.value = 'browse-management'
               }
             },
             { default: () => '购物车' }
-          )
+          ),
+        key: 'shopping-cart'
       },
       {
         label: () => 
@@ -122,10 +136,14 @@ const memberOptions: MenuOption[] = [
             {
               to: {
                 name: 'favorite'
+              },
+              onClick: () => {
+                activeKey.value = 'browse-management'
               }
             },
             { default: () => '收藏夹' }
-          )
+          ),
+        key: 'favorite'
       },   
       {
         label: () => 
@@ -134,10 +152,14 @@ const memberOptions: MenuOption[] = [
             {
               to: {
                 name: 'history'
+              },
+              onClick: () => { 
+                activeKey.value = 'browse-management'
               }
             },
             { default: () => '浏览记录' }
-          )
+          ),
+        key: 'history'
       },          
     ]
   },
@@ -152,10 +174,14 @@ const memberOptions: MenuOption[] = [
             {
               to: {
                 name: 'order'
+              },
+              onClick: () => {
+                activeKey.value = 'my-bussiness'
               }
             },
             { default: () => '订单管理' }
-          )
+          ),
+        key: 'order'
       },
       {
         label: () => 
@@ -164,10 +190,14 @@ const memberOptions: MenuOption[] = [
             {
               to: {
                 name: 'goods'
+              },
+              onClick: () => {
+                activeKey.value = 'my-bussiness'
               }
             },
             { default: () => '商品管理' }
-          )
+          ),
+        key: 'goods'
       },   
       {
         label: () => 
@@ -176,10 +206,14 @@ const memberOptions: MenuOption[] = [
             {
               to: {
                 name: 'trade'
+              },
+              onClick: () => {
+                activeKey.value = 'my-bussiness'
               }
             },
             { default: () => '卖出闲置' }
-          )
+          ),
+        key: 'trade'
       }, 
       {
         label: () => 
@@ -188,10 +222,14 @@ const memberOptions: MenuOption[] = [
             {
               to: {
                 name: 'chat'
+              },
+              onClick: () => {
+                activeKey.value = 'my-bussiness'
               }
             },
             { default: () => '我的聊天' }
-          )
+          ),
+        key: 'chat'
       },               
     ]
   },
@@ -249,8 +287,6 @@ const adminOptions: MenuOption[] = [
   },  
 ]
 
-const router = useRouter()
-
 // 登出
 function logOut () {
   //对话框询问
@@ -305,7 +341,9 @@ function logOut () {
 
 <template>
   <div class="top-wrapper">
-    <h1 class="wave-wrapper">
+    <h1
+      class="wave-wrapper"
+      @click="$router.push('/home')">
       TJ Flea <span class="dash">_</span>
     </h1>
     <div class="gap"/>
@@ -338,6 +376,7 @@ function logOut () {
   color: #000;
   overflow: hidden;
   padding: 0 .8em 0 1em;
+  cursor: pointer;
   &::before, &::after {
     content: "";
     position: absolute;

@@ -1,12 +1,14 @@
 <script setup lang="ts">
 import TopBar from './components/NewTopBar.vue'
+import BlossomDoodle from './components/Doodles/BlossomDoodle.vue'
+import ShiveringDoodle from './components/Doodles/ShiveringDoodle.vue'
 import { NNotificationProvider } from 'naive-ui'
 </script>
 
 <template>
-	<div 
+	<div
     id="app" 
-    style="background-color: #F5F5F5;">
+    class="app">
     <el-container style="overflow-x: hidden;">
       <el-header 
         v-if="$route.path != '/login'" 
@@ -14,7 +16,17 @@ import { NNotificationProvider } from 'naive-ui'
         <top-bar />
       </el-header>      
       <el-main class="main">
-        <n-notification-provider>
+        <n-notification-provider class="provider">
+          <div
+            v-show="$route.path !== '/login'"
+            class="doodle-wrapper-r">
+            <blossom-doodle/>            
+          </div>
+          <div
+            v-show="$route.path !== '/login'"
+            class="doodle-wrapper-l">
+            <shivering-doodle/>            
+          </div>          
           <router-view/>
         </n-notification-provider>
       </el-main>
@@ -41,7 +53,10 @@ import { NNotificationProvider } from 'naive-ui'
 	text-align: center;
 	color: #2c3e50;
   min-width: 1500px;  /* 设置页面最小宽度，防止布局被浏览器的尺寸打乱。 */
+  background-color: #F5F5F5;
+  position: relative;
 }
+
 ::-webkit-scrollbar {
   width: 0 !important;
 }
@@ -54,12 +69,27 @@ import { NNotificationProvider } from 'naive-ui'
 <style scoped>
 .main {
   padding: 0;
-  overflow-y: hidden;
-  min-height: 78vh;
+  overflow: hidden;
+  min-height: 49em;
   width: 100%;
   display: flex;
   flex-direction: column;
   align-items: center;
+}
+.provider {
+  position: relative;
+}
+.doodle-wrapper-r {
+  position: absolute;
+  top: 10%;
+  left: 0;
+  z-index: .1;
+}
+.doodle-wrapper-l {
+  position: absolute;
+  bottom: 10%;
+  right: -2em;
+  z-index: .1;
 }
 .footer {
   background-color: #F0F8FF;

@@ -123,7 +123,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref } from 'vue'
+import { computed, onMounted, onUpdated, ref } from 'vue'
 import { useRouter, onBeforeRouteUpdate } from 'vue-router'
 import GoodSellerPanel from '../components/Goods/GoodSellerPanel.vue'
 import Comments from '../components/Goods/Comments.vue'
@@ -257,6 +257,9 @@ const initialize = () => {
 		liked.value = false
 		inCart.value = false
 	}
+}
+
+function addImgEvent () {
 	// 为缩略图添加鼠标事件监听器
 	const subImages = document.getElementsByClassName('sub-image')
 	// 注意：由于Vue的mounted钩子不会承诺所有的子组件一起被挂载
@@ -268,7 +271,7 @@ const initialize = () => {
 				debounceShowBigImg(Number.parseInt((e.target as HTMLElement).id))
 			})
 		})
-	}, 100)
+	}, 500)	
 }
 
 if (identity.value === 'member') {
@@ -281,10 +284,15 @@ if (identity.value === 'member') {
 		time: date.toISOString().slice(0, 19).replace('T', ' ')
 	})
 }
+
 initialize()
 
+onMounted(addImgEvent)
+
+onUpdated(addImgEvent)
+
 onBeforeRouteUpdate((to) => {
-	console.log(`调用beforeRouteUpdate守卫, to.query.gid为: ${to.query.gid}`)
+	//console.log(`调用beforeRouteUpdate守卫, to.query.gid为: ${to.query.gid}`)
 	goodID.value = to.query.gid as string
 	getGoodInfo()
 	initialize()
@@ -476,7 +484,7 @@ const addToCart = () => {
 }
 .right-flex-item{
 	margin-top: 1em;
-	width: 22.6em;
+	flex: 1;
 }
 .good-title{
 	margin: 0;
@@ -582,6 +590,7 @@ const addToCart = () => {
 .bottom-box{
 	display: flex;
 	justify-content: center;
+	z-index: 5;
 }
 .seller-comment-title{
 	margin: 0;

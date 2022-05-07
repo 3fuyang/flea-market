@@ -137,6 +137,7 @@ const concactSeller = () => {
         avatar: sellerInfo.value.avatarUrl
       }
     })
+    console.log(routeUrl)
     window.open(routeUrl .href, '_blank')
   } else if (identity.value === 'admin') {
     ElMessage.warning(`请使用普通账号执行该操作。`)

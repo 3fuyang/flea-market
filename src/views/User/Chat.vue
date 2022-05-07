@@ -2,7 +2,7 @@
   <css-doodle
     class="sunset-avenue"
     @click="updateDoodle">
-    :doodle { @grid: 1x35 / 100vw 94vh; } 
+    :doodle { @grid: 1x35 / 100% 94vh; } 
     :container { 
         background: #ffcabb; 
         background: linear-gradient(to top, #ffcabb 50%, #de93b6 100%); 

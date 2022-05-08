@@ -70,6 +70,8 @@ function navigateDetails(id: string) {
   overflow: auto;
   display: flex;
   flex-direction: column;
+  background: white;
+  z-index: 1;
 }
 .recommend-label{
   font-size: .875rem;

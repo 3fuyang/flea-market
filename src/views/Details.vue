@@ -83,20 +83,22 @@
 					<div class="button-container">
 						<el-row justify="space-around">
 							<el-col :span="10">
-								<button 
-									:disbled="userID === goodInfo.sellerID"
+								<n-button
+									type="warning"
+									:disabled="userID === goodInfo.sellerID"
 									class="buy-it-now"
 									@click="goConfirm">
 									立即购买
-								</button>
+								</n-button>
 							</el-col>
 							<el-col :span="10">
-								<button
-									:disbaled="userID === goodInfo.sellerID"
+								<n-button
+									color="#FF4400"								
+									:disabled="userID === goodInfo.sellerID"
 									class="add-to-cart"
 									@click="addToCart">
 									{{ inCart ? '已加入购物车' :'加入购物车' }}
-								</button>							
+								</n-button>							
 							</el-col>							
 						</el-row>
 					</div>
@@ -136,7 +138,7 @@ import { ElMessage } from 'element-plus'
 import axios from 'axios'
 import { useUserStore } from '@/stores/user'
 import { storeToRefs } from 'pinia'
-import { NMessageProvider } from 'naive-ui'
+import { NMessageProvider, NButton } from 'naive-ui'
 
 // store
 const userStore = useUserStore()
@@ -388,6 +390,7 @@ const addToCart = () => {
 	margin: .8em 0 .4em 0;
 	overflow: auto;
 	width: 100%;
+	z-index: 1;
 }
 .good-container{
 	background-color: #fff;
@@ -569,28 +572,10 @@ const addToCart = () => {
 	padding: 0 .6em;
 }
 .buy-it-now{
-	cursor: pointer;	
-	color: #E5511D;
-	border-color: #F0CAB6;
-	background: #FFE4D0;
-	text-align: center;	
 	padding: .4em .8em;
 }
-.buy-it-now:hover{
-	border-color: #fbcab0;
-	background: #fbcab0;	
-}
 .add-to-cart{
-	cursor: pointer;
-	border-color: #FF9900;
-	background: #FF9900;
-	color: #fff;
-	text-align: center;	
 	padding: .4em .8em;	
-}
-.add-to-cart:hover{
-	border-color: #ff6f00;
-	background: #ff6f00;
 }
 .bottom-box{
 	display: flex;

@@ -72,9 +72,9 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, onBeforeUpdate, onRenderTracked, onRenderTriggered } from 'vue'
 import { ChatDotRound, RefreshLeft } from "@element-plus/icons-vue"
-import { onBeforeRouteUpdate, useRouter } from 'vue-router'
+import { useRouter } from 'vue-router'
 import axios from 'axios'
 import { ElMessage } from 'element-plus'
 import { useUserStore } from '@/stores/user'
@@ -119,12 +119,13 @@ function getSellerInfo () {
 
 getSellerInfo()
 
-onBeforeRouteUpdate(() => {
+onBeforeUpdate(() => {
   //console.log(`beforeUpdated, props.sellerID为: ${props.sellerID}`)
+  console.log('beforeUpdate')
   getSellerInfo()
 })
 
-/* let counterTracked = 0, counterTriggered = 0
+let counterTracked = 0, counterTriggered = 0
 
 onRenderTracked(e => {
   console.log(`第${++counterTracked}次调用onRenderTacked:`)
@@ -134,7 +135,7 @@ onRenderTracked(e => {
 onRenderTriggered(e => {
   console.log(`第${++counterTriggered}次调用onRenderTriggered:`)
   console.log(e)
-}) */
+})
 
 const router = useRouter()
 // 联系买家
@@ -149,8 +150,7 @@ const concactSeller = () => {
         avatar: sellerInfo.value.avatarUrl
       }
     })
-    console.log(routeUrl)
-    window.open(routeUrl .href, '_blank')
+    router.push(routeUrl)
   } else if (identity.value === 'admin') {
     ElMessage.warning(`请使用普通账号执行该操作。`)
   } else {

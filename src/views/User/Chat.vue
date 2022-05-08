@@ -185,13 +185,13 @@ const messageData = ref<Message[]>([])
 const textarea = ref('')
 
 // 切换聊天对象
-function changeOponent(oponentID: string, oponentName: string){
+function changeOponent (oponentID: string, oponentName: string) {
   currOponent.value = oponentID
   currOponentName.value = oponentName
   getMessage(true)
 }
 // 关闭聊天窗口
-function closeChat(){
+function closeChat () {
   currOponent.value = '我的聊天'
   currOponentName.value = ''
 }
@@ -230,7 +230,7 @@ function getChatList(newOponentID: string, newOponentName: string, newOponentAva
     })
 }
 // 获取消息列表
-function getMessage(oponentChanged = false){
+function getMessage (oponentChanged = false) {
   if (oponentChanged) {
     messageData.value.length = 0
   }

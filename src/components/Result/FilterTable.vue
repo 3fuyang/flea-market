@@ -412,7 +412,8 @@ onMounted(() => {
 </script>
 
 <style scoped>
-.filter-wrapper{
+.filter-wrapper {
+  z-index: 1;
   display: grid;
   align-self: center;
   font-size: .8rem;

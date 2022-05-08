@@ -334,5 +334,7 @@ function modifyPassword () {
 .input {
   width: 12em;
   text-align: left;
+  margin-left: 5em;
+
 }
 </style>

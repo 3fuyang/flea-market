@@ -2,7 +2,13 @@
 import TopBar from './components/NewTopBar.vue'
 import BlossomDoodle from './components/Doodles/BlossomDoodle.vue'
 import ShiveringDoodle from './components/Doodles/ShiveringDoodle.vue'
-import { NNotificationProvider } from 'naive-ui'
+import { NNotificationProvider, NLoadingBarProvider } from 'naive-ui'
+
+const barStyle = {
+  loading: {
+    backgroundColor: '#93E5EB'
+  }
+}
 </script>
 
 <template>
@@ -13,10 +19,12 @@ import { NNotificationProvider } from 'naive-ui'
       <el-header 
         v-if="$route.path != '/login'" 
         style="padding: 0;height: auto;">
-        <top-bar />
+        <n-loading-bar-provider :loading-bar-style="barStyle">
+          <top-bar />
+        </n-loading-bar-provider>
       </el-header>      
-      <el-main class="main">
-        <n-notification-provider class="provider">
+      <el-main class="main provider">
+        <n-notification-provider>
           <div
             v-show="$route.path !== '/login'"
             class="doodle-wrapper-r">

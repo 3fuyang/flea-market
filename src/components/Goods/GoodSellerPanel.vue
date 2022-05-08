@@ -36,7 +36,11 @@
     <div class="vertical-center-wrapper">
       <p class="score-label">评分: &nbsp;&nbsp;</p>
     </div>
-    <el-rate v-model="sellerInfo.score" disabled show-score/>
+    <n-rate 
+      v-model:value="sellerInfo.score"
+      allow-half
+      size="small"
+      readonly/>
   </div>
   <hr class="divider"/>
   <div class="trend-container">
@@ -80,7 +84,7 @@ import axios from 'axios'
 import { ElMessage } from 'element-plus'
 import { useUserStore } from '@/stores/user'
 import { storeToRefs } from 'pinia'
-import { useMessage } from 'naive-ui'
+import { useMessage, NRate } from 'naive-ui'
 
 const props = defineProps({
   sellerID: String
@@ -96,7 +100,7 @@ const sellerInfo = ref({
   sellerName: '',
   avatarUrl: '',
   reputation: '',
-  score: ''
+  score: 0
 }) // 卖家信息
 
 function getSellerInfo () {
@@ -106,7 +110,7 @@ function getSellerInfo () {
         sellerInfo.value.sellerName = res.data.nickname
         sellerInfo.value.avatarUrl = `http://106.15.78.201:8082/public/avatars/${res.data.avatar}`
         sellerInfo.value.reputation = res.data.reputation
-        sellerInfo.value.score = Number.parseFloat(res.data.score).toFixed(1)
+        sellerInfo.value.score = Number.parseFloat(res.data.score)
         if (props.sellerID === userID.value) {
           message.info(
             '注意：你正在浏览自己的闲置物品',

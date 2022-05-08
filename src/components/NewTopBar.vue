@@ -1,13 +1,24 @@
 <script lang="ts" setup>
 import { NButton, NMenu, type MenuOption } from 'naive-ui'
-import { ref, computed, h } from 'vue'
+import { ref, computed, h, watch } from 'vue'
 import { useUserStore } from '@/stores/user'
 import { storeToRefs } from 'pinia'
 import { ElMessage, ElMessageBox } from "element-plus"
-import { useRouter, RouterLink } from "vue-router"
+import { useRouter, RouterLink, useRoute } from "vue-router"
 import { memberRoutes, adminRoutes, loginRoutes, endRoutes } from "@/router"
+import { useLoadingBar } from 'naive-ui'
+
+const loadingBar = useLoadingBar()
 
 const router = useRouter()
+const route = useRoute()
+
+watch(route, () => {
+  loadingBar.start()
+  window.setTimeout(() => {
+    loadingBar.finish()
+  }, 0)  
+})
 
 const userStore = useUserStore()
 const { identity } = storeToRefs(userStore)
@@ -242,7 +253,8 @@ const memberOptions: MenuOption[] = [
           onClick: logOut,
         },
         { default: () => '注销' }
-      )
+      ),
+    key: 'logout'
   },    
 ]
 
@@ -283,7 +295,8 @@ const adminOptions: MenuOption[] = [
           onClick: logOut,
         },
         { default: () => '注销' }
-      )
+      ),
+    key: 'logout'
   },  
 ]
 

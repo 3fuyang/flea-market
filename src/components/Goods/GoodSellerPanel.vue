@@ -72,7 +72,8 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onBeforeUpdate, onRenderTracked, onRenderTriggered } from 'vue'
+import { ref, onBeforeUpdate } from 'vue'
+//import { onRenderTracked, onRenderTriggered } from 'vue'
 import { ChatDotRound, RefreshLeft } from "@element-plus/icons-vue"
 import { useRouter } from 'vue-router'
 import axios from 'axios'
@@ -121,11 +122,10 @@ getSellerInfo()
 
 onBeforeUpdate(() => {
   //console.log(`beforeUpdated, props.sellerID为: ${props.sellerID}`)
-  console.log('beforeUpdate')
   getSellerInfo()
 })
 
-let counterTracked = 0, counterTriggered = 0
+/* let counterTracked = 0, counterTriggered = 0
 
 onRenderTracked(e => {
   console.log(`第${++counterTracked}次调用onRenderTacked:`)
@@ -135,7 +135,7 @@ onRenderTracked(e => {
 onRenderTriggered(e => {
   console.log(`第${++counterTriggered}次调用onRenderTriggered:`)
   console.log(e)
-})
+}) */
 
 const router = useRouter()
 // 联系买家

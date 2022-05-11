@@ -1,0 +1,177 @@
+// Vitest Snapshot v1
+
+exports[`login > li_1 1`] = `
+LoginForm {
+  "password": "",
+  "type": "member",
+  "userID": "123",
+}
+`;
+
+exports[`login > li_2 1`] = `
+LoginForm {
+  "password": "",
+  "type": "member",
+  "userID": "1234",
+}
+`;
+
+exports[`login > li_3 1`] = `
+LoginForm {
+  "password": "",
+  "type": "member",
+  "userID": "12345",
+}
+`;
+
+exports[`login > li_4 1`] = `
+LoginForm {
+  "password": "",
+  "type": "member",
+  "userID": "1234567",
+}
+`;
+
+exports[`login > li_5 1`] = `
+LoginForm {
+  "password": "",
+  "type": "member",
+  "userID": "12345678",
+}
+`;
+
+exports[`login > li_6 1`] = `
+LoginForm {
+  "password": "",
+  "type": "",
+  "userID": "",
+}
+`;
+
+exports[`login > li_7 1`] = `
+LoginForm {
+  "password": "qwe",
+  "type": "member",
+  "userID": "123",
+}
+`;
+
+exports[`login > li_8 1`] = `
+LoginForm {
+  "password": "qwe",
+  "type": "member",
+  "userID": "1234",
+}
+`;
+
+exports[`login > li_9 1`] = `
+LoginForm {
+  "password": "qwe",
+  "type": "member",
+  "userID": "12345",
+}
+`;
+
+exports[`login > li_10 1`] = `
+LoginForm {
+  "password": "qwe",
+  "type": "member",
+  "userID": "1234567",
+}
+`;
+
+exports[`login > li_11 1`] = `
+LoginForm {
+  "password": "qwe",
+  "type": "member",
+  "userID": "12345678",
+}
+`;
+
+exports[`login > li_12 1`] = `
+LoginForm {
+  "password": "",
+  "type": "admin",
+  "userID": "123",
+}
+`;
+
+exports[`login > li_13 1`] = `
+LoginForm {
+  "password": "",
+  "type": "admin",
+  "userID": "1234",
+}
+`;
+
+exports[`login > li_14 1`] = `
+LoginForm {
+  "password": "",
+  "type": "admin",
+  "userID": "12345",
+}
+`;
+
+exports[`login > li_15 1`] = `
+LoginForm {
+  "password": "",
+  "type": "admin",
+  "userID": "1234567",
+}
+`;
+
+exports[`login > li_16 1`] = `
+LoginForm {
+  "password": "",
+  "type": "admin",
+  "userID": "12345678",
+}
+`;
+
+exports[`login > li_17 1`] = `
+LoginForm {
+  "password": "",
+  "type": "",
+  "userID": "",
+}
+`;
+
+exports[`login > li_18 1`] = `
+LoginForm {
+  "password": "qwe",
+  "type": "admin",
+  "userID": "123",
+}
+`;
+
+exports[`login > li_19 1`] = `
+LoginForm {
+  "password": "qwe",
+  "type": "admin",
+  "userID": "1234",
+}
+`;
+
+exports[`login > li_20 1`] = `
+LoginForm {
+  "password": "qwe",
+  "type": "admin",
+  "userID": "12345",
+}
+`;
+
+exports[`login > li_21 1`] = `
+LoginForm {
+  "password": "qwe",
+  "type": "admin",
+  "userID": "1234567",
+}
+`;
+
+exports[`login > li_22 1`] = `
+LoginForm {
+  "password": "qwe",
+  "type": "admin",
+  "userID": "12345678",
+}
+`;

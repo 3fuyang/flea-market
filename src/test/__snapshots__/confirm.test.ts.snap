@@ -1,0 +1,22 @@
+// Vitest Snapshot v1
+
+exports[`confirm > cf_1 1`] = `
+Confirm {
+  "orderID": "1",
+  "stat": "待付款",
+}
+`;
+
+exports[`confirm > cf_2 1`] = `
+Confirm {
+  "orderID": "1",
+  "stat": "待确认",
+}
+`;
+
+exports[`confirm > cf_3 1`] = `
+Confirm {
+  "orderID": "1",
+  "stat": "待评价",
+}
+`;

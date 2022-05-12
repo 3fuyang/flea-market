@@ -15,9 +15,9 @@ export class Collect {
       return true
     }
   }
-  set (uid: string = '', gid: string = '', collected: boolean = true) {
+  set (uid: string = '', gid: string = '', clctd: boolean = true) {
     this.userID = uid
     this.goodID = gid
-    this.collected = collected
+    this.collected = clctd
   }
 }

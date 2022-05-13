@@ -5,6 +5,7 @@
   </p>
   <div class="img-txt-wrapper">
     <el-image 
+      lazy
       class="img"
       :src="props.image">
     </el-image>

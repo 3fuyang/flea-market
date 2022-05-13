@@ -2,6 +2,7 @@
 <div class="gl-item-card">
   <div class="big-image-container">
     <el-image
+      lazy
       :src="currImageURL"
       class="big-image"
       @click="navigateDetails">

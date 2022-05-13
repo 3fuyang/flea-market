@@ -1,8 +1,7 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue'
-import { NButton, NIcon, NInput } from 'naive-ui'
+import { NButton, NIcon, NInput, useMessage } from 'naive-ui'
 import { Search, Reading, Monitor, MagicStick, Bicycle, Odometer, Position, Food, OfficeBuilding, FirstAidKit, Suitcase, Star, Clock, Lock, PieChart, Files, Message, Help } from '@element-plus/icons-vue'
-import { ElMessage } from 'element-plus'
 import axios from 'axios'
 import { useRouter } from 'vue-router'
 import { useUserStore } from '../stores/user'
@@ -10,6 +9,8 @@ import { storeToRefs } from 'pinia'
 
 // router实例
 const router = useRouter()
+
+const message = useMessage()
 
 // user仓库
 const userStore = useUserStore()
@@ -90,7 +91,7 @@ function searchKeyWord(): void {
       },
     })
   }else{
-    ElMessage.warning('亲,请输入关键字哦')
+    message.warning('亲,请输入关键字哦')
   }
 }
 

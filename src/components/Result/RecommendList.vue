@@ -7,6 +7,7 @@
     <div class="big-image-container">
       <el-image
         :src="item.imageURL"
+        lazy
         class="big-image"
         @click="navigateDetails(item.goodID)">
       </el-image>

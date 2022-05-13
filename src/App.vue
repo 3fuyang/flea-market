@@ -2,7 +2,7 @@
 import TopBar from './components/NewTopBar.vue'
 import BlossomDoodle from './components/Doodles/BlossomDoodle.vue'
 import ShiveringDoodle from './components/Doodles/ShiveringDoodle.vue'
-import { NNotificationProvider, NLoadingBarProvider } from 'naive-ui'
+import { NNotificationProvider, NLoadingBarProvider, NMessageProvider } from 'naive-ui'
 
 const barStyle = {
   loading: {
@@ -25,17 +25,19 @@ const barStyle = {
       </el-header>      
       <el-main class="main provider">
         <n-notification-provider>
-          <div
-            v-show="$route.path !== '/login'"
-            class="doodle-wrapper-r">
-            <blossom-doodle/>            
-          </div>
-          <div
-            v-show="$route.path !== '/login'"
-            class="doodle-wrapper-l">
-            <shivering-doodle/>            
-          </div>          
-          <router-view/>
+          <n-message-provider>
+            <div
+              v-show="$route.path !== '/login'"
+              class="doodle-wrapper-r">
+              <blossom-doodle/>            
+            </div>
+            <div
+              v-show="$route.path !== '/login'"
+              class="doodle-wrapper-l">
+              <shivering-doodle/>            
+            </div>          
+            <router-view/>
+          </n-message-provider>
         </n-notification-provider>
       </el-main>
       <el-footer 

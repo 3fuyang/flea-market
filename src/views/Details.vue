@@ -7,6 +7,7 @@
 						<el-image
 							:src="currImageURL"
 							:preview-src-list="imageCollection"
+							lazy
 							class="big-image">
 							<template #placeholder>
 								<div class="loading-container">

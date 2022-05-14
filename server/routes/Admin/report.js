@@ -10,7 +10,8 @@ app.use(express.urlencoded({extended:  false}))
 // 获取管理员昵称
 app.get(`/getAdminName/:admin_id`, (req, res) => {
   connection.query(
-    `select nickname from adminAccount where user_id='${req.params.admin_id}'`,
+    `select nickname from adminAccount where user_id=?`,
+    [req.params.admin_id],
     (err, result) => {
       if (err) throw err
       res.end(JSON.stringify(result))
@@ -37,8 +38,9 @@ app.post(`/getReports`, (req, res) => {
         promises.push(
           new Promise((resolve) =>{
             connection.query(
-              `select buyer,seller,good_id from orderData where order_id = '${item.order_id}';
-               select title from goodInfo where good_id=(select good_id from orderData where order_id='${item.order_id}')`,
+              `select buyer,seller,good_id from orderData where order_id = ?;
+               select title from goodInfo where good_id=(select good_id from orderData where order_id=?)`,
+               [item.order_id, item.order_id],
               (err, result) => {
                 if(err) throw err
                 let raw = JSON.parse(JSON.stringify(result)).flat(2)
@@ -61,8 +63,9 @@ app.post(`/getReports`, (req, res) => {
 // 封禁被举报用户
 app.post(`/banAccusedAccount`, (req, res) => {
   connection.query(
-    `update userAccount set available='1' where user_id='${req.body.userID}';
-     update reportData set reply='${req.body.reply}',reply_time='${req.body.replyTime}',replyer='${req.body.replyer}' where order_id='${req.body.orderID}'`,
+    `update userAccount set available='1' where user_id=?;
+     update reportData set reply=?,reply_time=?,replyer=? where order_id=?`,
+     [req.body.userID, req.body.reply, req.body.replyTime, req.body.replyer, req.body.orderID],
     (err, result) => {
       if (err) throw err
       res.end(JSON.stringify(result))
@@ -73,7 +76,8 @@ app.post(`/banAccusedAccount`, (req, res) => {
 // 修改被举报订单的举报状态
 app.post(`/modifyOrderReported`, (req, res) => {
   connection.query(
-    `update orderData set reported='${req.body.reported}' where order_id='${req.body.orderID}'`,
+    `update orderData set reported=? where order_id=?`,
+    [req.body.reported, req.body.orderID],
     (err, result) => {
       if (err) throw err
       res.end(JSON.stringify(result))
@@ -84,7 +88,8 @@ app.post(`/modifyOrderReported`, (req, res) => {
 // 驳回举报
 app.post(`/refuseReport`, (req, res) => {
   connection.query(
-    `update reportData set reply='${req.body.reply}',reply_time='${req.body.replyTime}',replyer='${req.body.replyer}',stat='已驳回' where order_id='${req.body.orderID}';`,
+    `update reportData set reply=?,reply_time=?,replyer=?,stat='已驳回' where order_id=?;`,
+    [req.body.reply, req.body.replyTime, req.body.replyer, req.body.orderID],
     (err, result) => {
       if (err) throw err
       res.end(JSON.stringify(result))

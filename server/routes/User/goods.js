@@ -12,7 +12,8 @@ app.use(express.urlencoded({extended:  false}))
 app.get('/onShelfGoods/:user_id', (req, res) => {
   new Promise((resolve, reject) => {
     connection.query(
-      `select * from goodInfo where seller_id='${req.params.user_id}' and available='0'`,
+      `select * from goodInfo where seller_id=? and available='0'`,
+      [req.params.user_id],
       (err, result) => {
         if(err) throw err
         resolve(JSON.parse(JSON.stringify(result)))
@@ -25,8 +26,9 @@ app.get('/onShelfGoods/:user_id', (req, res) => {
         promises.push(
           new Promise((resolve, reject) => {
             connection.query(
-              `select count(*) as cnt1 from collectionBox where good_id='${item.good_id}';
-               select count(*) as cnt2 from browseTrack where good_id='${item.good_id}'`,
+              `select count(*) as cnt1 from collectionBox where good_id=?;
+               select count(*) as cnt2 from browseTrack where good_id=?`,
+               [item.good_id, item.good_id],
               (err, result) => {
                 if(err) throw err
                 let data = JSON.parse(JSON.stringify(result))
@@ -49,7 +51,8 @@ app.get('/onShelfGoods/:user_id', (req, res) => {
 app.get('/soldGoods/:user_id', (req, res) => {
   new Promise((resolve, reject) => {
     connection.query(
-      `select * from goodInfo where seller_id='${req.params.user_id}' and available='1'`,
+      `select * from goodInfo where seller_id=? and available='1'`,
+      [req.params.user_id],
       (err, result) => {
         if(err) throw err
         resolve(JSON.parse(JSON.stringify(result)))
@@ -62,10 +65,11 @@ app.get('/soldGoods/:user_id', (req, res) => {
         promises.push(
           new Promise((resolve, reject) => {
             connection.query(
-              `select count(*) as cnt1 from collectionBox where good_id='${item.good_id}';
-               select count(*) as cnt2 from browseTrack where good_id='${item.good_id}'`,
+              `select count(*) as cnt1 from collectionBox where good_id=?;
+               select count(*) as cnt2 from browseTrack where good_id=?`,
+               [item.good_id, item.good_id],
               (err, result) => {
-                if(err) throw err
+                if (err) throw err
                 let data = JSON.parse(JSON.stringify(result))
                 item.likes = JSON.parse(JSON.stringify(data[0]))[0].cnt1
                 item.browsed = JSON.parse(JSON.stringify(data[1]))[0].cnt2
@@ -122,9 +126,10 @@ app.post('/addGood', (req, res) => {
 // 修改上架中商品信息
 app.post('/modifyGood', (req, res) => {
   connection.query(   
-    `update goodInfo set price='${req.body[0]}', category='${req.body[1]}', good_name='${req.body[2]}', 
-     title='${req.body[3]}', keywords='${req.body[4]}', campus='${req.body[5]}', intro='${req.body[6]}',
-     detail='${req.body[7]}', images='${req.body[8]}' where good_id='${req.body[9]}'`,
+    `update goodInfo set price=?, category=?, good_name=?, 
+     title=?, keywords=?, campus=?, intro=?,
+     detail=?, images=? where good_id=?`,
+     req.body,
      (err, result) => {
        if(err) throw err
        res.end(JSON.stringify(result))

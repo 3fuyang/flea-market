@@ -10,7 +10,8 @@ app.use(express.urlencoded({extended:  false}))
 // 获取买家昵称，头像
 app.get(`/getBuyerAvatarAndName/:user_id`, (req, res) => {
   connection.query(
-    `select nickname,avatar from userAccount where user_id='${req.params.user_id}'`,
+    `select nickname,avatar from userAccount where user_id=?`,
+    [req.params.user_id],
     (err, result) => {
       if (err) throw err
       res.end(JSON.stringify(result))
@@ -24,7 +25,8 @@ app.get(`/getSoldOrders/:user_id`, (req, res) => {
   const promises = []
   new Promise((resolve, reject) => {
     connection.query(
-      `select * from orderData where seller='${req.params.user_id}' order by generated_time desc`,
+      `select * from orderData where seller=? order by generated_time desc`,
+      [req.params.user_id],
       (err, result) => {
         if (err) reject(err)
         data = JSON.parse(JSON.stringify(result))
@@ -37,8 +39,9 @@ app.get(`/getSoldOrders/:user_id`, (req, res) => {
         promises.push(
           new Promise((resolve) =>{
             connection.query(
-              `select title,images from goodInfo where good_id = '${item.good_id}';
-               select nickname from userAccount where user_id='${item.buyer}'`,
+              `select title,images from goodInfo where good_id = ?;
+               select nickname from userAccount where user_id = ?`,
+               [item.good_id, item.buyer],
               (err, result) => {
                 if(err) throw err
                 const separatedResult = JSON.parse(JSON.stringify(result)).flat(2)
@@ -61,8 +64,9 @@ app.get(`/getSoldOrders/:user_id`, (req, res) => {
 // 拒接订单
 app.post(`/rejectOrder`, (req, res) => {
   connection.query(
-    `update orderData set stat='已取消' where order_id='${req.body.orderID}';
-     update goodInfo set available=0 where good_id=(select good_id from orderData where order_id='${req.body.orderID}')`,
+    `update orderData set stat='已取消' where order_id=?;
+     update goodInfo set available=0 where good_id=(select good_id from orderData where order_id=?)`,
+     [req.body.orderID, req.body.orderID],
      (err, result) => {
        if (err) throw err
        res.end(JSON.stringify(result))

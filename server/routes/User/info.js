@@ -10,7 +10,8 @@ app.use(express.urlencoded({extended:  false}))
 // 获取用户信息
 app.get('/getUserInfo/:user_id', (req, res) => {
   connection.query(
-    `select * from userAccount where user_id ='${req.params.user_id}'`,
+    `select * from userAccount where user_id = ?`,
+    [req.params.user_id],
     (err, result) => {
       if(err) throw err
       res.end(JSON.stringify(result))
@@ -20,14 +21,16 @@ app.get('/getUserInfo/:user_id', (req, res) => {
 
 // 修改用户信息
 app.post('/modifyUserInfo', (req, res) => {
+  const r = req.body
   connection.query(
     `update userAccount set 
-    nickname='${req.body.nickName}',
-    biography='${req.body.selfIntro}',
-    college='${req.body.college}',
-    gender='${req.body.gender}',
-    birthday='${req.body.birthday}'
-    where user_id='${req.body.userID}'`,
+    nickname=?,
+    biography=?,
+    college=?,
+    gender=?,
+    birthday=?
+    where user_id=?`,
+    [r.nickName, r.selfIntro, r.college, r.gender, r.birthday, r.userID],
     (err, result) => {
       if(err) throw err
       res.end(JSON.stringify(result))  

@@ -11,7 +11,8 @@ app.use(express.urlencoded({extended:  false}))
 app.post('/userlogin', (req, res) => {
   let doesExist = false
   connection.query(
-    "select count(*) as cnt from userAccount where user_id = '" + req.body.id + "' and mypassword = '" + req.body.password + "'", 
+    `select count(*) as cnt from userAccount where user_id = ? and mypassword = ?` ,
+    [req.body.id, req.body.password],
     (err, result) => {
       if (err) throw err
       doesExist = (result[0].cnt > 0) ? true : false
@@ -24,7 +25,8 @@ app.post('/userlogin', (req, res) => {
 app.post('/adminlogin', (req, res) => {
   let doesExist = false
   connection.query(
-    "select count(*) as cnt from adminAccount where user_id = '" + req.body.id + "' and mypassword = '" + req.body.password + "'", 
+    `select count(*) as cnt from adminAccount where user_id = ? and mypassword = ?`, 
+    [req.body.id, req.body.password],
     (err, result) => {
       if (err) throw err
       doesExist = (result[0].cnt > 0) ? true : false
@@ -37,7 +39,8 @@ app.post('/adminlogin', (req, res) => {
 app.post('/isrepeated', (req, res) => {
   let isRepeated = false
   connection.query(
-    "select count(*) as cnt from userAccount where user_id = '" + req.body.id + "' or telnum = '" + req.body.telnum + "'", 
+    `select count(*) as cnt from userAccount where user_id = ? or telnum = ?`, 
+    [req.body.id, req.body.telnum],
     (err, result) => {
       if (err) throw err
       isRepeated = (result[0].cnt > 0) ? true : false
@@ -72,7 +75,8 @@ app.post('/register', (req, res) => {
 app.post('/idcoupletel', (req, res) => {
   let isCoupled = false
   connection.query(
-    "select count(*) as cnt from userAccount where user_id = '" + req.body.id + "' and telnum = '" + req.body.telnum + "'",
+    `select count(*) as cnt from userAccount where user_id = ? and telnum = ?`,
+    [req.body.id, req.body.telnum],
     (err, result) => {
       if (err) throw err
       isCoupled = (result[0].cnt > 0) ? true : false
@@ -84,7 +88,8 @@ app.post('/idcoupletel', (req, res) => {
 // 接口6 用户修改密码：传入（ID、新密码） 返回（null）
 app.post('/modifypassword', (req, res) => {
   connection.query(
-    "update userAccount set mypassword = '" + req.body.newpassword + "' where user_id ='" + req.body.id + "'",
+    `update userAccount set mypassword = ? where user_id = ?`,
+    [req.body.newpassword, req.body.id],
     (err, result) => {
       if (err) throw err
       res.end(JSON.stringify(result))

@@ -10,7 +10,8 @@ app.use(express.urlencoded({extended:  false}))
 // 商品是否可访问
 app.get('/checkAvailable/:good_id', (req, res) => {
   connection.query(
-    `select available from goodInfo where good_id='${req.params.good_id}'`,
+    `select available from goodInfo where good_id=?`,
+    [req.params.good_id],
     (err, result) => {
       if (err) throw err
       let message = true
@@ -26,7 +27,8 @@ app.get('/checkAvailable/:good_id', (req, res) => {
 app.get('/getGoods/:good_id',(req,res) => {
   new Promise((resolve) => {
     connection.query(
-      "select * from goodInfo where good_id ='"+ req.params.good_id + "'",
+      "select * from goodInfo where good_id =?",
+      [req.params.good_id],
       (err, result) =>{
         if (err) throw err
         resolve(JSON.parse(JSON.stringify(result))[0])   
@@ -35,9 +37,10 @@ app.get('/getGoods/:good_id',(req,res) => {
   })
     .then(baseInfo => {
       connection.query(
-        `select count(*) as cnt from collectionBox where good_id='${req.params.good_id}'`,
+        `select count(*) as cnt from collectionBox where good_id=?`,
+        [req.params.good_id],
         (err, result) => {
-          if(err) throw err
+          if (err) throw err
           baseInfo.likes = JSON.parse(JSON.stringify(result))[0].cnt
           res.end(JSON.stringify(baseInfo))
         }
@@ -50,7 +53,8 @@ app.get('/getSellerInfo/:user_id',(req,res) => {
   new Promise((resolve) => {
     // 获取昵称，头像URL
     connection.query(
-      "select nickname,avatar from userAccount where user_id ='"+ req.params.user_id + "'",
+      "select nickname,avatar from userAccount where user_id = ?",
+      [req.params.user_id],
       (err, result) => {
         if (err) throw err
         let sellerInfo =  JSON.parse(JSON.stringify(result))[0]

@@ -10,7 +10,8 @@ app.use(express.urlencoded({extended:  false}))
 // 检查是否收藏商品
 app.post('/checkCollected', (req, res) => {
   connection.query(
-    `select count(*) as cnt from collectionBox where user_id = '${req.body.userID}' and good_id = '${req.body.goodID}'`,
+    `select count(*) as cnt from collectionBox where user_id = ? and good_id = ?`,
+    [req.body.userID, req.body.goodID],
     (err, result) => {
       if(err) throw(err)
       if(JSON.parse(JSON.stringify(result))[0].cnt > 0){
@@ -41,7 +42,8 @@ app.get('/getCollection/:user_id',(req,res) => {
   const promises = []
   new Promise((resolve, reject) => {
     connection.query(
-      "select * from collectionBox where user_id = '" + req.params.user_id + "' order by day_time desc",
+      `select * from collectionBox where user_id = ? order by day_time desc`,
+      [req.params.user_id],
       (err, result) => {
         if (err) throw err
         data = JSON.parse(JSON.stringify(result))
@@ -54,7 +56,8 @@ app.get('/getCollection/:user_id',(req,res) => {
         promises.push(
           new Promise((resolve) =>{
             connection.query(
-              `select title,price,images from goodInfo where good_id = '${item.good_id}'`,
+              `select title,price,images from goodInfo where good_id = ?`,
+              [item.good_id],
               (err, result) => {
                 if(err) throw err
                 result = JSON.parse(JSON.stringify(result))[0]
@@ -75,11 +78,14 @@ app.get('/getCollection/:user_id',(req,res) => {
 
 // 接口15 取消收藏某商品：传入（用户ID，商品ID） 返回（null）
 app.post('/cancelCollection',(req,res) => {
-  connection.query("delete from collectionBox where user_id ='" + req.body.userID + "' and good_id ='" + req.body.goodID + "'",
-  (err,result)=>{
-    if (err) throw err
-    res.end(JSON.stringify(result));
-  })
+  connection.query(
+    `delete from collectionBox where user_id = ? and good_id = ?`,
+    [req.body.userID, req.body.goodID],
+    (err, result) => {
+      if (err) throw err
+      res.end(JSON.stringify(result));
+    }
+  )
 })
 
 module.exports = app

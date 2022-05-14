@@ -26,7 +26,8 @@ app.get('/getTrack/:user_id',(req,res) => {
   const promises = []
   new Promise((resolve, reject) => {
     connection.query(
-      "select * from browseTrack where user_id = '" + req.params.user_id + "' order by day_time desc",
+      `select * from browseTrack where user_id = ? order by day_time desc`,
+      [req.params.user_id],
       (err, result) => {
         if (err) throw err
         data = JSON.parse(JSON.stringify(result))
@@ -39,11 +40,12 @@ app.get('/getTrack/:user_id',(req,res) => {
         promises.push(
           new Promise((resolve) =>{
             connection.query(
-              `select title,price,images from goodInfo where good_id = '${item.good_id}'`,
+              `select title,price,images from goodInfo where good_id = ?`,
+              [item.good_id],
               (err, result) => {
                 if(err) throw err
                 result = JSON.parse(JSON.stringify(result))[0]
-                for(let property in result){
+                for (let property in result) {
                   item[property] = result[property]
                 }
                 resolve()
@@ -61,7 +63,8 @@ app.get('/getTrack/:user_id',(req,res) => {
 // 接口13 清空浏览记录：传入（用户ID） 返回（null）
 app.get('/clearTrack/:user_id',(req,res) => {
   connection.query(
-    "delete from browseTrack where user_id ='" + req.params.user_id + "'",
+    `delete from browseTrack where user_id = ?`,
+    [req.params.user_id],
     (err, result) => {
       if (err) throw err
       res.end(JSON.stringify(result))

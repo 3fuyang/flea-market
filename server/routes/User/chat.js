@@ -18,7 +18,8 @@ app.get('/getChatOponent/:user_id', (req, res) => {
       promises.push(
         new Promise((resolve) => {
           connection.query(
-            `select nickname,avatar from userAccount where user_id = '${id}'`,
+            `select nickname,avatar from userAccount where user_id = ?`,
+            [id],
             (err, result) => {
               if(err) throw err
               resolve({
@@ -36,7 +37,8 @@ app.get('/getChatOponent/:user_id', (req, res) => {
   })  
   new Promise((resolve, reject) => {
     connection.query(
-      "select a_user_id,date_time from chatRecord where b_user_id ='"+ req.params.user_id + "' order by date_time desc",
+      `select a_user_id,date_time from chatRecord where b_user_id = ? order by date_time desc`,
+      [req.params.user_id],
       (err, result) => {
         if (err) throw err
         result = JSON.parse(JSON.stringify(result))
@@ -46,7 +48,8 @@ app.get('/getChatOponent/:user_id', (req, res) => {
   })
     .then((halfResult) => {
       connection.query(
-        "select b_user_id,date_time from chatRecord where a_user_id ='"+ req.params.user_id + "'",
+        `select b_user_id,date_time from chatRecord where a_user_id =?`,
+        [req.params.user_id],
         (err, result) => {
           if(err) throw err
           result = halfResult
@@ -70,7 +73,8 @@ app.get('/getMessage/:a_user_id/:b_user_id',(req,res) => {
     req.params.a_user_id = temp
   }
   connection.query(
-    "select * from chatRecord where a_user_id ='"+ req.params.a_user_id + "' and b_user_id ='" + req.params.b_user_id + "' order by date_time asc",
+    `select * from chatRecord where a_user_id = ? and b_user_id = ? order by date_time asc`,
+    [req.params.a_user_id, req.params.b_user_id],
     (err, result) =>{
       if (err) throw err
       res.end(JSON.stringify(result))    

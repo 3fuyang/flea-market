@@ -282,6 +282,9 @@ function handleSendMessage () {
   }
   // 调用接口：传入（用户ID，对方ID，说话方，时间，内容） 返回（null）
   axios.post('/api/sendMessage', message)
+    .then(() => {
+      getMessage()
+    })
 
   textarea.value = ''
 }
@@ -297,7 +300,7 @@ function updateDoodle (e: Event) {
 }
 .root {
   position: absolute;
-  top: 80px;
+  top: 30px;
   z-index: 6;
   display: flex;
   justify-content: center;

@@ -69,9 +69,11 @@
 import { ref } from 'vue'
 import { StarFilled, Avatar } from '@element-plus/icons-vue'
 import { useRouter } from 'vue-router'
-import { ElMessageBox, ElMessage } from 'element-plus'
-import { NEllipsis } from 'naive-ui'
+import { NEllipsis, useMessage, useDialog } from 'naive-ui'
 import axios from 'axios'
+
+const message = useMessage()
+const dialog = useDialog()
 
 const router = useRouter()
 
@@ -142,29 +144,27 @@ function jumpToDetail (goodId: string) {
 // 下架商品
 function pullOffGood (goodId: string) {
   // 显示确认对话框
-  ElMessageBox.confirm(
-    '您确定要下架该商品吗?系统不会保存该商品的信息。',
-    '提示',
+  dialog.warning(
     {
-      confirmButtonText: '确定',
-      cancelButtonText: '取消',
-      type: 'warning',
-    }
-  ).then(()=>{
-    // 调用接口：传入（商品ID）返回（下架结果）
+      title: '提示',
+      content: '您确定要下架该商品吗?系统不会保存该商品的信息。',
+      positiveText: '确定',
+      negativeText: '取消',
+      onPositiveClick: () => {
+        // 调用接口：传入（商品ID）返回（下架结果）
 
-    // 从视图中删除商品
-    const copy = goodsListView.value.filter((item)=>{return item.id !== goodId})
-    goodsListView.value.length = 0
-    goodsListView.value.push(...copy)
-    ElMessage({
-      type:'success',
-      message:'下架成功!',
-    })
-  }).catch(()=>{
-    // 取消下架
-    return false
-  })
+        // 从视图中删除商品
+        const copy = goodsListView.value.filter((item)=>{return item.id !== goodId})
+        goodsListView.value.length = 0
+        goodsListView.value.push(...copy)
+        message.success('下架成功！(但数据实在太少了，所以并没有删)')
+      },
+      onNegativeClick: () => {
+        // 取消下架
+        return false
+      }      
+    }
+  )
 }
 </script>
 

@@ -150,9 +150,14 @@
 <script setup lang="ts">
 import { ref, computed, onUpdated, watch } from 'vue'
 import { useRouter } from 'vue-router'
-import { ElMessage, ElMessageBox, type UploadFile, type UploadInstance, type UploadRawFile } from 'element-plus'
+import type { UploadFile, UploadInstance, UploadRawFile } from 'element-plus'
+import { useMessage, useDialog } from 'naive-ui'
 import { Close } from '@element-plus/icons-vue'
 import axios from 'axios'
+
+const message = useMessage()
+const dialog = useDialog()
+
 const props = defineProps({
   goodId: String, // 商品ID
   show: Boolean,  // 组件渲染条件
@@ -274,19 +279,19 @@ function nextStep () {
   switch (active.value) {
     case 0:
       if (goodInfo.value.title == "") {
-        ElMessage.error('标题不可为空!')
+        message.error('标题不可为空!')
         break
       } else if (goodInfo.value.type == "") {
-        ElMessage.error('商品类型不可为空!')
+        message.error('商品类型不可为空!')
         break
       } else if (goodInfo.value.name == "") {
-        ElMessage.error('商品名称不可为空')
+        message.error('商品名称不可为空')
         break
       } else if (goodInfo.value.keywords == "") {
-        ElMessage.error('关键词不可为空!')
+        message.error('关键词不可为空!')
         break
       } else if (goodInfo.value.campus == "") {
-        ElMessage.error('校区不可为空!')
+        message.error('校区不可为空!')
         break
       } else {
         ++active.value
@@ -294,10 +299,10 @@ function nextStep () {
       }
     case 1:
       if (goodInfo.value.intro == "") {
-        ElMessage.error('商品简介不可为空!')
+        message.error('商品简介不可为空!')
         break
       } else if (imgServerName.value.length === 0) {
-        ElMessage.error('请为商品上传实物图!')
+        message.error('请为商品上传实物图!')
         break
       } else {
         goodInfo.value.images = imgServerName.value.join(';')
@@ -306,23 +311,27 @@ function nextStep () {
       }
     case 2:
       if (Number.parseFloat(goodInfo.value.price) === 0) {
-        ElMessage.error('商品价格不能为零!')
+        message.error('商品价格不能为零!')
         break
       } else if (goodInfo.value.detail === '') {
-        ElMessage.error('请指定商品交易细节!')
+        message.error('请指定商品交易细节!')
         break
       } else {
         if (edited.value) {
           ++active.value
           break
         } else {
-          ElMessage.warning('没有需要提交的修改！')
+          message.warning('没有需要提交的修改！')
           break
         }
       }
     case 3:
-      ElMessageBox.confirm('确认要修改商品信息吗？','提示')
-        .then(() => {
+      dialog.info({
+        title: '提示',
+        content: '确认要修改商品信息吗？',
+        positiveText: '确定',
+        negativeText: '取消',
+        onPositiveClick: () => {
           // 调用接口-添加商品：传入（商品信息） 返回（商品ID）
           let date = new Date()
           date.setHours(date.getHours() + 8)
@@ -341,19 +350,17 @@ function nextStep () {
           axios.post('/api/modifyGood', modifiedGood)
             .then(() => {
               emits('close')
-              ElMessage({
-                  type: 'success',
-                  message: '修改成功'
-              })
+              message.success('修改成功')
               // 刷新当前页面
               const router = useRouter()
               router.go(0)
             })
-        })
-        .catch(() => {
-          ElMessage.info('取消修改!')
+        },
+        onNegativeClick: () => {
+          message.info('取消修改!')
           edited.value = false
-        })
+        }
+      })
       break
   } 
 }
@@ -367,13 +374,13 @@ const imgServerName = ref<string[]>([]) // 上传图片后返回的服务端 url
 const limitMax = 2200*1900 // 允许上传的最大尺寸
 // on-exceed hook
 function handleExceed () {
-  ElMessage.warning('只能为商品上传最多三张图片!')
+  message.warning('只能为商品上传最多三张图片!')
   return false
 }
 // before-upload hook
 function handleBeforeUpload (file: UploadRawFile) {
   if (file.size > limitMax) {
-    ElMessage.error('大小超出限制')
+    message.error('大小超出限制')
     return false
   } else {
     imgLocalUrl.value = []

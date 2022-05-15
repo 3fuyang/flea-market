@@ -91,7 +91,9 @@
 import { onMounted, ref } from 'vue'
 import { isNavigationFailure, onBeforeRouteUpdate, useRouter, type LocationQuery } from 'vue-router'
 import { cloneDeep, property } from 'lodash'
-import { ElMessage } from 'element-plus'
+import { useMessage } from 'naive-ui'
+
+const message = useMessage()
 
 const router = useRouter()
 
@@ -328,7 +330,7 @@ async function navigate () {
     query: newQuery
   })
   if (isNavigationFailure(failure)) {
-    ElMessage.error('路由导航失败')
+    message.error('路由导航失败')
   }
 }
 

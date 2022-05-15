@@ -1,14 +1,17 @@
 <script lang="ts" setup>
-import { NButton, NMenu, type MenuOption } from 'naive-ui'
+import { NButton, NMenu, type MenuOption, useMessage, useDialog } from 'naive-ui'
 import { ref, computed, h, watch } from 'vue'
 import { useUserStore } from '@/stores/user'
 import { storeToRefs } from 'pinia'
-import { ElMessage, ElMessageBox } from "element-plus"
 import { useRouter, RouterLink, useRoute } from "vue-router"
 import { memberRoutes, adminRoutes, loginRoutes, endRoutes } from "@/router"
 import { useLoadingBar } from 'naive-ui'
 
 const loadingBar = useLoadingBar()
+
+const message = useMessage()
+
+const dialog = useDialog()
 
 const router = useRouter()
 const route = useRoute()
@@ -303,51 +306,44 @@ const adminOptions: MenuOption[] = [
 // 登出
 function logOut () {
   //对话框询问
-  ElMessageBox.confirm(
-    '您的账号将注销登录,是否继续操作?',
-    '确认',
-    {
-      confirmButtonText:'继续',
-      cancelButtonText:'取消',
-      type:'warning'
-    }
-  ).then(() => {
-    //用store的actions设置登录状态为false
-    const preIdentity = identity.value
-    userStore.logOut()    
-    // 移除权限路由
-    switch (preIdentity) {
-      case 'member':
-        memberRoutes.forEach((route) => {
-          router.removeRoute(route.name)
-        })
-        break
-      case 'admin':
-        adminRoutes.forEach((route) => {
-          router.removeRoute(route.name)
-        })
-        break
-      default:
-        break
-    }
-    // 添加登录路由
-    loginRoutes.forEach((route) => {
-      router.addRoute(route)
-    })
-    // 将endRoutes移至尾部
-    endRoutes.forEach((route) => {
-      router.addRoute(route)
-    })
-    router.push('/home')
-    ElMessage({
-      type:'success',
-      message:'注销成功!'
-    })
-  }).catch(() => {
-    ElMessage({
-      type:'info',
-      message:'取消注销'
-    })
+  dialog.warning({
+    title: '确认',
+    content: '您的账号将注销登录,是否继续操作?',
+    positiveText: '继续',
+    negativeText: '取消',
+    onPositiveClick: () => {
+      //用store的actions设置登录状态为false
+      const preIdentity = identity.value
+      userStore.logOut()    
+      // 移除权限路由
+      switch (preIdentity) {
+        case 'member':
+          memberRoutes.forEach((route) => {
+            router.removeRoute(route.name)
+          })
+          break
+        case 'admin':
+          adminRoutes.forEach((route) => {
+            router.removeRoute(route.name)
+          })
+          break
+        default:
+          break
+      }
+      // 添加登录路由
+      loginRoutes.forEach((route) => {
+        router.addRoute(route)
+      })
+      // 将endRoutes移至尾部
+      endRoutes.forEach((route) => {
+        router.addRoute(route)
+      })
+      router.push('/home')
+      message.success('注销成功!')
+    },
+    onNegativeClick: () => {
+      message.info('取消注销')
+    }    
   })
 }
 </script>

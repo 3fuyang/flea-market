@@ -57,8 +57,10 @@
 
 <script setup lang="ts">
 import { ref, computed, onMounted, onBeforeUpdate } from 'vue'
-import { ElMessage } from 'element-plus'
+import { useMessage } from 'naive-ui'
 import axios from 'axios'
+
+const message = useMessage()
 
 const props = defineProps({
   show: Boolean,  // 是否显示对话框
@@ -108,16 +110,10 @@ onBeforeUpdate(()=>{
 // 提交评价
 function submitEvaluation(){
   if (evaluation.value === '') {
-    ElMessage({
-      type: 'error',
-      message: '请输入您的评价！'
-    })
+    message.error('请输入您的评价！')
   }
   else if (grade.value === null) {
-    ElMessage({
-      type: 'error',
-      message: '请为本次交易评分(0~5)！'
-    })    
+    message.error('请为本次交易评分(0~5)！')    
   }
   else {
     let date = new Date()
@@ -133,11 +129,7 @@ function submitEvaluation(){
       .then(() => {
         // 触发事件，修改视图中订单状态为'已完成'
         emits('order-done', props.currOrderId as string)
-
-        ElMessage({
-          type: 'success',
-          message: '谢谢您的评价！'
-        })
+        message.success('谢谢您的评价！')
         emits('close')
       })
   }

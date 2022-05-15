@@ -2,7 +2,7 @@
 import TopBar from './components/NewTopBar.vue'
 import BlossomDoodle from './components/Doodles/BlossomDoodle.vue'
 import ShiveringDoodle from './components/Doodles/ShiveringDoodle.vue'
-import { NNotificationProvider, NLoadingBarProvider, NMessageProvider } from 'naive-ui'
+import { NNotificationProvider, NLoadingBarProvider, NMessageProvider, NDialogProvider } from 'naive-ui'
 
 const barStyle = {
   loading: {
@@ -15,44 +15,46 @@ const barStyle = {
 	<div
     id="app" 
     class="app">
-    <el-container style="overflow-x: hidden;">
-      <el-header 
-        v-if="$route.path != '/login'" 
-        style="padding: 0;height: auto;">
-        <n-loading-bar-provider :loading-bar-style="barStyle">
-          <top-bar />
-        </n-loading-bar-provider>
-      </el-header>      
-      <el-main class="main provider">
+    <n-message-provider>
+      <n-dialog-provider>
         <n-notification-provider>
-          <n-message-provider>
-            <div
-              v-show="$route.path !== '/login'"
-              class="doodle-wrapper-r">
-              <blossom-doodle/>            
-            </div>
-            <div
-              v-show="$route.path !== '/login'"
-              class="doodle-wrapper-l">
-              <shivering-doodle/>            
-            </div>          
-            <router-view/>
-          </n-message-provider>
+          <el-container style="overflow-x: hidden;">
+            <el-header 
+              v-if="$route.path != '/login'" 
+              style="padding: 0;height: auto;">
+              <n-loading-bar-provider :loading-bar-style="barStyle">
+                <top-bar />
+              </n-loading-bar-provider>
+            </el-header>      
+            <el-main class="main provider">
+              <div
+                v-show="$route.path !== '/login'"
+                class="doodle-wrapper-r">
+                <blossom-doodle/>            
+              </div>
+              <div
+                v-show="$route.path !== '/login'"
+                class="doodle-wrapper-l">
+                <shivering-doodle/>            
+              </div>          
+              <router-view/>
+            </el-main>
+            <el-footer 
+              v-if="$route.path!='/login'" 
+              class="footer">
+              <p>
+                Copyright ©2022 同济大学校内二手交易平台
+              </p>
+            </el-footer>
+          </el-container>
+          <el-backtop 
+            v-if="$route.path!='/login'" 
+            :bottom="100" 
+            :right="40">
+          </el-backtop>
         </n-notification-provider>
-      </el-main>
-      <el-footer 
-        v-if="$route.path!='/login'" 
-        class="footer">
-        <p>
-          Copyright ©2022 同济大学校内二手交易平台
-        </p>
-      </el-footer>
-    </el-container>
-    <el-backtop 
-      v-if="$route.path!='/login'" 
-      :bottom="100" 
-      :right="40">
-    </el-backtop>
+      </n-dialog-provider>
+    </n-message-provider>
   </div>
 </template>
 

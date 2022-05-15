@@ -149,9 +149,14 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue'
 import { useRouter } from 'vue-router'
-import { ElMessage, ElMessageBox, type UploadFile } from 'element-plus'
+import { useMessage, useDialog } from 'naive-ui'
+import type { UploadFile } from 'element-plus'
 import type { UploadInstance, UploadRawFile } from 'element-plus'
 import axios from 'axios'
+
+const message = useMessage()
+
+const dialog = useDialog()
 
 const props = defineProps({
   userId: String, // 用户ID
@@ -189,73 +194,76 @@ function preStep() {
 }
 
 // 下一步
-function nextStep() {
+function nextStep () {
   switch (active.value) {
     case 0:
       if (goodInfo.value.title == "") {
-        ElMessage.error('标题不可为空!')
+        message.error('标题不可为空!')
       } else if (goodInfo.value.type == "") {
-        ElMessage.error('商品类型不可为空!')
+        message.error('商品类型不可为空!')
       } else if (goodInfo.value.name == "") {
-        ElMessage.error('商品名称不可为空')
+        message.error('商品名称不可为空')
       } else if (goodInfo.value.keywords == "") {
-        ElMessage.error('关键词不可为空!')
+        message.error('关键词不可为空!')
       } else if (goodInfo.value.campus == "") {
-        ElMessage.error('校区不可为空!')
+        message.error('校区不可为空!')
       } else {
         ++active.value
       }
       break
     case 1:
       if (goodInfo.value.intro == "") {
-        ElMessage.error('商品简介不可为空!')
+        message.error('商品简介不可为空!')
       } else if (imgServerName.value.length === 0) {
-        ElMessage.error('请为商品上传实物图!')
+        message.error('请为商品上传实物图!')
       } else {
         ++active.value
       }
       break
     case 2:
       if (Number.parseFloat(goodInfo.value.price) === 0) {
-        ElMessage.error('商品价格不能为零!')
+        message.error('商品价格不能为零!')
       } else if (goodInfo.value.detail === '') {
-        ElMessage.error('请指定商品交易细节!')
+        message.error('请指定商品交易细节!')
       } else {
         ++active.value
       }
       break
     case 3:
-      ElMessageBox.confirm('确认要上架商品吗？','提示')
-      .then(() => {
-        // 调用接口-添加商品：传入（商品信息） 返回（商品ID）
-        let date = new Date()
-        date.setHours(date.getHours() + 8)
-        const newGood = [
-          props.userId,
-          goodInfo.value.price,
-          goodInfo.value.type,
-          goodInfo.value.name,
-          goodInfo.value.title,
-          goodInfo.value.keywords,
-          goodInfo.value.campus,
-          goodInfo.value.intro,
-          goodInfo.value.detail,
-          imgServerName.value.join(';'),
-          date.toISOString().slice(0, 19).replace('T', ' ')         
-        ]
-        axios.post('/api/addGood', newGood)
-          .then(() => {
-            ElMessage({
-                type: 'success',
-                message: '上架成功'
+      dialog.info({
+        title: '提示',
+        content: '确认要上架商品吗？',
+        positiveText: '确认',
+        negativeText: '取消',
+        onPositiveClick: () => {
+          // 调用接口-添加商品：传入（商品信息） 返回（商品ID）
+          let date = new Date()
+          date.setHours(date.getHours() + 8)
+          const newGood = [
+            props.userId,
+            goodInfo.value.price,
+            goodInfo.value.type,
+            goodInfo.value.name,
+            goodInfo.value.title,
+            goodInfo.value.keywords,
+            goodInfo.value.campus,
+            goodInfo.value.intro,
+            goodInfo.value.detail,
+            imgServerName.value.join(';'),
+            date.toISOString().slice(0, 19).replace('T', ' ')         
+          ]
+          axios.post('/api/addGood', newGood)
+            .then(() => {
+              message.success('上架成功')
+              // 刷新当前页面
+              const router = useRouter()
+              router.go(0)
             })
-            // 刷新当前页面
-            const router = useRouter()
-            router.go(0)
-          })
+        },
+        onNegativeClick: () => {
+          return false 
+        }
       })
-      .catch(() => {})
-      break
   }
 }
 
@@ -269,13 +277,13 @@ const imgServerName = ref<string[]>([]) // 上传图片后返回的服务端名�
 const limitMax = 2200*1900 // 允许上传的最大尺寸
 // on-exceed hook
 function handleExceed () {
-  ElMessage.warning('只能为商品上传最多三张图片!')
+  message.warning('只能为商品上传最多三张图片!')
   return false
 }
 // before-upload hook
 function handleBeforeUpload (file: UploadRawFile) {
   if (file.size > limitMax) {
-    ElMessage.error('大小超出限制')
+    message.error('大小超出限制')
     return false
   }
 }

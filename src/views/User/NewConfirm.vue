@@ -45,7 +45,7 @@
 </template>
 
 <script lang="ts" setup>
-import { ElMessage } from 'element-plus'
+import { useMessage } from 'naive-ui'
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import axios from 'axios'
@@ -53,6 +53,8 @@ import GoodMediaObject from '../../components/Confirm/GoodMediaObject.vue'
 import PayQRCode from '../../components/Confirm/PayQRCode.vue'
 import { useUserStore } from '@/stores/user'
 import { storeToRefs } from 'pinia'
+
+const message = useMessage()
 
 const userStore = useUserStore()
 const { userID } = storeToRefs(userStore)
@@ -126,7 +128,7 @@ function closeModal(paid: boolean) {
   }
   Promise.all(promises)
     .then(() => {
-        ElMessage.success('提交成功，即将为您跳转到订单页！')
+        message.success('提交成功，即将为您跳转到订单页！')
         window.setTimeout(() => router.push('/order'), 500)
     })
     .catch(err => {

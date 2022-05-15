@@ -2,12 +2,13 @@
 import LoginWidget from '../components/Login/LoginWidget.vue'
 import RegisterWidget from '../components/Login/RegisterWidget.vue'
 import RetrieveWidget from '../components/Login/RetrieveWidget.vue'
-import { useNotification, NButton, NSpace } from 'naive-ui'
+import { useNotification, NButton, NSpace, useMessage } from 'naive-ui'
 import { ref, h } from 'vue'
-import { ElMessage } from 'element-plus'
 import { memberRoutes, adminRoutes, loginRoutes, endRoutes } from "@/router"
 import { useUserStore } from '@/stores/user'
 import { useRouter } from 'vue-router'
+
+const message = useMessage()
 
 const router = useRouter()
 
@@ -35,7 +36,7 @@ notification.create({
                   size: 'tiny',
                   secondary: true,
                   onClick: () => {
-                    ElMessage.success('用户登录成功！')
+                    message.success('用户登录成功！')
                     userStore.logIn('1951001')
                     // 删除登录路由
                     loginRoutes.forEach((route) => {
@@ -64,7 +65,7 @@ notification.create({
                   size: 'tiny',
                   secondary: true,
                   onClick: () => {
-                    ElMessage.success('管理员登录成功！')
+                    message.success('管理员登录成功！')
                     userStore.logIn('0001')
                     // 删除登录路由，添加管理员路由
                     loginRoutes.forEach((route) => {

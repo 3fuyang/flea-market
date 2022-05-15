@@ -50,9 +50,11 @@ import ReportModal from '../../components/Order/ReportModal.vue'
 import EvaluateModal from '../../components/Order/EvaluateModal.vue'
 import PayQRCode from '../../components/Confirm/PayQRCode.vue'
 import axios from 'axios'
-import { ElMessage } from 'element-plus'
+import { useMessage } from 'naive-ui'
 import { useUserStore } from '@/stores/user'
 import { storeToRefs } from 'pinia'
+
+const message = useMessage()
 
 const userStore = useUserStore()
 const { userID } = storeToRefs(userStore)
@@ -78,7 +80,7 @@ const showQR = ref(false) // 付款窗口开关
 const currentOrderPrice = ref(0) // 当前订单金额
 const currentOrderId = ref('') // 当前处理订单的ID
 const currentOrderStatus = ref('') // 当前处理订单的状态
-const currentOrderReported = ref(false) // 当前订单是否已被举报
+const currentOrderReported = ref('') // 当前订单是否已被举报
 
 // 调用接口：传入（用户ID） 返回（订单列表：订单ID，订单时间，商品名称，金额，卖家ID，订单状态，订单评价）
 axios.get(`/api/getOrders/${userID.value}`)
@@ -103,7 +105,7 @@ axios.get(`/api/getOrders/${userID.value}`)
 // 打开举报窗口
 function showReportModal(oid: string, orp: string){
   currentOrderId.value = oid
-  currentOrderReported.value = orp === '未举报' ? false : true
+  currentOrderReported.value = orp
   showReport.value = true
 }
 
@@ -150,10 +152,10 @@ function closeQRModal(paid: boolean) {
         if (index >= 0) {
           orderList.value[index].status = '待确认'
         }
-        ElMessage.success(`付款成功，交易完成后记得确认完成订单哦~`)
+        message.success(`付款成功，交易完成后记得确认完成订单哦~`)
       })
   } else {
-    ElMessage.info(`取消支付`)
+    message.info(`取消支付`)
   }
   showQR.value = false
 }

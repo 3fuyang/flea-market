@@ -36,7 +36,7 @@
             <el-col :span="12">
               <el-button
                 @click="$emit('close', 'normal', props.currOrderId)"
-              >{{reported === true?'返回':'关闭'}}</el-button>
+              >{{reported === '待处理' ? '返回' : '关闭'}}</el-button>
             </el-col>
           </el-row>
         </div>
@@ -48,13 +48,15 @@
 
 <script lang="ts" setup>
 import { ref, onMounted, onUpdated } from 'vue'
-import { ElMessage } from 'element-plus'
+import { useMessage } from 'naive-ui'
 import axios from 'axios'
+
+const message = useMessage()
 
 const props = defineProps({
   show: Boolean,  // 是否显示对话框
   currOrderId: String,  // 当前订单 ID
-  reported: Boolean // 是否被举报
+  reported: String // 举报状态
 })
 const emits = defineEmits(['close'])
 const reported = ref(props.reported) // 举报状态
@@ -64,7 +66,7 @@ const replyer = ref('') // 回复者
 const replyTime = ref('') // 回复时间
 
 onMounted(()=>{
-  if(props.reported){
+  if (props.reported !== '未举报') {
     // 调用接口：传入（订单ID） 返回（举报理由，状态，回复，回复时间）
     axios.get(`/api/getReport/${props.currOrderId}`)
       .then(res => {
@@ -78,7 +80,7 @@ onMounted(()=>{
 })
 
 onUpdated(() => {
-  if(props.reported){
+  if(props.reported !== '未举报'){
     // 调用接口：传入（订单ID） 返回（举报理由，状态，回复，回复时间）
     axios.get(`/api/getReport/${props.currOrderId}`)
       .then(res => {
@@ -93,12 +95,9 @@ onUpdated(() => {
 
 // 提交举报
 function reportOrder(){
-  if(reasonView.value === ''){
-    ElMessage({
-      type: 'error',
-      message: '举报理由不能为空！'
-    })
-  }else{
+  if (reasonView.value === '') {
+    message.error('举报理由不能为空！')
+  } else {
     let date = new Date()
     date.setHours(date.getHours() + 8)
     let body = {
@@ -109,11 +108,8 @@ function reportOrder(){
     // 调用接口：传入（订单ID，举报理由）
     axios.post(`/api/reportOrder`, body)
       .then(() => {
-        reported.value  = true
-        ElMessage({
-          type: 'success',
-          message: '举报成功，敬请等待管理员回复！'
-        })
+        reported.value  = '待处理'
+        message.success('举报成功，敬请等待管理员回复！')
         // 注意这里用defineEmits返回的emits在脚本中发出事件的方法！
         emits('close', 'reported')
       })

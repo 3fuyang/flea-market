@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import axios from 'axios'
-import { ElMessage } from 'element-plus'
-import { NCard, NForm, NFormItem, NInput, NButton, NDatePicker, NSelect } from 'naive-ui'
+import { NCard, NForm, NFormItem, NInput, NButton, NDatePicker, NSelect, useMessage } from 'naive-ui'
 import type { FormInst, FormRules, FormItemRule } from 'naive-ui'
 import { ref, watch } from 'vue'
 import { useRouter } from 'vue-router'
@@ -9,6 +8,8 @@ import { colleges } from './colleges'
 import { useUserStore } from '@/stores/user'
 import { memberRoutes, loginRoutes, endRoutes } from "@/router"
 import { useCAPTCHA } from '@/composables/useCAPTCHA'
+
+const message = useMessage()
 
 const router = useRouter()
 
@@ -114,7 +115,7 @@ function goFillInfo () {
           if (!is_r.data) {
             atInfo.value = true       
           } else {
-            ElMessage.error('账号或手机号已被注册！')
+            message.error('账号或手机号已被注册！')
             return false
           }
         })
@@ -139,7 +140,7 @@ function completeInfo () {
       console.log(reg_info)
       axios.post('/api/register',reg_info)
         .then(() => {
-          ElMessage.success('注册成功,1秒后将为您自动登录...')
+          message.success('注册成功,1秒后将为您自动登录...')
           userStore.logIn(registerData.value.userID)
           // 删除登录路由
           loginRoutes.forEach((route) => {

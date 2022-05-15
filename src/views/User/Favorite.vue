@@ -37,13 +37,16 @@
 </template>
 
 <script setup lang="ts">
-import { ElMessage, ElMessageBox } from 'element-plus'
+import { useMessage, useDialog } from 'naive-ui'
 import { ArrowLeft, Search, Close } from "@element-plus/icons-vue"
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import axios from 'axios'
 import { useUserStore } from '@/stores/user'
 import { storeToRefs } from 'pinia'
+
+const message = useMessage()
+const dialog = useDialog()
 
 // store
 const userStore = useUserStore()
@@ -104,7 +107,7 @@ function searchFavorite() {
       }
     }
   } else {
-    ElMessage.error('请输入关键字进行搜索')
+    message.error('请输入关键字进行搜索')
   }      
 }
 
@@ -116,47 +119,42 @@ function cancelSearch() {
 
 // 取消收藏
 function deleteFavorite (gid: string) {
-  ElMessageBox.confirm(
-    '将从收藏夹中删除这件商品,是否继续操作?',
-    '确认',
-    {
-      confirmButtonText:'继续',
-      cancelButtonText:'取消',
-      type:'warning',
-    }
-  ).then(()=>{
-    // 调用接口： 传入（用户ID,商品ID） 返回(null)
-    const data = {
-      userID: userID.value,
-      goodID: gid
-    }
-    axios.post('/api/cancelCollection', data)
-      .then(() => {
-        let index = 0
-        for (let item of favoriteData.value) {
-          if (item.id === gid) {
-            break
-          } else {
-            index++
+  dialog.warning({
+    title: '确认',
+    content: '将从收藏夹中删除这件商品,是否继续操作?',
+    positiveText: '继续',
+    negativeText: '取消',
+    onPositiveClick: () => {
+      // 调用接口： 传入（用户ID,商品ID） 返回(null)
+      const data = {
+        userID: userID.value,
+        goodID: gid
+      }
+      axios.post('/api/cancelCollection', data)
+        .then(() => {
+          let index = 0
+          for (let item of favoriteData.value) {
+            if (item.id === gid) {
+              break
+            } else {
+              index++
+            }
           }
-        }
-        favoriteData.value.splice(index, 1)
+          favoriteData.value.splice(index, 1)
 
-        index= 0
-        for (let item of showData.value) {
-          if (item.id === gid) {
-            break
-          } else {
-            index++
+          index= 0
+          for (let item of showData.value) {
+            if (item.id === gid) {
+              break
+            } else {
+              index++
+            }
           }
-        }
-        showData.value.splice(index, 1)
-        ElMessage({
-          type:'success',
-          message:'删除成功!',
+          showData.value.splice(index, 1)
+          message.success('删除成功！')
         })
-      })
-  })      
+    }
+  })  
 }
 </script>
 

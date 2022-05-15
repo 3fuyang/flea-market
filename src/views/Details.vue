@@ -135,11 +135,12 @@ import { useRouter, onBeforeRouteUpdate } from 'vue-router'
 import GoodSellerPanel from '../components/Goods/GoodSellerPanel.vue'
 import Comments from '../components/Goods/Comments.vue'
 import { StarFilled, Star, Shop } from "@element-plus/icons-vue"
-import { ElMessage } from 'element-plus'
 import axios from 'axios'
 import { useUserStore } from '@/stores/user'
 import { storeToRefs } from 'pinia'
-import { NMessageProvider, NButton } from 'naive-ui'
+import { NMessageProvider, NButton, useMessage } from 'naive-ui'
+
+const message = useMessage()
 
 // store
 const userStore = useUserStore()
@@ -196,7 +197,7 @@ function getGoodInfo () {
 	axios.get(`/api/checkAvailable/${goodID.value}`)
 		.then(res => {
 			if(!res.data){
-				ElMessage.error('该商品已下架！')
+				message.error('该商品已下架！')
 				router.back()
 			}
 		})
@@ -346,7 +347,7 @@ const goConfirm = () => {
 			}	
 		})
 	} else if (identity.value === 'admin') {
-		ElMessage.warning(`请使用普通账号执行该操作。`)
+		message.warning(`请使用普通账号执行该操作。`)
 	} else {
 		router.push(`/login`)
 	}
@@ -361,7 +362,7 @@ const addToCart = () => {
 	}
 	// 管理员账号
 	else if(identity.value === 'admin'){
-		ElMessage.warning('请登录普通用户账号进行该操作！')
+		message.warning('请登录普通用户账号进行该操作！')
 	}
 	// 普通用户
 	else if(identity.value === 'member'){

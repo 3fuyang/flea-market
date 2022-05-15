@@ -38,13 +38,15 @@
 </template>
 
 <script setup lang="ts">
-import { ElMessage } from 'element-plus'
+import { useMessage } from 'naive-ui'
 import { onBeforeMount, ref } from 'vue'
 import { onBeforeRouteUpdate, useRouter, useRoute, isNavigationFailure, type LocationQueryValue } from 'vue-router'
 import { cloneDeep } from 'lodash'
 import FilterTable from '../components/Result/FilterTable.vue'
 import RecommendList from '../components/Result/RecommendList.vue'
 import ResultList from '../components/Result/ResultList.vue'
+
+const message = useMessage()
 
 const router = useRouter()
 // 用户输入的搜索关键字
@@ -75,13 +77,13 @@ async function queryByPupular(item: string) {
     query: newQuery
   })
   if (isNavigationFailure(failure)) {
-    ElMessage.error('路由导航失败')
+    message.error('路由导航失败')
   }
 }
 // 使用关键词搜索
 async function queryByKeywords() {
   if (!(keywords.value as string).length) {
-    ElMessage.warning('亲，请输入关键词哦。')
+    message.warning('亲，请输入关键词哦。')
     return false
   } else {
     const newQuery = cloneDeep(router.currentRoute.value.query)
@@ -91,7 +93,7 @@ async function queryByKeywords() {
       query: newQuery
     })
     if (isNavigationFailure(failure)) {
-      ElMessage.error('路由导航失败')
+      message.error('路由导航失败')
     }
   }
 }

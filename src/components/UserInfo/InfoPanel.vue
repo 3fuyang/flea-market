@@ -107,10 +107,15 @@
 </template>
 
 <script setup lang="ts">
-import { onBeforeMount, ref, watch } from 'vue'
-import { ElMessageBox, ElMessage } from 'element-plus'
+import { ref, watch } from 'vue'
+import { useMessage, useDialog } from 'naive-ui'
 import "@/assets/fonts/font.css"
 import axios from 'axios'
+
+const message = useMessage()
+
+const dialog = useDialog()
+
 const props = defineProps({
   userID: String  // 用户ID
 })
@@ -221,7 +226,7 @@ const changeBaseInfo = () => {
 }
 // 取消修改
 const resetEdit = () => {
-  ElMessage.info('取消编辑个人信息。')
+  message.info('取消编辑个人信息。')
   changingInfo.value = false
   edited.value = false
   // 恢复修改后的用户信息
@@ -231,11 +236,14 @@ const resetEdit = () => {
 }
 const cancelEdit= () => {
   if (edited.value) {
-    ElMessageBox.confirm(
-      '不会保存已做的修改，是否确定取消编辑？',
-      '提示'
-    ).then(() => {
-      resetEdit()
+    dialog.warning({
+      title: '提示',
+      content: '不会保存已做的修改，是否确定取消编辑？',
+      positiveText: '确定',
+      negativeText: '取消',
+      onPositiveClick: () => {
+        resetEdit()
+      }
     })
   }else{
     resetEdit()
@@ -244,50 +252,41 @@ const cancelEdit= () => {
 // 保存修改
 const changeInfoConfirm = () => {
   if (edited.value) {
-    ElMessageBox.confirm(
-      "确认要修改个人信息吗?",
-      "提示"
-    ).then(() => {
-      // 校验表单
-      if (!newInfo.value.nickName.length) {
-        ElMessage({
-          type: "error",
-          message: "昵称不可为空!"
-        })
-        return false
+    dialog.info({
+      title: '提示',
+      content: '确认要修改个人信息吗?',
+      positiveText: '确认',
+      negativeText: '取消',
+      onPositiveClick: () => {
+        // 校验表单
+        if (!newInfo.value.nickName.length) {
+          message.error('昵称不可为空!')
+          return false
+        }
+        else if (!newInfo.value.birthday.length) {
+          message.error('生日不可为空!')
+          return false        
+        }
+        else if (!newInfo.value.selfIntro.length) {
+          message.error("个性签名不可为空!")
+          return false        
+        }      
+        // 调用接口：传入（用户ID，新用户信息） 返回（修改结果）
+        axios.post(`api/modifyUserInfo`, newInfo.value)
+          .then(() => {
+            // 修改视图
+            for (let property in newInfo.value) {
+              (userInfo.value as UserInfo)[property] = newInfo.value[property]
+            }
+            changingInfo.value = false
+            edited.value = false
+            message.success('个人信息已修改!')
+          })
       }
-      else if (!newInfo.value.birthday.length) {
-        ElMessage({
-          type: "error",
-          message: "生日不可为空!"
-        })
-        return false        
-      }
-      else if (!newInfo.value.selfIntro.length) {
-        ElMessage({
-          type: "error",
-          message: "个性签名不可为空!"
-        })
-        return false        
-      }      
-      // 调用接口：传入（用户ID，新用户信息） 返回（修改结果）
-      axios.post(`api/modifyUserInfo`, newInfo.value)
-        .then(() => {
-          // 修改视图
-          for (let property in newInfo.value) {
-            (userInfo.value as UserInfo)[property] = newInfo.value[property]
-          }
-          changingInfo.value = false
-          edited.value = false
-          ElMessage({
-            type: "success",
-            message: "个人信息已修改!",
-          }) 
-        })
     })
-  }else{
+  } else {
     //console.log(userInfo.value, newInfo.value)
-    ElMessage.warning('您没有要保存的修改。')
+    message.warning('您没有要保存的修改。')
   }
 }
 </script>

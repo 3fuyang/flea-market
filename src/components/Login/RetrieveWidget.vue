@@ -1,10 +1,11 @@
 <script setup lang="ts">
-import { NCard, NForm, NFormItem, NInput, NButton } from 'naive-ui'
+import { NCard, NForm, NFormItem, NInput, NButton, useMessage } from 'naive-ui'
 import type { FormRules, FormItemRule, FormInst } from 'naive-ui'
 import { ref } from 'vue'
 import axios from 'axios'
-import { ElMessage } from 'element-plus'
 import { useCAPTCHA } from '@/composables/useCAPTCHA'
+
+const message = useMessage()
 
 // 定义事件
 const emits = defineEmits<{
@@ -117,7 +118,7 @@ function goModify (): void {
           if (is_c.data) {
             atModify.value = true        
           } else {
-            ElMessage.error('没有对应的账号！')
+            message.error('没有对应的账号！')
             return false
           }
         })
@@ -137,7 +138,7 @@ function completeModify () {
       // 调用接口：传入（用户ID、新密码） 返回（null）
       axios.post('/api/modifyPassword/', id_pwd)
         .then(() => {
-          ElMessage.success('修改成功，请重新登录！')
+          message.success('修改成功，请重新登录！')
           emits('close-retrieve')
         })      
     } else {

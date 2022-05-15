@@ -66,12 +66,15 @@
 </template>
 
 <script lang="ts" setup>
-import {ElMessageBox,ElMessage} from "element-plus"
+import { useMessage, useDialog } from "naive-ui"
 import axios from 'axios'
 import { ref } from "vue"
 import { useRouter } from "vue-router"
 import { useUserStore } from '@/stores/user'
 import { storeToRefs } from "pinia"
+
+const message = useMessage()
+const dialog = useDialog()
 
 const router = useRouter()
 // store
@@ -133,73 +136,60 @@ function handleSelectionChange (selection: CartGood[]) {
 }
 // 从购物车中删除商品
 function removeGoods (gid: string) {
-  ElMessageBox.confirm(
-    '将从购物车中删除这件商品,是否继续操作?',
-    '确认',
-    {
-      confirmButtonText: '继续',
-      cancelButtonText: '取消',
-      type: 'warning',
-    }
-  ).then(() => {
-    // 调用接口： 传入（用户ID,商品ID） 返回(null)
-    axios.get(`/api/removeCart/${userID.value}/${gid}`)
-      .then(() => {
-        let index = 0
-        for (let item of tableData.value) {
-          if (item.id === gid) {
-            break
-          } else {
-            index++
+  dialog.warning({
+    title: '确认',
+    content: '将从购物车中删除这件商品,是否继续操作?',
+    positiveText: '继续',
+    negativeText: '取消',
+    onPositiveClick: () => {
+      // 调用接口： 传入（用户ID,商品ID） 返回(null)
+      axios.get(`/api/removeCart/${userID.value}/${gid}`)
+        .then(() => {
+          let index = 0
+          for (let item of tableData.value) {
+            if (item.id === gid) {
+              break
+            } else {
+              index++
+            }
           }
-        }
-        tableData.value.splice(index, 1)
-        ElMessage({
-          type: 'success',
-          message: '删除成功!'
+          tableData.value.splice(index, 1)
+          message.success('删除成功!')
         })
-      })
-  })        
+    }
+  })
 }
 
 // 批量移除商品
 function removeSelectedGoods () {
-  if(selectedData.value.length === 0){
-    ElMessage({
-      type: 'error',
-      message: '请选中商品！'
-    })    
-  }else{
-    ElMessageBox.confirm(
-      '将从购物车中删除选中商品,是否继续操作?',
-      '确认',
-      {
-        confirmButtonText: '继续',
-        cancelButtonText: '取消',
-        type: 'warning'
-      }
-    ).then(()=>{
-      for (let sitem of selectedData.value) {
-        let index = 0
-        for (let item of tableData.value) {
-          if (item.id === sitem.id) {
-            // 调用接口： 传入（用户ID,商品ID） 返回(null)
-            axios.get(`/api/removeCart/${userID.value}/${sitem.id}`)
-            break
-          } else {
-            index++
+  if (selectedData.value.length === 0) {
+    message.error('请选中商品！')
+  } else {
+    dialog.warning({
+      title: '确认',
+      content: '将从购物车中删除选中商品,是否继续操作?',
+      positiveText: '继续',
+      negativeText: '取消',
+      onPositiveClick: () => {
+        for (let sitem of selectedData.value) {
+          let index = 0
+          for (let item of tableData.value) {
+            if (item.id === sitem.id) {
+              // 调用接口： 传入（用户ID,商品ID） 返回(null)
+              axios.get(`/api/removeCart/${userID.value}/${sitem.id}`)
+              break
+            } else {
+              index++
+            }
           }
-        }
-        tableData.value.splice(index, 1)
-      }    
-      selectedData.value.length = 0
-      selectedNum.value = 0
-      cost.value = 0
-      ElMessage({
-        type: 'success',
-        message: '删除成功!'
-      })
-    }) 
+          tableData.value.splice(index, 1)
+        }    
+        selectedData.value.length = 0
+        selectedNum.value = 0
+        cost.value = 0
+        message.success('删除成功!')
+      }
+    })
   }       
 }
 // 结算
@@ -220,10 +210,7 @@ function jumpToConfirm () {
       }
     })
   }else{
-    ElMessage({
-      type: 'error',
-      message: '请选中商品！'
-    })
+    message.error('请选中商品!')
   }
 }
 </script>

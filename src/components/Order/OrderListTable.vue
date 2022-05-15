@@ -122,9 +122,13 @@
 // 需要引入 useRouter()，生成 router 实例
 import { useRouter } from 'vue-router'
 import { ref, computed } from 'vue'
-import { ElMessage, ElMessageBox } from "element-plus"
+import { useMessage, useDialog } from 'naive-ui'
 import { Service, ChatDotRound, Edit, Wallet, CircleCheck } from '@element-plus/icons-vue'
 import axios from 'axios'
+
+const message = useMessage()
+
+const dialog = useDialog()
 
 // 订单类型
 interface Order {
@@ -193,36 +197,32 @@ function payOrder (oid: string, price: number) {
 
 // 确认收货
 function confirmReceipt (oid: string) {
-  ElMessageBox.confirm(
-    '请确保已收到并检验过货物，是否确定完成订单?',
-    '提示',
-    {
-      confirmButtonText:'确定',
-      cancelButtonText:'取消',
-      type:'warning',
-    }
-  ).then(() => {
-    // 调用接口：传入（订单ID）返回（确定结果）
-    axios.post(`/api/completeOrder`, { orderID: oid})
-      .then(() => {
-        // 从视图中修改订单状态
-        for(let item of orderListView.value){
-          if (item.orderId === oid){
-            item.status = '待评价'
-            break
-          }else{
-            continue
+  dialog.info({
+    title: '提示',
+    content: '请确保已收到并检验过货物，是否确定完成订单?',
+    positiveText: '确定',
+    negativeText: '取消',
+    onPositiveClick: () => {
+      // 调用接口：传入（订单ID）返回（确定结果）
+      axios.post(`/api/completeOrder`, { orderID: oid})
+        .then(() => {
+          // 从视图中修改订单状态
+          for (let item of orderListView.value) {
+            if (item.orderId === oid) {
+              item.status = '待评价'
+              break
+            }else{
+              continue
+            }
           }
-        }
-        ElMessage({
-          type:'success',
-          message:'感谢您的购物!',
+          message.success('感谢您的购物!')
         })
-      })
-  }).catch(() => {
-    // 取消
-    return false
-  })  
+    },
+    onNegativeClick: () => {
+      // 取消
+      return false
+    }
+  })
 }
 
 // 删除订单

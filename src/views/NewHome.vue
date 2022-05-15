@@ -472,7 +472,7 @@ const adminButtons = [
               <lock v-if="item.label === '安全中心'"/>
               <pie-chart v-else-if="item.label === '卖出商品'"/>
               <files v-else-if="item.label === '我的闲置'"/>
-              <message v-else-if="item.label === '我的聊天'"/>
+              <Message v-else-if="item.label === '我的聊天'"/>
             </n-icon>
           </template>
           {{item.label}}

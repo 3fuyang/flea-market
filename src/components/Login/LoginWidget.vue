@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { NCard, NForm, NFormItem, NInput, NRadioGroup, NButton, NRadioButton, NIcon } from 'naive-ui'
 import type { FormInst, FormRules, FormItemRule } from 'naive-ui'
+import { useMessage } from 'naive-ui'
 import { ref } from 'vue'
 import axios from 'axios'
-import { ElMessage } from 'element-plus'
 import { useRouter } from 'vue-router'
 import { LockOpenOutline } from '@vicons/ionicons5'
 import { useUserStore } from '../../stores/user'
@@ -11,6 +11,8 @@ import { memberRoutes, adminRoutes, loginRoutes, endRoutes } from "@/router"
 
 // 获取store
 const userStore = useUserStore()
+
+const message = useMessage()
 
 // 定义事件
 defineEmits<{
@@ -68,7 +70,7 @@ function logIn (): void {
           axios.post('/api/userlogin',id_pwd)
             .then((is_e) => {
               if (is_e.data) {
-                ElMessage.success('用户登录成功！')
+                message.success('用户登录成功！')
                 userStore.logIn(loginData.value.userID)
                 // 删除登录路由
                 loginRoutes.forEach((route) => {
@@ -84,14 +86,14 @@ function logIn (): void {
                 })                
                 router.push('/home')          
               } else {
-                ElMessage.error('账号或密码错误！')
+                message.error('账号或密码错误！')
               }
             })
           break
         case 'admin':
           axios.post('/api/adminlogin', id_pwd).then((is_e)=>{
             if (is_e.data) {
-              ElMessage.success('管理员登录成功！')
+              message.success('管理员登录成功！')
               userStore.logIn(loginData.value.userID)
               // 删除登录路由，添加管理员路由
               loginRoutes.forEach((route) => {
@@ -106,7 +108,7 @@ function logIn (): void {
               })          
               router.push('/admin/report')
             } else {
-              ElMessage.error('账号或密码错误！')
+              message.error('账号或密码错误！')
             }
           })
           break      

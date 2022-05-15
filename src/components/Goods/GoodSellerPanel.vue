@@ -81,7 +81,6 @@ import { ref, onBeforeUpdate } from 'vue'
 import { ChatDotRound, RefreshLeft } from "@element-plus/icons-vue"
 import { useRouter } from 'vue-router'
 import axios from 'axios'
-import { ElMessage } from 'element-plus'
 import { useUserStore } from '@/stores/user'
 import { storeToRefs } from 'pinia'
 import { useMessage, NRate } from 'naive-ui'
@@ -156,7 +155,7 @@ const concactSeller = () => {
     })
     router.push(routeUrl)
   } else if (identity.value === 'admin') {
-    ElMessage.warning(`请使用普通账号执行该操作。`)
+    message.warning(`请使用普通账号执行该操作。`)
   } else {
     router.push(`/login`)
   }

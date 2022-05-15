@@ -118,7 +118,52 @@ app.get('/onShelfGoods/:user_id', (req, res) => {
 
 #### 聊天窗口的滚动条初始化置底
 
-使用`nextTick()`在聊天角色变化时操作滚动条。
+##### 参考资料
+
+![image-20220515192226569](README.assets/image-20220515192226569.png)
+
++ Element.scrollTop：一个元素的内容垂直滚动的像素数(一个**非整数**)，其值是这个元素的**内容顶部**到其视口可见内容（**的顶部**）的距离的度量。当一个元素的内容没有产生垂直方向的滚动条，那么它的`scrollTop`值为 0。
+  + 因为`scrollTop`是三个属性中**唯一一个可写**的，所以要注意其赋值规范：
+  + 如果一个元素不能被滚动（例如，它没有溢出，或者这个元素有一个"**non-scrollable"**属性）， `scrollTop`将被设置为`0`。
+  + 设置`scrollTop`的值小于0，`scrollTop` 被设为`0`
+  + **如果设置了超出这个容器可滚动的值, `scrollTop` 会被设为最大值。**
+
+<img src="README.assets/image-20220515191124166.png" alt="image-20220515191124166" style="zoom:80%;" />
+
++ Element.scrollHeight：一个元素的**总高度**（**整数**），包括由于溢出而无法展示在网页的不可见部分。
+
+![img](README.assets/scrollheight.png)
+
++ Element.clientHeight：只读属性，是一个**整数**，即元素视口可见内容的高度。
+
+<img src="README.assets/image-20220515190952040.png" alt="image-20220515190952040" style="zoom:80%;" />
+
+##### 解决方案
+
++ 在两种情况下，需要操作滚动条到底部：
+
+  + 切换聊天对象时；
+
+  + 未切换聊天对象，但滚动条已经处于底部，且有新消息时。
+
++ 滚动条置底的方法：
+
+``` js
+const el = document.getElementById('...')
+
+// 将元素的 scrollTop 赋值为超出最大值的值(scrollHeight - clientHeight)，则其会转化为可能的最大值，即将滚动条置底，这里使用 scrollHeight 即可。
+el.scrollTop = el.scrollHeight
+```
+
++ 如何判断滚动条已在底部？参考上面 MDN 的解答，比较`scrollHeight - (scrollTop + clientHeight)`与一个较小的阈值(考虑到三者的取值特性，通常为 1)。
+
+``` js
+if (scrollContainer.scrollHeight - scrollContainer.scrollTop - scrollContainer.clientHeight < 1) {
+    // ...
+}
+```
+
++ 因为涉及到 DOM 操作，需要使用`nextTick()`保证获取到正确的元素。
 
 ``` ts
 nextTick(() => {

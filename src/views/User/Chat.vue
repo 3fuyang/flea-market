@@ -234,6 +234,9 @@ function getMessage (oponentChanged = false) {
   if (oponentChanged) {
     messageData.value.length = 0
   }
+  if (currOponent.value === '我的聊天') {
+    return false
+  }
   let newMessage: Message[] = []
   // 调用接口：传入（用户ID，聊天对象ID） 返回（两人消息列表：时间、说话方、内容）
   let a_user_id = userID.value, b_user_id = currOponent.value
@@ -258,12 +261,19 @@ function getMessage (oponentChanged = false) {
         messageData.value.push(...newMessage)
       }
       if (oponentChanged) {
-        // 如果切换对象，则初始化时将滚动条置于底部
         nextTick(() => {
           const scrollContainer = Array.from(document.getElementsByClassName('n-scrollbar-container'))[1]
-          const scrollContent = Array.from(document.getElementsByClassName('n-scrollbar-content'))[1]
-          scrollContainer.scrollTop = scrollContent.scrollHeight
+          // 如果切换对象，则初始化时将滚动条置于底部
+          scrollContainer.scrollTop = scrollContainer.scrollHeight
         })
+      } else {
+          const scrollContainer = Array.from(document.getElementsByClassName('n-scrollbar-container'))[1]
+          // 判断滚动条是否在底部
+          if (scrollContainer.scrollHeight > scrollContainer.clientHeight && scrollContainer.scrollHeight - scrollContainer.scrollTop - scrollContainer.clientHeight < 1) {
+            nextTick(() => {
+              scrollContainer.scrollTop = scrollContainer.scrollHeight
+            })
+          } 
       }
     })
 }

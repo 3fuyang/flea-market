@@ -40,7 +40,7 @@ const barStyle = {
               <router-view/>
             </el-main>
             <el-footer 
-              v-if="$route.path!='/login'" 
+              v-if="!['/login', '/newchat'].includes($route.path)" 
               class="footer">
               <p>
                 Copyright ©2022 同济大学校内二手交易平台

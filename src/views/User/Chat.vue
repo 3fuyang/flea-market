@@ -1,59 +1,13 @@
 <template>
-  <css-doodle
-    class="sunset-avenue"
-    @click="updateDoodle">
-    :doodle { @grid: 1x35 / 100% 94vh; } 
-    :container { 
-        background: #ffcabb; 
-        background: linear-gradient(to top, #ffcabb 50%, #de93b6 100%); 
-        background-repeat: no-repeat; 
-    } 
-    
-    position: relative; 
-    align-self: end;
-    height: @rand(10%, 75%);
-    background: linear-gradient(to
-    top, #725392 0%, #b764ac 100%);
-    margin-left: @rand(0.1, 1)vw;
-    z-index: 1;
-    transform: scaleX(@rand(.8, 1.9));
-    
-    ::before { 
-        content: ""; 
-        position: absolute; 
-        bottom: 0; 
-        left: @rand(-20, 12)px; 
-        right: @rand(-20, 12)px; 
-        top: @rand(15, 55)%; 
-        background: linear-gradient(to
-        top, #352864 0%, #4d4280 100%); 
-        z-index: 3; 
-    } 
-    
-    ::after { 
-        content: "";
-        position: absolute;
-        width: .1vw;
-        height: .12vw;
-        top: @rand(15, 20)%;
-        left: @rand(10, 20)%;
-        z-index: 5;
-        box-shadow: 
-            @rand(0.1, 2.1)vw @rand(0, 10)vh .5px rgba(246, 212, 0, .7),
-            @rand(0.1, 2.1)vw @rand(10, 15)vh .5px rgba(246, 212, 0, .6), 
-            @rand(0.1, 2.1)vw @rand(15, 22)vh .5px rgba(246, 212, 0, .7), 
-            @rand(0.1, 2.1)vw @rand(22, 30)vh .5px rgba(246, 212, 0, .6), 
-            @rand(0.1, 2.1)vw @rand(30, 40)vh .5px rgba(246, 212, 0, .8);
-    }
-  </css-doodle>
+  
 <div class="root">
   <div class="chat-wrapper">
     <div class="left-sider">
       <n-scrollbar max-height="48em">
         <p class="message-title">
-          <NIcon :size="18">
-            <Promotion/>
-          </NIcon>
+          <n-icon :size="18">
+            <promotion/>
+          </n-icon>
           消息列表
         </p>
         <div 
@@ -62,11 +16,15 @@
           v-for="(item) in oponentList"
           :key="item.uid"
           @click="changeOponent(item.uid, item.uname)">
-          <n-avatar
-            round
-            :size="58"
-            :src="item.avatar"
-            fallback-src="http://106.15.78.201:8082/public/avatars/default.png"/>
+          <n-badge
+            dot
+            type="info">
+            <n-avatar
+              round
+              :size="58"
+              :src="item.avatar"
+              fallback-src="http://106.15.78.201:8082/public/avatars/default.png"/>
+          </n-badge>
           <div class="oponent-info">
             <p class="uname">{{item.uid}}&nbsp;{{item.uname}}</p>
           </div>
@@ -78,12 +36,12 @@
         <p class="oponent-name">
           {{currOponent}} {{currOponentName}}
         </p>
-        <NIcon 
+        <n-icon 
           class="close-tag"
           :size="24"
           @click="closeChat">
           <close/>
-        </NIcon>
+        </n-icon>
       </div>
       <div class="message-wrapper">
         <n-scrollbar class="message-box" max-height="33em">
@@ -110,7 +68,10 @@
           type="textarea"
           maxlength="200" 
           show-count
-          rows="4"
+          :autosize="{
+            minRows: 4,
+            maxRows: 4
+          }"
           autofocus/>
       </div>
       <NButton
@@ -137,7 +98,7 @@
 </template>
 
 <script setup lang="ts">
-import { NScrollbar, NIcon, NAvatar, NTag, NInput, NButton } from "naive-ui"
+import { NScrollbar, NIcon, NAvatar, NTag, NInput, NButton, NBadge, NCard } from "naive-ui"
 import { Promotion, Close } from "@element-plus/icons-vue"
 import { ref, onBeforeMount, onUnmounted, nextTick } from "vue"
 import { useRoute } from 'vue-router'
@@ -151,6 +112,7 @@ const userStore = useUserStore()
 const { userID } = storeToRefs(userStore)
 
 const route = useRoute()
+// 定时器
 let chatTimer: number | null | undefined
 onBeforeMount(() => {
   let newOponent = route.query
@@ -299,15 +261,10 @@ function handleSendMessage () {
   textarea.value = ''
 }
 
-function updateDoodle (e: Event) {
-  (e.target as any).update()
-}
+
 </script>
 
 <style scoped>
-.sunset-avenue {
-  cursor: pointer;
-}
 .root {
   position: absolute;
   top: 30px;
@@ -324,7 +281,7 @@ function updateDoodle (e: Event) {
   display: flex;
   box-sizing: border-box;
   overflow: auto;
-  border-radius: .3em;
+  border-radius: .6em;
   box-shadow: 0 0 .3em rgba(0,0,0,0.2);
 }
 .left-sider {

@@ -70,6 +70,7 @@ declare module '@vue/runtime-core' {
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
     ShiveringDoodle: typeof import('./src/components/Doodles/ShiveringDoodle.vue')['default']
+    SunsetCity: typeof import('./src/components/CSSDoodle/SunsetCity.vue')['default']
     TradeOrders: typeof import('./src/components/Trade/TradeOrders.vue')['default']
     UploadGoodModal: typeof import('./src/components/Goods/UploadGoodModal.vue')['default']
   }

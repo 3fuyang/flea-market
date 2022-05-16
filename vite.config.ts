@@ -47,15 +47,6 @@ export default defineConfig({
     },
   },
   build: {
-    rollupOptions: {
-      output: {
-        // rollup.js分包，控制chunk大小
-        manualChunks(id) {
-          if (id.includes('node_modules')) {
-            return id.toString().split('node_modules/')[1].split('/')[0].toString()
-          }
-        }
-      }
-    }
+    chunkSizeWarningLimit: 600
   }
 })

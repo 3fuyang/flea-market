@@ -76,7 +76,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onBeforeUpdate } from 'vue'
+import { ref, toRefs, watch, type Ref } from 'vue'
 //import { onRenderTracked, onRenderTriggered } from 'vue'
 import { ChatDotRound, RefreshLeft } from "@element-plus/icons-vue"
 import { useRouter } from 'vue-router'
@@ -88,6 +88,8 @@ import { useMessage, NRate } from 'naive-ui'
 const props = defineProps({
   sellerID: String
 })
+
+const sellerID = toRefs(props).sellerID
 
 const message = useMessage()
 
@@ -123,10 +125,15 @@ function getSellerInfo () {
 
 getSellerInfo()
 
-onBeforeUpdate(() => {
-  //console.log(`beforeUpdated, props.sellerID为: ${props.sellerID}`)
+// 监听props中sellerID的变化，更新卖家信息
+watch(sellerID as Ref<string>, (value, oldValue) => {
   getSellerInfo()
 })
+
+/* onBeforeUpdate(() => {
+  //console.log(`beforeUpdated, props.sellerID为: ${props.sellerID}`)
+  getSellerInfo()
+}) */
 
 /* let counterTracked = 0, counterTriggered = 0
 
@@ -162,7 +169,7 @@ const concactSeller = () => {
 }
 
 // 前往趋势商品详情页
-const goToDetail= (id: string) => {
+const goToDetail = (id: string) => {
   router.push({
     path: '/details',
     query: {

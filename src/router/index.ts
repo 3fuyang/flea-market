@@ -12,8 +12,7 @@ const History = () => import("../views/User/History.vue")
 const Favorite = () => import("../views/User/Favorite.vue")
 const Goods = () => import("../views/User/Goods.vue")
 const Order = () => import("../views/User/Order.vue")
-const Chat = () => import("../views/User/Chat.vue")
-const NewChat = () => import('../views/User/NewChat.vue')
+const Chat = () => import('../views/User/NewChat.vue')
 const Confirm = () => import("../views/User/NewConfirm.vue")
 const Security = () => import("../views/User/NewSecurity.vue")
 const ShoppingCart = () => import("../views/User/ShoppingCart.vue")
@@ -47,12 +46,7 @@ export const publicRoutes = [
 	{
 		path: '/topnav',
 		component: () => import('@/components/NewTopBar.vue')
-	},
-	{
-		name: 'newchat',
-		path: '/newchat',
-		component: NewChat
-	},	
+	}
 ]
 
 // 普通会员权限路由

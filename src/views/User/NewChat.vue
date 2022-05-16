@@ -1,15 +1,16 @@
 <script lang="ts" setup>
 import SunsetCity from '@/components/CSSDoodle/SunsetCity.vue'
-import { NButton, NInput, NTag, NDivider, NText, NAvatar, NCard, NIcon, useMessage, NScrollbar, NEllipsis } from 'naive-ui'
+import { NEmpty, NButton, NInput, NTag, NDivider, NText, NAvatar, NCard, NIcon, useMessage, NScrollbar, NEllipsis } from 'naive-ui'
 import { Image, ChatboxEllipsesOutline, Home, LogoGithub, SearchOutline } from '@vicons/ionicons5'
-import { Emoji16Filled } from '@vicons/fluent'
-import { useRouter } from 'vue-router'
-import { ref } from 'vue'
+import { BuildingSkyscraper20Regular, Building20Filled, BuildingMultiple20Filled, Emoji16Filled } from '@vicons/fluent'
+import { useRouter, useRoute } from 'vue-router'
+import { computed, ref, onBeforeMount, onBeforeUnmount, nextTick } from 'vue'
 import axios from 'axios'
 import { useUserStore } from '@/stores/user'
 import { storeToRefs } from 'pinia'
 
 const router = useRouter()
+const route = useRoute()
 const message = useMessage()
 const userStore = useUserStore()
 const { userID } = storeToRefs(userStore)
@@ -57,24 +58,178 @@ interface Message {
   speaker: number
   details: string
 }
-
 // 消息数据
 const messageData = ref<Message[]>([])
-axios.get(`/api/getMessage/${userID.value}/1951002`)
-  .then((res) => {
-    let isSelfA = true
-    res.data.forEach((item: any) => {
-      messageData.value.push({
-        day_time: item.date_time.substr(0, 19).replace('T', ' '),
-        // 0 表示对方，1 表示该用户
-        speaker: isSelfA ? (item.speaker === 0 ? 1 : 0) : (item.speaker === 1 ? 1: 0),
-        details: item.details
-      })
-    })
-  })
 
 // 消息输入框model对象
 const textarea = ref('')
+
+// 对方类型
+interface Oponent {
+  uid: string
+  uname: string
+  avatar: string
+}
+// 全部聊天对象model
+const oponentsList = ref<Oponent[]>([])
+
+// 筛选对象输入框model对象
+const filter = ref('')
+// 聊天对象model对象
+const oponentsView = computed(() => {
+  if (filter.value.length > 0) {
+    const newView = oponentsList.value.filter((item) => {
+      return new RegExp(filter.value, 'img').test(item.uid.concat(item.uname))
+    })
+    return newView
+  } else {
+    return oponentsList.value
+  }
+})
+
+// 消息获取定时器
+let messageTimer: number | null | undefined
+
+// 挂载前，获取消息对象列表，并开启定时器
+onBeforeMount(() => {
+  let newOponent = route.query
+  getChatList(newOponent.oponentID as string, newOponent.oponentName as string, newOponent.avatar as string)
+  // 设置定时器
+  messageTimer = window.setInterval(getMessage, 2000)
+})
+
+// 卸载前，清除定时器
+onBeforeUnmount(() => {
+  clearInterval(messageTimer as number)
+})
+
+// 当前聊天对象ID
+const currOponent = ref('我的聊天')
+// 当前聊天对象昵称
+const currOponentName = ref('')
+
+// 切换聊天对象
+function changeOponent (oponentID: string, oponentName: string) {
+  currOponent.value = oponentID
+  currOponentName.value = oponentName
+  getMessage(true)
+}
+
+// 关闭聊天窗口
+function closeChat () {
+  currOponent.value = '我的聊天'
+  currOponentName.value = ''
+}
+
+// 获取聊天对象列表
+function getChatList(newOponentID: string, newOponentName: string, newOponentAvatar: string){
+  // 调用接口：传入（用户ID，聊天对象ID） 返回（聊天对象列表：ID，名称）
+  const newList: Oponent[] = []
+  axios.get(`/api/getChatOponent/${userID.value}`)
+    .then(res => {
+      res.data.forEach((item: any) => {
+        newList.push({
+          uid: item.user_id,
+          uname: item.nickname,
+          avatar: `http://106.15.78.201:8082/public/avatars/${item.avatar}`
+        })
+      })
+    })
+    .then(() => {
+      if (newList.length !== oponentsList.value.length) {
+        oponentsList.value.length = 0
+        oponentsList.value.push(...newList)
+      }
+      if (newOponentID) {
+        let index = oponentsList.value.findIndex(item => item.uid === newOponentID)
+        if (index >= 0) {
+          oponentsList.value.splice(index, 1)
+        }
+        oponentsList.value.unshift({
+          uid: newOponentID,
+          uname: newOponentName,
+          avatar: newOponentAvatar          
+        })
+        currOponent.value = newOponentID
+        currOponentName.value = newOponentName 
+      }          
+    })
+}
+
+// 获取消息列表
+function getMessage (oponentChanged = false) {
+  if (oponentChanged) {
+    messageData.value.length = 0
+  }
+  if (currOponent.value === '我的聊天') {
+    return false
+  }
+  let newMessage: Message[] = []
+  // 调用接口：传入（用户ID，聊天对象ID） 返回（两人消息列表：时间、说话方、内容）
+  let a_user_id = userID.value, b_user_id = currOponent.value
+  if ((a_user_id as string) > b_user_id) {
+    [a_user_id, b_user_id] = [b_user_id, a_user_id as string]
+  }
+  axios.get(`/api/getMessage/${a_user_id}/${b_user_id}`)
+    .then((res) => {
+      let isSelfA = a_user_id === userID.value
+      res.data.forEach((item: any) => {
+        newMessage.push({
+          day_time: item.date_time.substr(0, 19).replace('T', ' '),
+          // 0 表示对方，1 表示该用户
+          speaker: isSelfA ? (item.speaker === 0 ? 1 : 0) : (item.speaker === 1 ? 1: 0),
+          details: item.details
+        })
+      })
+    })
+    .then(() => {
+      if (oponentChanged || newMessage.length !== messageData.value.length) {
+        messageData.value.length = 0
+        messageData.value.push(...newMessage)
+      }
+      if (oponentChanged) {
+        nextTick(() => {
+          const scrollContainer = Array.from(document.getElementsByClassName('n-scrollbar-container'))[1]
+          // 如果切换对象，则初始化时将滚动条置于底部
+          scrollContainer.scrollTop = scrollContainer.scrollHeight
+        })
+      } else {
+          const scrollContainer = Array.from(document.getElementsByClassName('n-scrollbar-container'))[1]
+          // 判断滚动条是否在底部
+          if (scrollContainer.scrollHeight > scrollContainer.clientHeight && scrollContainer.scrollHeight - scrollContainer.scrollTop - scrollContainer.clientHeight < 1) {
+            nextTick(() => {
+              scrollContainer.scrollTop = scrollContainer.scrollHeight
+            })
+          } 
+      }
+    })
+}
+
+// 发送消息
+function handleSendMessage () {
+  let a_user_id = userID.value, b_user_id = currOponent.value
+  if(a_user_id as string > b_user_id){
+    [a_user_id, b_user_id] = [b_user_id, a_user_id as string]
+  }
+  const date = new Date(+ new Date() + 8 * 3600 * 1000).toISOString().slice(0, 19).replace('T', ' ')
+  let message = {
+    a_user_id, b_user_id, 
+    speaker: userID.value < currOponent.value ? '0' : '1',
+    date_time: date,
+    details: textarea.value        
+  }
+  // 调用接口：传入（用户ID，对方ID，说话方，时间，内容） 返回（null）
+  axios.post('/api/sendMessage', message)
+    .then(() => {
+      getMessage()
+      nextTick(() => {
+        const scrollContainer = Array.from(document.getElementsByClassName('n-scrollbar-container'))[1]
+        scrollContainer.scrollTop = scrollContainer.scrollHeight
+      })
+    })
+
+  textarea.value = ''
+}
 </script>
 
 <template>
@@ -106,10 +261,13 @@ const textarea = ref('')
 
       <!--搜索框-->
       <n-input
+        v-if="oponentsList.length > 0"
         class="search-input"
         round
         placeholder="Search"
-        size="small">
+        size="small"
+        clearable
+        v-model:value="filter">
         <template #suffix>
           <n-icon>
             <SearchOutline />
@@ -118,23 +276,27 @@ const textarea = ref('')
       </n-input>
 
       <!--聊天对象列表-->
-      <n-scrollbar 
+      <n-scrollbar
         class="oponent-list"
         style="max-height: 40em">
+        <n-empty
+          description="No Data"
+          v-if="oponentsView.length === 0"/>
         <n-card
-          v-for="n in 12"
+          v-for="item in oponentsView"
           class="oponent-card"
           :content-style="oponentCardStyle"
-          hoverable>
+          hoverable
+          @click="changeOponent(item.uid, item.uname)">
           <!--头像-->
           <n-avatar
             round
             fallback-src="https://www.naiveui.com/assets/naivelogo.93278402.svg"
-            src="https://07akioni.oss-cn-beijing.aliyuncs.com/07akioni.jpeg"/>
+            :src="item.avatar"/>
           <!--昵称-->
           <div class="nickname">
             <n-ellipsis class="ellipsis">
-              1951001 布裸斯·韦天
+              {{`${item.uid} ${item.uname}`}}
             </n-ellipsis>
             <span class="native-ellipsis">
               最新消息最新消息最新消息最新消息最新消息最新消息最新消息
@@ -144,85 +306,114 @@ const textarea = ref('')
       </n-scrollbar>
     </div>
 
-    <!--聊天窗口-->
+    <!--聊天区-->
     <div class="message-box">
       <!--窗口标题-->
       <n-text
         class="oponent-title"
         strong>
-        1951001 布裸斯·韦天
-        <span class="dash">_</span>
+        {{`${currOponent} ${currOponentName}`}}
+        <span
+          v-if="currOponent !== '我的聊天'"
+          class="dash">_</span>
       </n-text>
 
       <n-divider class="divider"/>
-      <!--消息列表-->
-      <n-scrollbar
-        style="max-height: 29.2em;"
-        class="message-list">
-        <div
-          v-for="item in messageData"
-          class="message-item">
-          <n-tag
-            class="time-tag"
-            round
-            size="small"
-            :color="{ color: '#E39BB6', textColor: '#FFF'}">
-            {{item.day_time}}
-          </n-tag>          
-          <div class="message-row">
-            <div
-              v-if="item.speaker !== 0"
-              class="polyfill"/>
-            <div
-              :class="item.speaker === 0 ? 'oponent-bubble' : 'self-bubble'">
-              {{item.details}}
+      <!--未选中对象时-->
+      <div
+        class="empty-wrapper"
+        v-if="currOponent === '我的聊天'">
+        <n-empty
+          description="Can anybody find me somebody to TALK ~">
+          <template #icon>
+            <div style="display: flex;justify-content: center;">
+              <n-icon>
+                <Building20Filled/>
+              </n-icon>
+              <n-icon>
+                <BuildingMultiple20Filled/>
+              </n-icon>
+              <n-icon>
+                <BuildingSkyscraper20Regular/>
+              </n-icon>              
             </div>
-            <div
-              v-if="item.speaker === 0"
-              class="polyfill"/>
+          </template>
+        </n-empty>
+      </div>
+      <!--消息列表-->
+      <div
+        class="chat-wrapper"
+        v-if="currOponent !== '我的聊天'">
+        <n-scrollbar
+          style="max-height: 29.2em;"
+          class="message-list">
+          <div
+            v-for="item in messageData"
+            class="message-item">
+            <n-tag
+              class="time-tag"
+              round
+              size="small"
+              :color="{ color: '#E39BB6', textColor: '#FFF'}">
+              {{item.day_time}}
+            </n-tag>          
+            <div class="message-row">
+              <div
+                v-if="item.speaker !== 0"
+                class="polyfill"/>
+              <div
+                :class="item.speaker === 0 ? 'oponent-bubble' : 'self-bubble'">
+                {{item.details}}
+              </div>
+              <div
+                v-if="item.speaker === 0"
+                class="polyfill"/>
+            </div>
           </div>
-        </div>
-      </n-scrollbar>
+        </n-scrollbar>
 
-      <n-divider class="divider"/>
-      <!--输入框-->
-      <n-input
-        class="message-input"
-        type="textarea"
-        placeholder="Type your message."
-        :autosize="{ minRows: 4, maxRows: 4 }"
-        clearable
-        maxlength="200" 
-        show-count
-        v-model:value="textarea"/>
-      <!--聊天工具栏-->
-      <div class="tool-bar">
-        <n-icon
-          class="emoji-icon"
-          depth="4"
-          size="24">
-          <emoji16-filled/>
-        </n-icon>
-        <n-icon
-          class="emoji-icon"
-          depth="4"
-          size="24">
-          <Image/>
-        </n-icon>        
-        <div class="polyfill"/>
-        <n-button
-          size="small"
-          round
-          class="btn">
-          关闭
-        </n-button>        
-        <n-button
-          size="small"
-          round
-          color="#7BC4EF"
-          class="btn">
-          发送
-        </n-button>
+        <n-divider class="divider"/>
+        <!--输入框-->
+        <n-input
+          class="message-input"
+          type="textarea"
+          placeholder="Type your message."
+          :autosize="{ minRows: 4, maxRows: 4 }"
+          clearable
+          maxlength="200" 
+          show-count
+          v-model:value="textarea"/>
+        <!--聊天工具栏-->
+        <div class="tool-bar">
+          <n-icon
+            class="emoji-icon"
+            depth="4"
+            size="24">
+            <emoji16-filled/>
+          </n-icon>
+          <n-icon
+            class="emoji-icon"
+            depth="4"
+            size="24">
+            <Image/>
+          </n-icon>        
+          <div class="polyfill"/>
+          <n-button
+            size="small"
+            round
+            class="btn"
+            @click="closeChat">
+            关闭
+          </n-button>        
+          <n-button
+            size="small"
+            round
+            color="#7BC4EF"
+            class="btn"
+            @click="handleSendMessage">
+            发送
+          </n-button>
+        </div>
       </div> 
     </div>
   </n-card>
@@ -338,6 +529,20 @@ $blue: #7BC4EF;
   margin-bottom: .5em;
 }
 
+.empty-wrapper {
+  display: flex;
+  flex-grow: 1;
+  align-items: center;
+  justify-content: center;
+}
+
+.chat-wrapper {
+  height: 100%;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
 .message-list {
   display: flex;
   flex-direction: column;
@@ -346,11 +551,14 @@ $blue: #7BC4EF;
 .message-item {
   display: flex;
   flex-direction: column;
+  &:not(:last-child) {
+    margin-bottom: .6em;
+  }    
 }
 
 .time-tag {
   align-self: center;
-  margin-bottom: .8em;
+  margin-bottom: .8em;  
 }
 
 
@@ -371,9 +579,6 @@ $blue: #7BC4EF;
   color: white;
   transition: box-shadow .4s ease-in-out;
   position: relative;
-  &:not(:last-child) {
-    margin-bottom: .4em;
-  }
   &:hover {
     box-shadow: 0 7px 5px -5px $grey;
   }
@@ -402,9 +607,6 @@ $blue: #7BC4EF;
   color: white;
   transition: box-shadow .4s ease-in-out;
   position: relative;
-  &:not(:last-child) {
-    margin-bottom: .4em;
-  }
   &:hover {
     box-shadow: 0 7px 5px -5px $grey;
   }

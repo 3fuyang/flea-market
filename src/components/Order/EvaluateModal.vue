@@ -93,15 +93,15 @@ onMounted(()=>{
   }
 })
 
-onBeforeUpdate(()=>{
-  if(submitted.value){
+onBeforeUpdate(() => {
+  if (submitted.value) {
     // 调用接口：传入(订单ID) 返回（评价文本，评价星级）
     axios.get(`/api/getOrderEvaluation/${props.currOrderId}`)
       .then(res => {
         evaluation.value = res.data[0].review
         grade.value = res.data[0].rate
       })
-  }else{
+  } else {
     evaluation.value = ''
     grade.value = null
   }  

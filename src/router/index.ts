@@ -144,9 +144,11 @@ const router = createRouter({
 router.beforeEach((to, from, next) => {
 	// initializing store
 	const userStore = useUserStore()
+	console.log(from)
+	console.log(to)
 	switch (userStore.identity) {
 		case 'member':
-			if (!router.hasRoute('info')) {
+			if (router.hasRoute('login')) {
 				// 删除登录路由
 				loginRoutes.forEach((route) => {
 					router.removeRoute(route.name)
@@ -159,10 +161,11 @@ router.beforeEach((to, from, next) => {
 				endRoutes.forEach((route) => {
 					router.addRoute(route)
 				})
+				router.replace(to)
 			}
 			break
 		case 'admin':
-			if (!router.hasRoute('report')) {
+			if (router.hasRoute('login')) {
 				// 删除登录路由，添加管理员路由
 				loginRoutes.forEach((route) => {
 					router.removeRoute(route.name)
@@ -173,7 +176,8 @@ router.beforeEach((to, from, next) => {
 				// 将endRoutes移至尾部
 				endRoutes.forEach((route) => {
 					router.addRoute(route)
-				})          
+				})
+				router.replace(to)       
 			}
 			break
 		case 'visitor':

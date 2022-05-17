@@ -49,6 +49,7 @@ declare module '@vue/runtime-core' {
     ElTooltip: typeof import('element-plus/es')['ElTooltip']
     ElUpload: typeof import('element-plus/es')['ElUpload']
     EvaluateModal: typeof import('./src/components/Order/EvaluateModal.vue')['default']
+    FavoriteCard: typeof import('./src/components/Favorite/FavoriteCard.vue')['default']
     FilterTable: typeof import('./src/components/Result/FilterTable.vue')['default']
     GoodCard: typeof import('./src/components/Result/GoodCard.vue')['default']
     GoodMediaObject: typeof import('./src/components/Confirm/GoodMediaObject.vue')['default']

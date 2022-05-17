@@ -12,32 +12,40 @@
     </template>
   </page-title>
   <div style="text-align: right;">
-  <el-button type="info"  style="width: 110px;margin-right: 200px;"
-  @click="clearHistory"><el-icon :size="17"><delete/></el-icon>&nbsp;清空记录</el-button>
+    <el-button type="info"  style="width: 110px;margin-right: 200px;margin-bottom: -1em;"
+    @click="clearHistory">
+      <el-icon :size="17">
+        <delete/>
+      </el-icon>
+      &nbsp;清空记录
+    </el-button>
   </div>
   <el-row>
-  <el-col :span="2"></el-col>
-  <el-col :span="20">
-  <div v-if="dateArray.length === 0">
-    <el-empty description="脑袋空空。"/>
-  </div>
-  <div v-for="(item) in dateArray" :key=item>
-    <div style="text-align: left;margin-bottom: 10px;">
-    <span style="display: inline-block;font-size: 18px;font-weight: bold;">{{item}}</span>
-    </div>
-    <el-row>
-    <template v-for="(goodItem) in historyData" :key="goodItem.id">
-    <el-card v-if="goodItem.date === item" :key=goodItem.id :body-style="{ padding: '0px' }" style="width: 220px;height: 250px;margin: 0px 5px 10px 5px;" 
-    @click="jumpCard(goodItem.id)">
-      <el-image class="point" :src="goodItem.image" fit="scale-down" style="max-height: 190px;"/>
-        <span style="display: inline-block;font-size: 13px;color: #808080;margin-top: 3px;overflow: hidden;text-overflow: ellipsis;white-space: nowrap;">{{goodItem.title}}</span><br/>
-        <span style="display: inline-block;font-size: 18px;color: #FF9900;margin-top: 3px;">￥{{goodItem.price}}</span>
-    </el-card> 
-    </template>
-    <br/>
-    </el-row> 
-  </div>
-  </el-col>
+    <el-col :span="2"/>
+    <el-col :span="20">
+      <div v-if="dateArray.length === 0">
+        <el-empty description="脑袋空空。"/>
+      </div>
+      <div v-for="(item) in dateArray" :key=item>
+        <div style="text-align: left;margin-bottom: 10px;">
+          <span class="date-tag">{{item}}</span>
+        </div>
+        <div class="date-wrapper">
+          <template
+            v-for="(goodItem) in historyData"
+            :key="goodItem.id">
+            <favorite-card
+              v-if="goodItem.date === item"
+              :good-i-d="goodItem.id"
+              :src="goodItem.image"
+              :price="goodItem.price"
+              :title="goodItem.title"
+              :removable="false"/>
+          </template>
+          <br/>
+        </div> 
+      </div>
+    </el-col>
   </el-row>
 </div>
 </template>
@@ -52,6 +60,7 @@ import { useUserStore } from '@/stores/user'
 import { storeToRefs } from 'pinia'
 import PageTitle from '@/components/Public/PageTitle.vue'
 import { History20Filled } from '@vicons/fluent'
+import FavoriteCard from '@/components/Favorite/FavoriteCard.vue'
 
 const message = useMessage()
 const dialog = useDialog()
@@ -127,11 +136,22 @@ function clearHistory() {
 }
 </script>
 
-<style scoped>
+<style scoped lang="scss">
 .root {
   width: 100%
 }
 .point{
   cursor: pointer;
+}
+.date-tag {
+  display: inline-block;
+  font-size: 18px;
+  font-weight: bold;
+  margin-top: 1em;
+}
+.date-wrapper {
+  display: flex;
+  gap: 1.8em;
+  flex-wrap: wrap;
 }
 </style>

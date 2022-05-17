@@ -31,13 +31,19 @@
       </div>
       <el-row>
       <template v-for="(goodItem) in showData" :key="goodItem.id">
-      <el-card :body-style="{ padding: '0px' }" style="width: 220px;height: 250px;margin: 0px 5px 10px 5px;" >
-        <el-image class="point" :src="goodItem.path" @click="jumpCard(goodItem.id)" fit="scale-down" />
-          <span style="display: inline-block;font-size: 13px;color: #808080;margin-top: 3px;">{{goodItem.name}}</span><br/>
-          <span style="display: inline-block;font-size: 18px;color: #FF9900;margin-top: 3px;">￥{{goodItem.price}}</span>
-          <el-icon class="point" style="font-size: 20px;color: #999999;font-weight: bold;margin-top: 5px;float: right;"
-          @click="deleteFavorite(goodItem.id)"><close/></el-icon>
-      </el-card> 
+        <favorite-card
+          :good-i-d="goodItem.id"
+          :src="goodItem.path"
+          :price="goodItem.price"
+          :title="goodItem.name"
+          :removable="true"/>
+        <!-- <el-card :body-style="{ padding: '0px' }" style="width: 220px;height: 250px;margin: 0px 5px 10px 5px;" >
+          <el-image class="point" :src="goodItem.path" @click="jumpCard(goodItem.id)" fit="scale-down" />
+            <span style="display: inline-block;font-size: 13px;color: #808080;margin-top: 3px;">{{goodItem.name}}</span><br/>
+            <span style="display: inline-block;font-size: 18px;color: #FF9900;margin-top: 3px;">￥{{goodItem.price}}</span>
+            <el-icon class="point" style="font-size: 20px;color: #999999;font-weight: bold;margin-top: 5px;float: right;"
+            @click="deleteFavorite(goodItem.id)"><close/></el-icon>
+        </el-card> --> 
       </template>
       <br/>
       </el-row> 
@@ -56,6 +62,7 @@ import { useUserStore } from '@/stores/user'
 import { storeToRefs } from 'pinia'
 import PageTitle from '@/components/Public/PageTitle.vue'
 import { StarLineHorizontal320Regular } from '@vicons/fluent'
+import FavoriteCard from '@/components/Favorite/FavoriteCard.vue'
 
 const message = useMessage()
 const dialog = useDialog()

@@ -46,6 +46,12 @@ npm run dev
 
 本项目的前端鉴权是通过动态路由(`addRoute`，`removeRoute`)和 Pinia 的全局状态管理实现的。
 
+为 Router 添加全局导航守卫`beforeEach`，在守卫中检查 pinia 的 store 中的`identity`(用户身份)字段，根据该字段决定是否需要动态添加用户身份对应的路由，并删除特定路由(如登录)。
+
+##### ESM 循环引用的问题
+
+为实现前端鉴权，本项目的`@/router/index.ts`和`@/store/user.ts`中出现了**模块循环引入**的情况，但最终却能正常工作，下面对这种经典情景进行了考察。
+
 #### Promise.all() 处理 connection.query
 
 适用于从一张表(通常是外键关系表)获取主码，再从被关系表中取得详细信息的情景（比如从收藏夹中取得商品的 ID 数组，再根据该数组从商品表中取得标题、图片等详细信息），是一个十分实用的 boilerplate。
@@ -118,7 +124,7 @@ app.get('/onShelfGoods/:user_id', (req, res) => {
 
 ##### 参考资料
 
-![image-20220515192226569](README.assets/image-20220515192226569.png)
+<img src="README.assets/image-20220515192226569.png" alt="image-20220515192226569" style="zoom:80%;border: 1px solid #eee;" />
 
 + Element.scrollTop：一个元素的内容垂直滚动的像素数(一个**非整数**)，其值是这个元素的**内容顶部**到其视口可见内容（**的顶部**）的距离的度量。当一个元素的内容没有产生垂直方向的滚动条，那么它的`scrollTop`值为 0。
   + 因为`scrollTop`是三个属性中**唯一一个可写**的，所以要注意其赋值规范：
@@ -176,56 +182,26 @@ nextTick(() => {
 
 #### 地址栏输入 url 或刷新页面导致 Vue Router 失效
 
+##### 问题描述
+
 以往对于 Vue Router 的配置都是初始化时就添加所有路由，然后将鉴权的工作交由各组件的生命周期钩子(如 setup, beforeMount, beforeUpdate)或组件内路由守卫(如 beforeRouteUpdate)处理，而由于本项目使用动态路由鉴权，在地址栏导航、浏览器刷新的操作下 Vue Router 会丢失。
 
 这是由于 Vue Router 是专门创建**单页应用程序(SPA)**的，其状态存储于浏览器为该页分配的堆栈中，地址栏导航、浏览器刷新都会导致这些内存被垃圾回收程序**回收**，于是导致 Vue Router 的**丢失**。
 
-暂时没有解决方案。
+##### 解决方案
 
-为解决该问题，为 Router 添加全局导航守卫`beforeEach`，在守卫中检查 pinia 的 store 中的`identity`(用户身份)字段，根据该字段决定是否需要动态添加用户身份对应的路由，并删除特定路由(如登录)。
+在网络查阅资料后，发现原本的在`beforeEach`全局守卫中配合`pinia`鉴权的动态路由方案可以解决刷新丢失路由的问题，因为刷新页面后，Vue 应用重新挂载，也会携带 Vue-Router 执行该全局守卫。
 
-``` ts
-router.beforeEach((to, from, next) => {
-	// initializing store
-	const userStore = useUserStore()
-	switch (userStore.identity) {
-		case 'member':
-			if (!router.hasRoute('info')) {
-				// 删除登录路由
-				loginRoutes.forEach((route) => {
-					router.removeRoute(route.name)
-				})
-				// 添加普通会员路由
-				memberRoutes.forEach((route) => {
-					router.addRoute(route)
-				})
-				// 将endRoutes移至尾部
-				endRoutes.forEach((route) => {
-					router.addRoute(route)
-				})
-			}
-			break
-		case 'admin':
-			if (!router.hasRoute('report')) {
-				// 删除登录路由，添加管理员路由
-				loginRoutes.forEach((route) => {
-					router.removeRoute(route.name)
-				})
-				adminRoutes.forEach((route) => {
-					router.addRoute(route)
-				})
-				// 将endRoutes移至尾部
-				endRoutes.forEach((route) => {
-					router.addRoute(route)
-				})          
-			}
-			break
-		case 'visitor':
-			break
-	}
-	next()
-})
+但由于在所有角色的可用路由中都添加了**末尾路由(404 Not Found)**，所以**在动态添加路由之前**，现路由(`to.path`)就**匹配**了`404`，并重定向到`/404`，所以控制台打印的`to.path`永远是`/404`。
+
+``` devTool
+// url in browser: '/chat' or whatever
+from: any, to: /404
 ```
+
+**结论**：这说明了即便是生命周期中顶级的全局守卫`beforeEach`（排除组件内`beforeRouteLeave`），也是 router **在现有路由中进行一次匹配**之后的操作。
+
+在删除了末尾路由后，即可保证页面刷新后路由的恢复，但还是要**考虑怎么安排末尾路由**。
 
 #### 文件上传的请求头设置
 

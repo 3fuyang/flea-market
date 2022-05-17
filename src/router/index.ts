@@ -123,7 +123,7 @@ export const loginRoutes = [
 
 // 末尾路由
 export const endRoutes = [
-	{
+/* 	{
 		name: '404',
 		path: '/404',
 		component: NotFound
@@ -132,7 +132,7 @@ export const endRoutes = [
 		name: 'notFound',
 		path: '/:pathMatch(.*)',
 		redirect: '/404'
-	}
+	} */
 ]
 
 
@@ -142,46 +142,49 @@ const router = createRouter({
 })
 
 router.beforeEach((to, from, next) => {
+	//console.log(from.path, to.path)
 	// initializing store
 	const userStore = useUserStore()
-	switch (userStore.identity) {
-		case 'member':
-			if (router.hasRoute('login')) {
-				// 删除登录路由
-				loginRoutes.forEach((route) => {
-					router.removeRoute(route.name)
-				})
-				// 添加普通会员路由
-				memberRoutes.forEach((route) => {
-					router.addRoute(route)
-				})
-				// 将endRoutes移至尾部
-				endRoutes.forEach((route) => {
-					router.addRoute(route)
-				})
-				router.replace(to)
-			}
-			break
-		case 'admin':
-			if (router.hasRoute('login')) {
-				// 删除登录路由，添加管理员路由
-				loginRoutes.forEach((route) => {
-					router.removeRoute(route.name)
-				})
-				adminRoutes.forEach((route) => {
-					router.addRoute(route)
-				})
-				// 将endRoutes移至尾部
-				endRoutes.forEach((route) => {
-					router.addRoute(route)
-				})
-				router.replace(to)       
-			}
-			break
-		case 'visitor':
-			break
+	if (userStore.identity === 'member') {
+		if (router.hasRoute('login')) {
+			// 删除登录路由
+			loginRoutes.forEach((route) => {
+				router.removeRoute(route.name)
+			})
+			// 添加普通会员路由
+			memberRoutes.forEach((route) => {
+				router.addRoute(route)
+			})
+			// 将endRoutes移至尾部
+			endRoutes.forEach((route) => {
+				router.addRoute(route)
+			})
+			next(to.path)
+		} else {
+			next()
+		}
+	} else if (userStore.identity === 'admin') {
+		if (router.hasRoute('login')) {
+			// 删除登录路由，添加管理员路由
+			loginRoutes.forEach((route) => {
+				router.removeRoute(route.name)
+			})
+			adminRoutes.forEach((route) => {
+				router.addRoute(route)
+			})
+			// 将endRoutes移至尾部
+			endRoutes.forEach((route) => {
+				router.addRoute(route)
+			})
+			next(to.path)    
+		} else {
+			next()
+		}
+	} else if (userStore.identity === 'visitor') {
+		next()
+	}	else {
+		next()
 	}
-	next()
 })
 
 export default router

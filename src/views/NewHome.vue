@@ -168,20 +168,36 @@ function clickAvatar(): void {
 interface ProfileData {
   label: string
   value: string | number
+  onClick: (v: string | number) => void
 }
 // 交易相关数据
 const profileData = ref<ProfileData[]>([
   {
     label: '购物车',
-    value: '--'
+    value: '--',
+    onClick: (v) => {
+      if (v !== '--') {
+        router.push('/shoppingcart')
+      }
+    }
   },
   {
     label: '待付款',
-    value: '--'
+    value: '--',
+    onClick: (v) => {
+      if (v !== '--') {
+        router.push('/order')
+      }
+    }    
   },
   {
     label: '待评价',
-    value: '--'
+    value: '--',
+    onClick: (v) => {
+      if (v !== '--') {
+        router.push('/order')
+      }
+    }    
   }
 ])
 
@@ -409,7 +425,8 @@ const adminButtons = [
       <div class="nums-wrapper">
         <div 
           class="num-item"
-          v-for="item in profileData">
+          v-for="item in profileData"
+          @click="item.onClick(item.value)">
           <p :class="['item-numeric', identity !== 'member' ? 'color-grey' : '']">{{item.value}}</p>
           <p class="item-label">{{item.label}}</p>
         </div>

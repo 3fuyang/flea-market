@@ -1,6 +1,16 @@
 <template>
 <div class="root">
-  <span style="display: inline-block;color: #000000;margin: 20px 0px 10px 20px;font-size: 24px;font-weight: bold;">购物车</span><br/>
+  <page-title>
+    <template #icon>
+      <cart-outline/>
+    </template>
+    <template #main-title>
+      购物车
+    </template>
+    <template #sub-title>
+      Shopping Cart
+    </template>
+  </page-title>
   <el-row>
   <el-col :span="2"></el-col>
   <el-col :span="20">
@@ -72,6 +82,8 @@ import { ref } from "vue"
 import { useRouter } from "vue-router"
 import { useUserStore } from '@/stores/user'
 import { storeToRefs } from "pinia"
+import PageTitle from "@/components/Public/PageTitle.vue"
+import { CartOutline } from '@vicons/ionicons5'
 
 const message = useMessage()
 const dialog = useDialog()

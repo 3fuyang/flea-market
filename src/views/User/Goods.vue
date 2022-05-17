@@ -1,6 +1,16 @@
 <template>
 <div class="root-wrapper">
-<span class="title">商品管理</span><br/>  
+  <page-title>
+    <template #icon>
+      <ClipboardTaskListRtl20Regular/>
+    </template>
+    <template #main-title>
+      商品管理
+    </template>
+    <template #sub-title>
+      My Unused
+    </template>
+  </page-title>
   <el-row>
     <el-col :span="6"/>
     <el-col :span="12">
@@ -52,6 +62,8 @@ import UploadGoodModal from '../../components/Goods/UploadGoodModal.vue'
 import GoodsInfoModal from '../../components/Goods/GoodsInfoModal.vue'
 import { useUserStore } from '@/stores/user'
 import { storeToRefs } from 'pinia'
+import PageTitle from '@/components/Public/PageTitle.vue'
+import { ClipboardTaskListRtl20Regular } from '@vicons/fluent'
 
 // store
 const userStore = useUserStore()

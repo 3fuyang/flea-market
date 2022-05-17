@@ -61,6 +61,7 @@ declare module '@vue/runtime-core' {
     ModifyTelCard: typeof import('./src/components/Security/ModifyTelCard.vue')['default']
     NewTopBar: typeof import('./src/components/NewTopBar.vue')['default']
     OrderListTable: typeof import('./src/components/Order/OrderListTable.vue')['default']
+    PageTitle: typeof import('./src/components/Public/PageTitle.vue')['default']
     PayQRCode: typeof import('./src/components/Confirm/PayQRCode.vue')['default']
     RecommendList: typeof import('./src/components/Result/RecommendList.vue')['default']
     RegisterWidget: typeof import('./src/components/Login/RegisterWidget.vue')['default']

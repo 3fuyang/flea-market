@@ -1,6 +1,16 @@
 <template>
 <div class="root-wrapper">
-  <p class="total-title">卖出闲置</p>
+  <page-title>
+    <template #icon>
+      <Money20Regular/>
+    </template>
+    <template #main-title>
+      卖出闲置
+    </template>
+    <template #sub-title>
+      Trade
+    </template>
+  </page-title>
   <div class="list-box">
     <div class="sider"></div>
     <NDialogProvider>
@@ -14,6 +24,8 @@
 <script setup lang="ts">
 import TradeOrders from '../../components/Trade/TradeOrders.vue'
 import { NDialogProvider } from 'naive-ui'
+import { Money20Regular } from '@vicons/fluent'
+import PageTitle from '@/components/Public/PageTitle.vue'
 </script>
 
 <style scoped>

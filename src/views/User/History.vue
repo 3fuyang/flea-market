@@ -1,6 +1,16 @@
 <template>
 <div class="root">
-  <span style="display: inline-block;color: #000000;margin: 20px 0px 0px 20px;font-size: 24px;font-weight: bold;">浏览记录</span><br/>
+  <page-title>
+    <template #icon>
+      <history20-filled/>
+    </template>
+    <template #main-title>
+      浏览记录
+    </template>
+    <template #sub-title>
+      History
+    </template>
+  </page-title>
   <div style="text-align: right;">
   <el-button type="info"  style="width: 110px;margin-right: 200px;"
   @click="clearHistory"><el-icon :size="17"><delete/></el-icon>&nbsp;清空记录</el-button>
@@ -40,6 +50,8 @@ import axios from 'axios'
 import { useRouter } from 'vue-router'
 import { useUserStore } from '@/stores/user'
 import { storeToRefs } from 'pinia'
+import PageTitle from '@/components/Public/PageTitle.vue'
+import { History20Filled } from '@vicons/fluent'
 
 const message = useMessage()
 const dialog = useDialog()

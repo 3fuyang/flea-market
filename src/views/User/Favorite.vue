@@ -1,6 +1,16 @@
 <template>
 <div class="root-wrapper">
-  <span style="display: inline-block;color: #000000;margin: 20px 0px 0px 20px;font-size: 24px;font-weight: bold;">我的收藏</span><br/>
+  <page-title>
+    <template #icon>
+      <star-line-horizontal320-regular/>
+    </template>
+    <template #main-title>
+      我的收藏
+    </template>
+    <template #sub-title>
+      Favorite
+    </template>
+  </page-title>
   <div style="text-align: right;margin-bottom: 10px;">     
   <el-button v-show="searching === 1" type="text"  round style="margin-right: 800px;"
   @click="cancelSearch()"><el-icon :size="18"><arrow-left/></el-icon>Cancel</el-button>  
@@ -44,6 +54,8 @@ import { useRouter } from 'vue-router'
 import axios from 'axios'
 import { useUserStore } from '@/stores/user'
 import { storeToRefs } from 'pinia'
+import PageTitle from '@/components/Public/PageTitle.vue'
+import { StarLineHorizontal320Regular } from '@vicons/fluent'
 
 const message = useMessage()
 const dialog = useDialog()

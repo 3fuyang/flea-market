@@ -1,6 +1,16 @@
 <template>
 <div class="root">
-  <span class="title">订单管理</span><br/>
+  <page-title>
+    <template #icon>
+      <ClipboardTaskListRtl20Regular/>
+    </template>
+    <template #main-title>
+      订单管理
+    </template>
+    <template #sub-title>
+      Order
+    </template>
+  </page-title>
   <el-row>
     <el-col :span="2"></el-col>
     <el-col :span="20">
@@ -54,6 +64,8 @@ import axios from 'axios'
 import { useMessage } from 'naive-ui'
 import { useUserStore } from '@/stores/user'
 import { storeToRefs } from 'pinia'
+import PageTitle from '@/components/Public/PageTitle.vue'
+import { ClipboardTaskListRtl20Regular } from '@vicons/fluent'
 
 const message = useMessage()
 

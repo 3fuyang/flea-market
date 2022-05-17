@@ -46,8 +46,6 @@ npm run dev
 
 本项目的前端鉴权是通过动态路由(`addRoute`，`removeRoute`)和 Pinia 的全局状态管理实现的。
 
-
-
 #### Promise.all() 处理 connection.query
 
 适用于从一张表(通常是外键关系表)获取主码，再从被关系表中取得详细信息的情景（比如从收藏夹中取得商品的 ID 数组，再根据该数组从商品表中取得标题、图片等详细信息），是一个十分实用的 boilerplate。
@@ -181,6 +179,8 @@ nextTick(() => {
 以往对于 Vue Router 的配置都是初始化时就添加所有路由，然后将鉴权的工作交由各组件的生命周期钩子(如 setup, beforeMount, beforeUpdate)或组件内路由守卫(如 beforeRouteUpdate)处理，而由于本项目使用动态路由鉴权，在地址栏导航、浏览器刷新的操作下 Vue Router 会丢失。
 
 这是由于 Vue Router 是专门创建**单页应用程序(SPA)**的，其状态存储于浏览器为该页分配的堆栈中，地址栏导航、浏览器刷新都会导致这些内存被垃圾回收程序**回收**，于是导致 Vue Router 的**丢失**。
+
+暂时没有解决方案。
 
 为解决该问题，为 Router 添加全局导航守卫`beforeEach`，在守卫中检查 pinia 的 store 中的`identity`(用户身份)字段，根据该字段决定是否需要动态添加用户身份对应的路由，并删除特定路由(如登录)。
 

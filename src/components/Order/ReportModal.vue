@@ -47,7 +47,7 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, onMounted, onUpdated } from 'vue'
+import { ref, onBeforeMount, onUpdated } from 'vue'
 import { useMessage } from 'naive-ui'
 import axios from 'axios'
 
@@ -65,8 +65,8 @@ const reply = ref('') // 管理员回复
 const replyer = ref('') // 回复者
 const replyTime = ref('') // 回复时间
 
-onMounted(()=>{
-  if (props.reported !== '未举报') {
+function getReportData () {
+  if (props.reported && props.reported !== '未举报') {
     // 调用接口：传入（订单ID） 返回（举报理由，状态，回复，回复时间）
     axios.get(`/api/getReport/${props.currOrderId}`)
       .then(res => {
@@ -76,22 +76,12 @@ onMounted(()=>{
         replyer.value = res.data[0].replyer
         replyTime.value = res.data[0].reply_time
       })
-  }
-})
+  }  
+}
 
-onUpdated(() => {
-  if(props.reported !== '未举报'){
-    // 调用接口：传入（订单ID） 返回（举报理由，状态，回复，回复时间）
-    axios.get(`/api/getReport/${props.currOrderId}`)
-      .then(res => {
-        reasonView.value = res.data[0].reason
-        reported.value = res.data[0].stat
-        reply.value = res.data[0].reply
-        replyer.value = res.data[0].replyer
-        replyTime.value = res.data[0].reply_time
-      })
-  }
-})
+onBeforeMount(getReportData)
+
+onUpdated(getReportData)
 
 // 提交举报
 function reportOrder(){

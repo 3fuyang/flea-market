@@ -144,8 +144,6 @@ const router = createRouter({
 router.beforeEach((to, from, next) => {
 	// initializing store
 	const userStore = useUserStore()
-	console.log(from)
-	console.log(to)
 	switch (userStore.identity) {
 		case 'member':
 			if (router.hasRoute('login')) {

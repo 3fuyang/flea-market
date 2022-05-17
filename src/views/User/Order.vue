@@ -20,7 +20,8 @@
       @close="closeReport"/>
   </Teleport>
   <Teleport to="main">
-    <EvaluateModal 
+    <EvaluateModal
+      v-if="showEvaluate"
       :show="showEvaluate" 
       :currOrderId="currentOrderId" 
       :currOrderStatus="currentOrderStatus" 

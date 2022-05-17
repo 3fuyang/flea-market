@@ -48,13 +48,70 @@ npm run dev
 
 为 Router 添加全局导航守卫`beforeEach`，在守卫中检查 pinia 的 store 中的`identity`(用户身份)字段，根据该字段决定是否需要动态添加用户身份对应的路由，并删除特定路由(如登录)。
 
-##### ESM 循环引用的问题
+##### 循环加载的问题
 
-为实现前端鉴权，本项目的`@/router/index.ts`和`@/store/user.ts`中出现了**模块循环引入**的情况，但最终却能正常工作，下面对这种经典情景进行了考察。
+为实现前端鉴权，本项目的`@/router/index.ts`和`@/store/user.ts`中出现了**模块循环加载**的情况（<span style="text-decoration: line-through;">现在没有了</span>），但最终却能正常工作，下面对这种经典情景进行了考察。
+
+参考：[阮一峰 ES6 入门](https://www.bookstack.cn/read/es6-3rd/spilt.4.docs-module-loader.md)
+
+**循环加载(Circular dependency)**指的是，`a`脚本的执行依赖`b`脚本，而`b`脚本的执行又依赖`a`脚本。
+
+###### CommonJS 模块
+
+CommonJS 使用`require`命令第一次加载脚本时，就会**执行整个脚本**，然后在**内存**生成一个对象。
+
+``` typescript
+// Node.js 内部加载模块后生成的对象
+{
+    //...
+    id: '...',	// 模块名
+	exports: { ... },	// 模块输出的各个接口
+	loaded: true,	// 该模块的脚本是否执行完毕
+	//...        
+}	
+```
+
+以后需要使用该模块时，就会到上面的`exports`属性中取值，即使再次执行`require`命令，也不会再重新执行脚本，而是到**缓存**中取值。
+
+所以，CommonJS 模块无论加载多少次，都只会在第一次加载时执行一次，以后再加载，就返回缓存中第一次执行的结果，除非手动清除系统缓存，属于**单例模式（Singleton）**。
+
+CommonJS 模块的代码会在`require`时**全部执行**，一旦出现某个模块被“循环加载“，就**只输出已经执行的部分**，还未执行的部分不会输出。
+
+这里注意，ESM 和 CommonJS 的模块引入都是**同步的**（不包括`import()`）。
+
+所以，当发生循环加载时，内存中的`exports`属性上便只有已经执行的代码的导出。
+
+###### ESM 模块
+
+ES6 Module 是**动态引用（传引用）**，如果使用`import`从一个模块加载变量，那些变量**不会被缓存**，而是成为一个**指向被加载模块的引用**，需要开发者自己保证，真正取值时能够取到。
+
+``` js
+// a.mjs
+import { bar } from './b'
+console.log('a.mjs')
+console.log(bar)
+export let foo = 'foo'
+
+// b.mjs
+import { foo } from './a'
+console.log('b.mjs')
+console.log(foo)
+export let bar = 'bar'
+```
+
+这里执行`node a.mjs`后，会出现：
+
+``` shell
+$ node --experimental-modules a.mjs
+b.mjs
+ReferenceError: foo is not defined
+```
+
+流程：执行`a.mjs`，发现引入了`b.mjs`，所以会**优先执行 `b.mjs`**，然后再执行`a.mjs`。执行`b.mjs`时，已知它从`a.mjs`中引入了`foo`接口，此时不会去执行`a.mjs`（估计是因为 a.mjs 已经在执行栈中），而是**认为这个接口已经存在**，**继续往下执行**（这是执行到`import`语句时的情况，所以此时不会报错）。直到打印`foo`时，发现该接口未定义，因此报错。
 
 #### Promise.all() 处理 connection.query
 
-适用于从一张表(通常是外键关系表)获取主码，再从被关系表中取得详细信息的情景（比如从收藏夹中取得商品的 ID 数组，再根据该数组从商品表中取得标题、图片等详细信息），是一个十分实用的 boilerplate。
+适用于从一张表（通常是外键关系表）获取主码，再从被关系表中取得详细信息的情景（比如从收藏夹中取得商品的 ID 数组，再根据该数组从商品表中取得标题、图片等详细信息），是一个十分实用的 boilerplate。
 
 ``` js
 // 基本结构

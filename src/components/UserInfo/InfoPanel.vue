@@ -1,23 +1,40 @@
 <template>
     <el-card class="baseInfo">
-      <el-avatar :src="userInfo?.avatar" alt="User Avatar" :size="100" />
-      <div class="nickName" v-if="!changingInfo">
+      <n-avatar
+        :src="userInfo?.avatar"
+        round
+        bordered
+        :size="100" />
+      <div
+        class="nickName"
+        v-if="!changingInfo">
         {{ userInfo?.nickName }}
       </div>
-      <div class="selfIntroduction" v-if="!changingInfo">
+      <div
+        class="selfIntroduction"
+        v-if="!changingInfo">
         {{ userInfo?.selfIntro }}
       </div>
       <el-divider />
-      <el-form label-width="75px" class="infoForm" :model="userInfo">
-        <el-form-item v-if="changingInfo" prop="nickName">
-          <template #label>昵称:</template>
+      <el-form
+        label-width="75px" 
+        class="infoForm" 
+        :model="userInfo">
+        <el-form-item
+          v-if="changingInfo"
+          prop="nickName">
+          <template #label>
+            昵称:
+          </template>
           <el-input
             v-if="changingInfo"
             v-model="newInfo.nickName"
           ></el-input>
           <div v-else>{{ userInfo?.college }}</div>
         </el-form-item>
-        <el-form-item v-if="changingInfo" prop="selfIntroduction">
+        <el-form-item
+          v-if="changingInfo"
+          prop="selfIntroduction">
           <template #label>个人简介:</template>
           <el-input
             v-if="changingInfo"
@@ -40,14 +57,15 @@
               :value="item.value"
             />
           </el-select>
-          <div v-else>{{ userInfo?.college }}</div>
+          <div v-else>
+            {{ userInfo?.college }}
+          </div>
         </el-form-item>
         <el-form-item prop="gender">
           <template #label>性别:</template>
           <el-select
             v-if="changingInfo"
-            v-model="newInfo.gender"
-          >
+            v-model="newInfo.gender">
             <el-option
               v-for="item in genderOptions"
               :key="item.value"
@@ -108,7 +126,7 @@
 
 <script setup lang="ts">
 import { ref, watch } from 'vue'
-import { useMessage, useDialog } from 'naive-ui'
+import { useMessage, useDialog, NAvatar } from 'naive-ui'
 import "@/assets/fonts/font.css"
 import axios from 'axios'
 

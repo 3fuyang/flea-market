@@ -2,7 +2,17 @@
 <el-card
   class="commentInfo"
   :body-style="{ padding: '0px' }">
-  <p class="comment-title">买家评价</p>
+  <page-title style="margin: 0;justify-content: flex-start;transform: scale(.8) translate(-4em, 0);">
+    <template #icon>
+      <person-chat16-regular/>
+    </template>
+    <template #main-title>
+      顾客评价
+    </template>
+    <template #sub-title>
+      Customer Review
+    </template>
+  </page-title>
   <el-divider class="divider"/>
   <div class="commentCardList">
     <div v-if="commentList.length">
@@ -61,6 +71,8 @@
 <script lang="ts" setup>
 import { ref, computed } from 'vue'
 import '@/assets/fonts/font.css'
+import PageTitle from '@/components/Public/PageTitle.vue'
+import { PersonChat16Regular } from '@vicons/fluent'
 
 defineProps({
   userID: String

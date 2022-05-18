@@ -396,6 +396,10 @@ const genderOptions: SelectOption[] = ['男', '女'].map(item => ({
   margin: 1.2em 0;
   padding: 0;
   cursor: pointer;
+  transition: transform .6s;
+  &:hover {
+    transform: rotate(360deg);
+  }
 }
 
 .nickname {

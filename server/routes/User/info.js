@@ -1,6 +1,8 @@
 // Info页面的接口
 const express = require('express')
 const app = express()
+const multer = require('multer')
+const fs = require('fs')
 
 const connection = require('../../database/db')
 
@@ -37,5 +39,38 @@ app.post('/modifyUserInfo', (req, res) => {
     }
   )
 })
+
+// 上传头像
+app.post(
+  '/uploadAvatar',
+  multer({
+    // 设置文件存储路径
+    dest: './public/avatars',
+  }).array('file', 1),  // 注意：这里的字段必须与前端formdata的字段名相同
+  (req, res, next) => {
+    const fileInfoList = []
+    let name
+    req.files.forEach((file) => {
+      let fileInfo = {};
+      let path = './public/avatars/' + Date.now().toString() + '_' + file.originalname
+      fs.renameSync('./public/avatars/' + file.filename, path)
+      // 获取文件基本信息
+      fileInfo.type = file.mimetype
+      fileInfo.name = file.originalname
+      name = fileInfo.name
+      fileInfo.size = file.size
+      fileInfo.path = path
+      fileInfoList.push(fileInfo)
+    })
+    connection.query(
+      `update userAccount set avatar=? where user_id=${req.get('userID')}`,
+      name,
+      (err, result) => {
+        if (err) throw err
+        res.end(JSON.stringify(result))
+      }
+    )    
+  }
+)
 
 module.exports = app

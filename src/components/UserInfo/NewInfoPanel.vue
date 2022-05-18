@@ -1,6 +1,8 @@
 <script lang="ts" setup>
-import { NRate, NDatePicker, NSelect, NInput, NForm, NFormItem, NButton, NDescriptions, NDescriptionsItem, NCard, NAvatar, useMessage, useDialog, NText, NDivider, type FormInst, type SelectOption, type FormRules } from 'naive-ui'
-import { ref, watch } from 'vue'
+import { NPopover, NRate, NDatePicker, NSelect, NInput, NForm, NFormItem, NButton, NDescriptions, NDescriptionsItem, NCard, NAvatar, NText, NDivider, NUpload } from 'naive-ui'
+import type { UploadInst, FormInst, SelectOption, FormRules } from 'naive-ui'
+import { useMessage, useDialog } from 'naive-ui'
+import { ref, watch, h } from 'vue'
 import type { CSSProperties } from 'vue'
 import axios from 'axios'
 import PageTitle from '../Public/PageTitle.vue'
@@ -200,6 +202,61 @@ function confirmEdit () {
   }  
 }
 
+// 头像上传组件ref对象
+const uploadRef = ref<UploadInst | null>(null)
+
+// 文件列表长度
+const fileListLength = ref(0)
+
+// 打开上传头像对话框
+function openAvatarModal () {
+  dialog.create({
+    title: '上传头像',
+    content: () => h(
+      NUpload,
+      {
+        accept: '.jpg,.jpeg,.png,.gif,.tif,.tga,.bmp',
+        action: '/api/uploadAvatar',
+        headers: { 'userID': props.userID },
+        defaultUpload: false,
+        max: 1,
+        ref: uploadRef,
+        listType: 'image-card',
+        name: 'file',
+        fileListStyle: {
+          display: 'flex',
+          justifyContent: 'center'
+        },
+        onChange: (options) => {
+          fileListLength.value = options.fileList.length
+        }
+      },
+      {
+        default: () => h(
+          NButton,
+          null,
+          {
+            default: () => '选择图片'
+          }
+        )
+      }
+    ),
+    type: 'info',
+    positiveText: '确认上传',
+    positiveButtonProps: {
+      disabled: !fileListLength
+    },
+    negativeText: '取消',
+    onPositiveClick: () => {
+      // 上传图片
+      uploadRef.value?.submit()
+    },
+    onNegativeClick: () => {
+      message.info('取消上传头像')
+    }
+  })
+}
+
 // 卡片内容样式
 const contentStyle: CSSProperties = {
   boxSizing: 'border-box',
@@ -248,12 +305,20 @@ const genderOptions: SelectOption[] = ['男', '女'].map(item => ({
     class="info-card"
     :content-style="contentStyle"
     :footer-style="footerStyle">
-    <n-avatar
-      class="avatar"
-      :src="userInfo?.avatar"
-      round
-      color="white"
-      :size="100"/>
+    <n-popover
+      trigger="hover"
+      >
+      <template #trigger>
+        <n-avatar
+          class="avatar"
+          :src="userInfo?.avatar"
+          round
+          color="white"
+          :size="100"
+          @click="openAvatarModal" />
+      </template>
+      更换头像
+    </n-popover>
     <template v-if="!changingInfo">
       <p class="nickname">
         {{userInfo.nickName}}

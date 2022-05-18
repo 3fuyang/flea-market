@@ -1,7 +1,7 @@
 <template>
   <div class="info">
     <el-row justify="center">
-      <info-panel v-if="identity === 'member'" :userID="userID"/>
+      <NewInfoPanel v-if="identity === 'member'" :userID="userID"/>
       <comment-list v-if="identity === 'member'" :userID="userID"/>
     </el-row>
   </div>  
@@ -10,6 +10,7 @@
 <script setup lang="ts">
 import InfoPanel from '../../components/UserInfo/InfoPanel.vue'
 import CommentList from '../../components/UserInfo/CommentList.vue'
+import NewInfoPanel from '@/components/UserInfo/NewInfoPanel.vue'
 import { useUserStore } from '@/stores/user'
 import { storeToRefs } from 'pinia'
 
@@ -20,7 +21,7 @@ const { userID, identity } = storeToRefs(userStore)
 
 <style scoped>
 .info {
-  width: 65vw;
-  margin: 0 auto;
+  width: 62.4rem;
+  margin: 2em auto;
 }
 </style>

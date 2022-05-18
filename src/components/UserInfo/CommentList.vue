@@ -149,8 +149,6 @@ commentList.value = [
 
 <style scoped>
 .commentInfo {
-  margin-top: 10px;
-  margin-bottom: 10px;
   margin-left: 20px;
   width: 60%;
   text-align: center;

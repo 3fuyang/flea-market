@@ -4,7 +4,7 @@ import type { FormInst, FormRules, FormItemRule } from 'naive-ui'
 import { useMessage } from 'naive-ui'
 import { ref } from 'vue'
 import axios from 'axios'
-import { useRouter } from 'vue-router'
+import { useRouter, type RouteRecordName } from 'vue-router'
 import { LockOpenOutline } from '@vicons/ionicons5'
 import { useUserStore } from '../../stores/user'
 import { memberRoutes, adminRoutes, loginRoutes, endRoutes } from "@/router"
@@ -74,7 +74,7 @@ function logIn (): void {
                 userStore.logIn(loginData.value.userID)
                 // 删除登录路由
                 loginRoutes.forEach((route) => {
-                  router.removeRoute(route.name)
+                  router.removeRoute(route.name as RouteRecordName)
                 })
                 // 添加普通会员路由
                 memberRoutes.forEach((route) => {
@@ -97,7 +97,7 @@ function logIn (): void {
               userStore.logIn(loginData.value.userID)
               // 删除登录路由，添加管理员路由
               loginRoutes.forEach((route) => {
-                router.removeRoute(route.name)
+                router.removeRoute(route.name as RouteRecordName)
               })
               adminRoutes.forEach((route) => {
                 router.addRoute(route)

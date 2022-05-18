@@ -3,7 +3,7 @@ import axios from 'axios'
 import { NCard, NForm, NFormItem, NInput, NButton, NDatePicker, NSelect, useMessage } from 'naive-ui'
 import type { FormInst, FormRules, FormItemRule } from 'naive-ui'
 import { ref, watch } from 'vue'
-import { useRouter } from 'vue-router'
+import { useRouter, type RouteRecordName } from 'vue-router'
 import { colleges } from './colleges'
 import { useUserStore } from '@/stores/user'
 import { memberRoutes, loginRoutes, endRoutes } from "@/router"
@@ -144,7 +144,7 @@ function completeInfo () {
           userStore.logIn(registerData.value.userID)
           // 删除登录路由
           loginRoutes.forEach((route) => {
-            router.removeRoute(route.name)
+            router.removeRoute(route.name as RouteRecordName)
           })
           // 添加普通会员路由
           memberRoutes.forEach((route) => {

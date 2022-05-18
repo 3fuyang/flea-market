@@ -6,7 +6,7 @@ import { useNotification, NButton, NSpace, useMessage } from 'naive-ui'
 import { ref, h } from 'vue'
 import { memberRoutes, adminRoutes, loginRoutes, endRoutes } from "@/router"
 import { useUserStore } from '@/stores/user'
-import { useRouter } from 'vue-router'
+import { useRouter, type RouteRecordName } from 'vue-router'
 
 const message = useMessage()
 
@@ -40,7 +40,7 @@ notification.create({
                     userStore.logIn('1951001')
                     // 删除登录路由
                     loginRoutes.forEach((route) => {
-                      router.removeRoute(route.name)
+                      router.removeRoute(route.name as RouteRecordName)
                     })
                     // 添加普通会员路由
                     memberRoutes.forEach((route) => {
@@ -69,7 +69,7 @@ notification.create({
                     userStore.logIn('0001')
                     // 删除登录路由，添加管理员路由
                     loginRoutes.forEach((route) => {
-                      router.removeRoute(route.name)
+                      router.removeRoute(route.name as RouteRecordName)
                     })
                     adminRoutes.forEach((route) => {
                       router.addRoute(route)

@@ -15,7 +15,7 @@ const barStyle = {
 	<div
     id="app" 
     class="app">
-    <n-message-provider>
+    <n-message-provider :max="1">
       <n-dialog-provider>
         <n-notification-provider>
           <el-container style="overflow-x: hidden;">

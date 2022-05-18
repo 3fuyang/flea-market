@@ -3,7 +3,7 @@ import { NButton, NMenu, type MenuOption, useMessage, useDialog } from 'naive-ui
 import { ref, computed, h, watch } from 'vue'
 import { useUserStore } from '@/stores/user'
 import { storeToRefs } from 'pinia'
-import { useRouter, RouterLink, useRoute } from "vue-router"
+import { useRouter, RouterLink, useRoute, type RouteRecordName } from "vue-router"
 import { memberRoutes, adminRoutes, loginRoutes, endRoutes } from "@/router"
 import { useLoadingBar } from 'naive-ui'
 
@@ -319,12 +319,12 @@ function logOut () {
       switch (preIdentity) {
         case 'member':
           memberRoutes.forEach((route) => {
-            router.removeRoute(route.name)
+            router.removeRoute(route.name as RouteRecordName)
           })
           break
         case 'admin':
           adminRoutes.forEach((route) => {
-            router.removeRoute(route.name)
+            router.removeRoute(route.name as RouteRecordName)
           })
           break
         default:

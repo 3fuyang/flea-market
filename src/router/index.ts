@@ -1,4 +1,4 @@
-import { createRouter, createWebHistory } from 'vue-router'
+import { createRouter, createWebHistory, type RouteRecordRaw, type RouteRecordName } from 'vue-router'
 import { useUserStore } from '@/stores/user'
 
 const Home = () => import('../views/NewHome.vue')
@@ -23,7 +23,7 @@ const DealReport = () => import("../views/Administrator/DealingReports.vue")
 const NotFound = () => import('../views/NotFound.vue')
 
 // 公共路由
-export const publicRoutes = [
+export const publicRoutes: RouteRecordRaw[] = [
 	{
 		path: '/',
 		redirect: '/home'
@@ -50,7 +50,7 @@ export const publicRoutes = [
 ]
 
 // 普通会员权限路由
-export const memberRoutes = [
+export const memberRoutes: RouteRecordRaw[] = [
 	{
 		name: 'info',
 		path: '/info',
@@ -104,7 +104,7 @@ export const memberRoutes = [
 ]
 
 // 管理员权限路由
-export const adminRoutes = [
+export const adminRoutes: RouteRecordRaw[] = [
 	{
 		name: 'report',
 		path: '/admin/report',
@@ -113,7 +113,7 @@ export const adminRoutes = [
 ]
 
 // 登录路由
-export const loginRoutes = [
+export const loginRoutes: RouteRecordRaw[] = [
 	{
 		name: 'login',
 		path: '/login',
@@ -122,7 +122,7 @@ export const loginRoutes = [
 ]
 
 // 末尾路由
-export const endRoutes = [
+export const endRoutes: RouteRecordRaw[] = [
 /* 	{
 		name: '404',
 		path: '/404',
@@ -138,7 +138,10 @@ export const endRoutes = [
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
-  routes: [...publicRoutes, ...loginRoutes, ...endRoutes]
+  routes: [...publicRoutes, ...loginRoutes, ...endRoutes],
+	scrollBehavior (to, from, savedPosition) {
+		return { top: 0 }
+	}
 })
 
 router.beforeEach((to, from, next) => {
@@ -149,7 +152,7 @@ router.beforeEach((to, from, next) => {
 		if (router.hasRoute('login')) {
 			// 删除登录路由
 			loginRoutes.forEach((route) => {
-				router.removeRoute(route.name)
+				router.removeRoute(route.name as RouteRecordName)
 			})
 			// 添加普通会员路由
 			memberRoutes.forEach((route) => {
@@ -167,7 +170,7 @@ router.beforeEach((to, from, next) => {
 		if (router.hasRoute('login')) {
 			// 删除登录路由，添加管理员路由
 			loginRoutes.forEach((route) => {
-				router.removeRoute(route.name)
+				router.removeRoute(route.name as RouteRecordName)
 			})
 			adminRoutes.forEach((route) => {
 				router.addRoute(route)

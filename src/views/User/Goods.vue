@@ -2,7 +2,7 @@
 <div class="root-wrapper">
   <page-title>
     <template #icon>
-      <ClipboardTaskListRtl20Regular/>
+      <GiftCard20Regular/>
     </template>
     <template #main-title>
       商品管理
@@ -63,7 +63,7 @@ import GoodsInfoModal from '../../components/Goods/GoodsInfoModal.vue'
 import { useUserStore } from '@/stores/user'
 import { storeToRefs } from 'pinia'
 import PageTitle from '@/components/Public/PageTitle.vue'
-import { ClipboardTaskListRtl20Regular } from '@vicons/fluent'
+import { GiftCard20Regular } from '@vicons/fluent'
 
 // store
 const userStore = useUserStore()

@@ -8,7 +8,6 @@
 </template>
 
 <script setup lang="ts">
-import InfoPanel from '../../components/UserInfo/InfoPanel.vue'
 import CommentList from '../../components/UserInfo/CommentList.vue'
 import NewInfoPanel from '@/components/UserInfo/NewInfoPanel.vue'
 import { useUserStore } from '@/stores/user'

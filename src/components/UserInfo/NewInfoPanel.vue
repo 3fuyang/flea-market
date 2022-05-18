@@ -418,7 +418,7 @@ const genderOptions: SelectOption[] = ['男', '女'].map(item => ({
 }
 
 .description-box {
-  width: 60%;
+  width: 70%;
   text-align: left;
 }
 

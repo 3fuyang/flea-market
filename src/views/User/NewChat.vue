@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import SunsetCity from '@/components/CSSDoodle/SunsetCity.vue'
 import { NEmpty, NButton, NInput, NTag, NDivider, NText, NAvatar, NCard, NIcon, useMessage, NScrollbar, NEllipsis } from 'naive-ui'
-import { Image, ChatboxEllipsesOutline, Home, LogoGithub, SearchOutline } from '@vicons/ionicons5'
+import { ChatboxEllipsesOutline, Home, LogoGithub, SearchOutline } from '@vicons/ionicons5'
 import { BuildingSkyscraper20Regular, Building20Filled, BuildingMultiple20Filled, Emoji16Filled } from '@vicons/fluent'
 import { useRouter, useRoute } from 'vue-router'
 import { computed, ref, onBeforeMount, onBeforeUnmount, nextTick } from 'vue'
@@ -407,13 +407,7 @@ function handleSendMessage () {
             size="24"
             @click="emojiPickerSwitch = !emojiPickerSwitch">
             <emoji16-filled/>
-          </n-icon>
-          <n-icon
-            class="image-icon"
-            depth="4"
-            size="24">
-            <Image/>
-          </n-icon>        
+          </n-icon>      
           <div class="polyfill"/>
           <n-button
             size="small"

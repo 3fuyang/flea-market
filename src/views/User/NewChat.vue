@@ -8,6 +8,7 @@ import { computed, ref, onBeforeMount, onBeforeUnmount, nextTick } from 'vue'
 import axios from 'axios'
 import { useUserStore } from '@/stores/user'
 import { storeToRefs } from 'pinia'
+import { VuemojiPicker, type EmojiClickEventDetail } from 'vuemoji-picker'
 
 const router = useRouter()
 const route = useRoute()
@@ -64,6 +65,15 @@ const messageData = ref<Message[]>([])
 // 消息输入框model对象
 const textarea = ref('')
 
+// emoji-picker 开关
+const emojiPickerSwitch = ref(false)
+
+// emoji-picker 点击事件
+function handleEmojiClick (detail: EmojiClickEventDetail) {
+  textarea.value += detail.unicode
+  emojiPickerSwitch.value = false
+}
+
 // 对方类型
 interface Oponent {
   uid: string
@@ -112,6 +122,7 @@ const currOponentName = ref('')
 function changeOponent (oponentID: string, oponentName: string) {
   currOponent.value = oponentID
   currOponentName.value = oponentName
+  textarea.value = ''
   getMessage(true)
 }
 
@@ -119,6 +130,7 @@ function changeOponent (oponentID: string, oponentName: string) {
 function closeChat () {
   currOponent.value = '我的聊天'
   currOponentName.value = ''
+  textarea.value = ''  
 }
 
 // 获取聊天对象列表
@@ -385,14 +397,19 @@ function handleSendMessage () {
           v-model:value="textarea"/>
         <!--聊天工具栏-->
         <div class="tool-bar">
+          <vuemoji-picker
+            v-if="emojiPickerSwitch"
+            class="emoji-picker"
+            @emoji-click="handleEmojiClick"/>
           <n-icon
             class="emoji-icon"
             depth="4"
-            size="24">
+            size="24"
+            @click="emojiPickerSwitch = !emojiPickerSwitch">
             <emoji16-filled/>
           </n-icon>
           <n-icon
-            class="emoji-icon"
+            class="image-icon"
             depth="4"
             size="24">
             <Image/>
@@ -639,6 +656,13 @@ $blue: #7BC4EF;
   align-items: center;
   width: 100%;
   justify-content: flex-start;
+  position: relative;
+}
+
+.emoji-picker {
+  position: absolute;
+  bottom: 2em;
+  left: 0;
 }
 
 .btn {
@@ -652,6 +676,15 @@ $blue: #7BC4EF;
   &:hover, &:active {
     box-shadow: 0 0 2px $grey;
   }
+}
+
+.image-icon {
+  align-self: flex-start;
+  cursor: pointer;
+  transition: box-shadow .2s ease-out;
+  &:hover, &:active {
+    box-shadow: 0 0 2px $grey;
+  }  
 }
 
 @keyframes blink {

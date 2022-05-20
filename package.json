@@ -20,7 +20,8 @@
     "pinia-plugin-persistedstate": "^1.5.1",
     "vue": "^3.2.33",
     "vue-axios": "^3.4.0",
-    "vue-router": "^4.0.14"
+    "vue-router": "^4.0.14",
+    "vuemoji-picker": "^0.1.4"
   },
   "devDependencies": {
     "@types/node": "^17.0.31",

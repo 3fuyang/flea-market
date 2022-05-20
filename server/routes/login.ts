@@ -1,8 +1,8 @@
 // Login页面的接口
-const express = require('express')
-const app = express()
+import express from 'express'
+import connection from '../database/db'
 
-const connection = require('../database/db')
+const app = express()
 
 app.use(express.json())
 app.use(express.urlencoded({extended:  false}))
@@ -97,4 +97,4 @@ app.post('/modifypassword', (req, res) => {
   )
 })
 
-module.exports = app 
+export default app

@@ -4,17 +4,24 @@ import { NEmpty, NButton, NInput, NTag, NDivider, NText, NAvatar, NCard, NIcon, 
 import { ChatboxEllipsesOutline, Home, LogoGithub, SearchOutline } from '@vicons/ionicons5'
 import { BuildingSkyscraper20Regular, Building20Filled, BuildingMultiple20Filled, Emoji16Filled } from '@vicons/fluent'
 import { useRouter, useRoute } from 'vue-router'
-import { computed, ref, onBeforeMount, onBeforeUnmount, nextTick } from 'vue'
+import { computed, ref, onBeforeMount, nextTick } from 'vue'
 import axios from 'axios'
 import { useUserStore } from '@/stores/user'
 import { storeToRefs } from 'pinia'
 import { VuemojiPicker, type EmojiClickEventDetail } from 'vuemoji-picker'
+import { io } from 'socket.io-client'
 
 const router = useRouter()
 const route = useRoute()
 const message = useMessage()
 const userStore = useUserStore()
 const { userID } = storeToRefs(userStore)
+
+const socket = io('localhost:8082', {
+  extraHeaders: {
+    'userid': userID.value
+  }
+})
  
 // NavBar 中按钮
 const menuItems = [
@@ -79,6 +86,7 @@ interface Oponent {
   uid: string
   uname: string
   avatar: string
+  latest: string
 }
 // 全部聊天对象model
 const oponentsList = ref<Oponent[]>([])
@@ -97,20 +105,10 @@ const oponentsView = computed(() => {
   }
 })
 
-// 消息获取定时器
-let messageTimer: number | null | undefined
-
 // 挂载前，获取消息对象列表，并开启定时器
 onBeforeMount(() => {
   let newOponent = route.query
   getChatList(newOponent.oponentID as string, newOponent.oponentName as string, newOponent.avatar as string)
-  // 设置定时器
-  messageTimer = window.setInterval(getMessage, 2000)
-})
-
-// 卸载前，清除定时器
-onBeforeUnmount(() => {
-  clearInterval(messageTimer as number)
 })
 
 // 当前聊天对象ID
@@ -134,7 +132,7 @@ function closeChat () {
 }
 
 // 获取聊天对象列表
-function getChatList(newOponentID: string, newOponentName: string, newOponentAvatar: string){
+function getChatList (newOponentID: string, newOponentName: string, newOponentAvatar: string, newLatest: string = ''){
   // 调用接口：传入（用户ID，聊天对象ID） 返回（聊天对象列表：ID，名称）
   const newList: Oponent[] = []
   axios.get(`/api/getChatOponent/${userID.value}`)
@@ -143,7 +141,8 @@ function getChatList(newOponentID: string, newOponentName: string, newOponentAva
         newList.push({
           uid: item.user_id,
           uname: item.nickname,
-          avatar: `http://106.15.78.201:8082/public/avatars/${item.avatar}`
+          avatar: `http://106.15.78.201:8082/public/avatars/${item.avatar}`,
+          latest: item.latest
         })
       })
     })
@@ -160,7 +159,8 @@ function getChatList(newOponentID: string, newOponentName: string, newOponentAva
         oponentsList.value.unshift({
           uid: newOponentID,
           uname: newOponentName,
-          avatar: newOponentAvatar          
+          avatar: newOponentAvatar,
+          latest: newLatest
         })
         currOponent.value = newOponentID
         currOponentName.value = newOponentName 
@@ -217,6 +217,36 @@ function getMessage (oponentChanged = false) {
     })
 }
 
+socket.on('deliver message', (msg) => {
+  // 获取对话者 ID，将其移至对话者列表的顶端
+  let oponentID: string = userID.value === msg.a_user_id ? msg.b_user_id : msg.a_user_id
+  const index = oponentsList.value.findIndex((item) => item.uid === oponentID)
+  if (index > 0) {
+    // 对话者已在列表中且不是首位，将其移至首位
+    const tmp = oponentsList.value.splice(index, 1)[0]
+    tmp.latest = msg.details
+    oponentsList.value.unshift(tmp)
+  } else if (index < 0) {
+    // 对话者不在列表中
+    axios.get(`/api/getOponentInfo/${oponentID}`)
+      .then((res: any) => {
+        oponentsList.value.unshift({
+          uid: oponentID,
+          uname: res.data.nickname,
+          avatar: `http://106.15.78.201:8082/public/avatars/${res.data.avatar}`,
+          latest: msg.details
+        })
+      })
+  } else {
+    // 对话者已经处于首位
+    oponentsList.value[0].latest = msg.details
+  }
+  // 如果目前的对话者正是发来消息的对话者，则更新消息列表
+  if (currOponent.value === oponentID) {
+    getMessage()
+  }
+})
+
 // 发送消息
 function handleSendMessage () {
   let a_user_id = userID.value, b_user_id = currOponent.value
@@ -230,15 +260,26 @@ function handleSendMessage () {
     date_time: date,
     details: textarea.value        
   }
+  // 向 socket 连接传递"发送消息"事件
+  new Promise(() => {
+    socket.emit('send message', message)
+  }).then(() => {
+    getMessage()
+    nextTick(() => {
+      const scrollContainer = Array.from(document.getElementsByClassName('n-scrollbar-container'))[1]
+      scrollContainer.scrollTop = scrollContainer.scrollHeight
+    })    
+  })
+  
   // 调用接口：传入（用户ID，对方ID，说话方，时间，内容） 返回（null）
-  axios.post('/api/sendMessage', message)
+  /* axios.post('/api/sendMessage', message)
     .then(() => {
       getMessage()
       nextTick(() => {
         const scrollContainer = Array.from(document.getElementsByClassName('n-scrollbar-container'))[1]
         scrollContainer.scrollTop = scrollContainer.scrollHeight
       })
-    })
+    }) */
 
   textarea.value = ''
 }
@@ -311,7 +352,7 @@ function handleSendMessage () {
               {{`${item.uid} ${item.uname}`}}
             </n-ellipsis>
             <span class="native-ellipsis">
-              最新消息最新消息最新消息最新消息最新消息最新消息最新消息
+              {{item.latest}}
             </span>
           </div>
         </n-card>

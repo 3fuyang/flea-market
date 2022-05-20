@@ -1,8 +1,8 @@
 // Home页面的接口
-const express = require('express')
-const app = express()
+import express from 'express'
+import connection from '../database/db'
 
-const connection = require('../database/db')
+const app = express()
 
 app.use(express.json())
 app.use(express.urlencoded({extended:  false}))
@@ -35,7 +35,7 @@ app.get('/getGoods/:good_id',(req,res) => {
       }
     )    
   })
-    .then(baseInfo => {
+    .then((baseInfo: any) => {
       connection.query(
         `select count(*) as cnt from collectionBox where good_id=?`,
         [req.params.good_id],
@@ -61,7 +61,7 @@ app.get('/getSellerInfo/:user_id',(req,res) => {
         resolve(sellerInfo)
       }
     )
-  }).then((sellerInfo) => {
+  }).then((sellerInfo: any) => {
     // 获取信誉，评分(依赖于订单)
     sellerInfo.reputation = '良好' 
     // 完成订单接口后改写：查询所有该卖家的订单，得到它们评分的平均值，添加到sellerInfo中
@@ -80,4 +80,5 @@ app.get(`/getTrends`, (req, res) => {
     }
   )
 })
-module.exports = app
+
+export default app

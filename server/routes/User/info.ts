@@ -1,10 +1,11 @@
 // Info页面的接口
-const express = require('express')
-const app = express()
-const multer = require('multer')
-const fs = require('fs')
+import express from 'express'
+import multer from 'multer'
+import fs from 'fs'
+import connection from '../../database/db'
+import { FileInfo } from './goods'
 
-const connection = require('../../database/db')
+const app = express()
 
 app.use(express.json())
 app.use(express.urlencoded({extended:  false}))
@@ -47,11 +48,11 @@ app.post(
     // 设置文件存储路径
     dest: './public/avatars',
   }).array('file', 1),  // 注意：这里的字段必须与前端formdata的字段名相同
-  (req, res, next) => {
+  (req: any, res, next) => {
     const fileInfoList = []
-    let name
-    req.files.forEach((file) => {
-      let fileInfo = {};
+    let name: string = ''
+    req.files.forEach((file: any) => {
+      let fileInfo = new FileInfo()
       let path = './public/avatars/' + Date.now().toString() + '_' + file.originalname
       fs.renameSync('./public/avatars/' + file.filename, path)
       // 获取文件基本信息
@@ -73,4 +74,4 @@ app.post(
   }
 )
 
-module.exports = app
+export default app

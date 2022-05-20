@@ -1,8 +1,8 @@
 // DealingReports页面的接口
-const express = require('express')
-const app = express()
+import express from 'express'
+import connection from '../../database/db'
 
-const connection = require('../../database/db')
+const app = express()
 
 app.use(express.json())
 app.use(express.urlencoded({extended:  false}))
@@ -21,15 +21,15 @@ app.get(`/getAdminName/:admin_id`, (req, res) => {
 
 // 获取未处理的举报列表
 app.post(`/getReports`, (req, res) => {
-  let data
-  const promises = []
+  let data: any
+  const promises: any[] = []
   new Promise((resolve, reject) => {
     connection.query(
       `select order_id,reason,report_time,stat from reportData where stat='待处理' order by report_time desc`,
       (err, result) => {
         if (err) throw err
         data = JSON.parse(JSON.stringify(result))
-        resolve()
+        resolve('')
       }
     )
   })
@@ -48,7 +48,7 @@ app.post(`/getReports`, (req, res) => {
                 for(let property in anotherHalf){
                   item[property] = anotherHalf[property]
                 }
-                resolve()
+                resolve('')
               }
             )
           })
@@ -97,4 +97,4 @@ app.post(`/refuseReport`, (req, res) => {
   )
 })
 
-module.exports = app
+export default app

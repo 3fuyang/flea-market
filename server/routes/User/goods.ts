@@ -1,9 +1,10 @@
 /* Goods 页面 */
-const express = require('express')
+import express from 'express'
+import multer from 'multer'
+import { renameSync} from 'fs'
+import connection from '../../database/db'
+
 const app = express()
-const multer = require('multer')
-const fs = require('fs')
-const connection = require('../../database/db')
 
 app.use(express.json())
 app.use(express.urlencoded({extended:  false}))
@@ -20,9 +21,9 @@ app.get('/onShelfGoods/:user_id', (req, res) => {
       }
     )
   })
-    .then((halfResult) => {
-      const promises = []
-      halfResult.forEach(item => {
+    .then((halfResult: any) => {
+      const promises: any[] = []
+      halfResult.forEach((item: any) => {
         promises.push(
           new Promise((resolve, reject) => {
             connection.query(
@@ -59,9 +60,9 @@ app.get('/soldGoods/:user_id', (req, res) => {
       }
     )
   })
-    .then((halfResult) => {
-      const promises = []
-      halfResult.forEach(item => {
+    .then((halfResult: any) => {
+      const promises: any[] = []
+      halfResult.forEach((item: any) => {
         promises.push(
           new Promise((resolve, reject) => {
             connection.query(
@@ -86,6 +87,14 @@ app.get('/soldGoods/:user_id', (req, res) => {
     })
 })
 
+// 文件信息类
+class FileInfo {
+  type: string = ''
+  name: string = ''
+  size: number = 0
+  path: string = ''
+}
+
 // 上传图片
 app.post(
   '/uploadImage',
@@ -93,12 +102,12 @@ app.post(
     // 设置文件存储路径
     dest: './public/images',
   }).array('file', 3),  // 注意：这里的字段必须与前端formdata的字段名相同
-  (req, res, next) => {
-    const fileInfoList = []
-    req.files.forEach((file) => {
-      let fileInfo = {};
+  (req: any, res, next) => {
+    const fileInfoList: any[] = []
+    req.files.forEach((file: any) => {
+      let fileInfo = new FileInfo()
       let path = './public/images/' + Date.now().toString() + '_' + file.originalname
-      fs.renameSync('./public/images/' + file.filename, path)
+      renameSync('./public/images/' + file.filename, path)
       // 获取文件基本信息
       fileInfo.type = file.mimetype
       fileInfo.name = file.originalname
@@ -137,4 +146,5 @@ app.post('/modifyGood', (req, res) => {
   )
 })
 
-module.exports = app
+export default app
+export { FileInfo }

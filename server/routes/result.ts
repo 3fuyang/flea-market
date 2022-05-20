@@ -1,8 +1,8 @@
 // Result页面的接口
-const express = require('express')
-const app = express()
+import express from 'express'
+import connection from '../database/db'
 
-const connection = require('../database/db')
+const app = express()
 
 app.use(express.json())
 app.use(express.urlencoded({extended:  false}))
@@ -41,7 +41,7 @@ app.post('/getResult', (req, res) => {
           sql += ` and price<=${filters[property]}`
         } else if (property == 'score') {
           sql += ` and (`
-          filters[property].forEach((item) => {
+          filters[property].forEach((item: any) => {
             // 获取评分上、下界
             let [min, max] = item.split('-')
             sql += ` ((select rate from userAccount where user_id=goodInfo.seller_id)>=${min} and (select rate from userAccount where user_id=goodInfo.seller_id)<=${max}) or`  
@@ -50,7 +50,7 @@ app.post('/getResult', (req, res) => {
           sql += ')'
         } else {
           sql += ` and (`
-          filters[property].forEach((item) => {
+          filters[property].forEach((item: any) => {
             sql += ` ${property}='${item}' or`
           })
           sql = sql.substring(0, sql.length - 3)
@@ -78,6 +78,7 @@ app.post('/getResult', (req, res) => {
     }
   } else if ('filters' in reqBody) {
     // 无关键词，有筛选条件
+    const filters = reqBody.filters
     //console.log('无关键词，有筛选条件')
     let sql = `select good_id,price,title,images from goodInfo where available=0`
     for (let property in reqBody.filters) {
@@ -105,7 +106,7 @@ app.post('/getResult', (req, res) => {
         sql += ` and price<=${reqBody.filters[property]}`
       } else if (property == 'score') {
         sql += ` and (`
-        filters[property].forEach((item) => {
+        filters[property].forEach((item: any) => {
           // 获取评分上、下界
           let [min, max] = item.split('-')
           sql += ` ((select rate from userAccount where user_id=goodInfo.seller_id)>=${min} and (select rate from userAccount where user_id=goodInfo.seller_id)<=${max}) or`  
@@ -114,7 +115,7 @@ app.post('/getResult', (req, res) => {
         sql += ')'        
       } else {
         sql += ` and (`
-        reqBody.filters[property].forEach((item) => {
+        reqBody.filters[property].forEach((item: any) => {
           sql += ` ${property}='${item}' or`
         })
         sql = sql.substring(0, sql.length - 3)
@@ -146,4 +147,4 @@ app.get(`/getRecommendList`, (req, res) => {
   )
 })
 
-module.exports = app
+export default app

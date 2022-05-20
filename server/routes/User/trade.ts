@@ -1,8 +1,8 @@
 /* Trade 页面 */
-const express = require('express')
-const app = express()
+import express from 'express'
+import connection from '../../database/db'
 
-const connection = require('../../database/db')
+const app = express()
 
 app.use(express.json())
 app.use(express.urlencoded({extended:  false}))
@@ -21,8 +21,8 @@ app.get(`/getBuyerAvatarAndName/:user_id`, (req, res) => {
 
 // 获取卖出的订单
 app.get(`/getSoldOrders/:user_id`, (req, res) => {
-  let data
-  const promises = []
+  let data: any
+  const promises: any[] = []
   new Promise((resolve, reject) => {
     connection.query(
       `select * from orderData where seller=? order by generated_time desc`,
@@ -30,7 +30,7 @@ app.get(`/getSoldOrders/:user_id`, (req, res) => {
       (err, result) => {
         if (err) reject(err)
         data = JSON.parse(JSON.stringify(result))
-        resolve()
+        resolve('')
       }
     )
   })
@@ -49,7 +49,7 @@ app.get(`/getSoldOrders/:user_id`, (req, res) => {
                 for(let property in result){
                   item[property] = result[property]
                 }
-                resolve()
+                resolve('')
               }
             )
           })
@@ -73,4 +73,5 @@ app.post(`/rejectOrder`, (req, res) => {
      }
   )
 })
-module.exports = app
+
+export default app

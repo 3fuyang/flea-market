@@ -1,8 +1,8 @@
 // Confirm 页面
-const express = require('express')
-const app = express()
+import express from 'express'
+import connection from '../../database/db'
 
-const connection = require('../../database/db')
+const app = express()
 
 app.use(express.json())
 app.use(express.urlencoded({extended:  false}))
@@ -21,8 +21,8 @@ app.get(`/getBuyerInfo/:user_id`, (req, res) => {
 
 // 获取商品信息
 app.post(`/goodsToConfirm`, (req, res) => {
-  const promises = []
-  req.body.forEach(item => {
+  const promises: any[] = []
+  req.body.forEach((item: any) => {
     promises.push(new Promise((resolve) => {
       connection.query(
         `select good_id,title,price,images,seller_id from goodInfo where good_id=? and available=0;
@@ -58,4 +58,4 @@ app.post(`/generateOrder`, (req, res) => {
   )
 })
 
-module.exports = app
+export default app

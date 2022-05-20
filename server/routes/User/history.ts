@@ -1,8 +1,8 @@
 /* History 页面 */
-const express = require('express')
-const app = express()
+import express from 'express'
+import connection from '../../database/db'
 
-const connection = require('../../database/db')
+const app = express()
 
 app.use(express.json())
 app.use(express.urlencoded({extended:  false}))
@@ -22,8 +22,8 @@ app.post('/addTrack', (req, res) => {
 
 // 接口11 获取浏览记录：传入（用户ID） 返回（浏览记录数据:商品ID、浏览日期）
 app.get('/getTrack/:user_id',(req,res) => {  
-  let data
-  const promises = []
+  let data: any
+  const promises: any[] = []
   new Promise((resolve, reject) => {
     connection.query(
       `select * from browseTrack where user_id = ? order by day_time desc`,
@@ -31,7 +31,7 @@ app.get('/getTrack/:user_id',(req,res) => {
       (err, result) => {
         if (err) throw err
         data = JSON.parse(JSON.stringify(result))
-        resolve()
+        resolve('')
       }
     )
   })
@@ -48,7 +48,7 @@ app.get('/getTrack/:user_id',(req,res) => {
                 for (let property in result) {
                   item[property] = result[property]
                 }
-                resolve()
+                resolve('')
               }
             )
           })
@@ -72,4 +72,4 @@ app.get('/clearTrack/:user_id',(req,res) => {
   )
 })
 
-module.exports = app
+export default app

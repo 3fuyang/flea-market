@@ -1,11 +1,13 @@
 # TJ flea
 
-一个基于 `<span style="color: #42D392;">`Vue 和 `<span style="color: #CA3430;">`Express 的经典`<span style="text-decoration: line-through">`土味的二手交易平台项目`<span style="text-decoration: line-through">`屎山
+一个基于 `<span style="color: #42D392;">`Vue 和 `<span style="color: #CA3430;">`Express 的经典 `<span style="text-decoration: line-through">`土味的二手交易平台项目 `<span style="text-decoration: line-through">`屎山
 
 ## 技术栈
 
 + 前端：Vue 3 + TypeScript + Pinia + Element Plus + Naive UI
 + 后端：Express + MySQL + Socket.IO
+
+Online Demo: [http://106.15.78.201:8084/](http://106.15.78.201:8084/)
 
 ## 运行方法
 
@@ -48,11 +50,11 @@ npm run dev
 
 项目的聊天功能其实就是**Web 实时通信问题**，分为两个阶段实现。
 
-第一个阶段，使用古老的**短轮询（short polling）**方式，即聊天页面初始化时就用 `window.setInterval`设置一个定时器，以每秒一次的频率向服务端请求数据，显然，不断地发送和关闭请求会为服务器造成较大的压力，而这之中的绝大多数请求是不必要的。
+第一个阶段，使用古老的**短轮询**方式（short polling），即聊天页面初始化时就用 `window.setInterval`设置一个定时器，以每秒一次的频率向服务端请求数据，显然，不断地发送和关闭请求会为服务器造成较大的压力，而这之中的绝大多数请求是不必要的。
 
-第二个阶段，使用 **WebSocket** 协议实现。项目使用 **[Socket.IO](https://socket.io/docs/v4/)** 框架，Socket.IO 是一个在客户端、服务端间建立低延迟、全双工、**基于事件**的连接的库，它构建在 WebSocket 协议之上，且提供了在需要时回退到**长轮询（long polling）**的额外保证。
+第二个阶段，使用 **WebSocket** 协议实现。项目使用 **[Socket.IO](https://socket.io/docs/v4/)** 框架，Socket.IO 是一个在客户端、服务端间建立低延迟、全双工、**基于事件**的连接的库，它构建在 WebSocket 协议之上，且提供了在需要时回退到**长轮询**（long polling）的额外保证。
 
-**服务端**：在服务端开启了 Socket.IO 服务后，参考 Vue 3 响应式系统使用“**订阅--发布模式**”的设计，项目使用一个**桶（bucket）**来管理所有 socket 连接。
+**服务端**：在服务端开启了 Socket.IO 服务后，参考 Vue 3 响应式系统使用“**订阅--发布模式**”的设计，项目使用一个**桶** (bucket)来管理所有 socket 连接。
 
 ```typescript
 type UserID = string
@@ -156,7 +158,7 @@ socket.on('deliver message', (msg) => {
 
 参考：[阮一峰 ES6 入门](https://www.bookstack.cn/read/es6-3rd/spilt.4.docs-module-loader.md)
 
-**循环加载(Circular dependency)**指的是，`a`脚本的执行依赖 `b`脚本，而 `b`脚本的执行又依赖 `a`脚本。
+**循环加载** (Circular dependency)指的是，`a`脚本的执行依赖 `b`脚本，而 `b`脚本的执行又依赖 `a`脚本。
 
 ###### CommonJS 模块
 
@@ -169,7 +171,7 @@ CommonJS 使用 `require`命令第一次加载脚本时，就会**执行整个�
     id: '...',	// 模块名
 	exports: { ... },	// 模块输出的各个接口
 	loaded: true,	// 该模块的脚本是否执行完毕
-	//...      
+	//...    
 }
 ```
 

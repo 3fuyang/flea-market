@@ -4,7 +4,7 @@ import { NEmpty, NButton, NInput, NTag, NDivider, NText, NAvatar, NCard, NIcon, 
 import { ChatboxEllipsesOutline, Home, LogoGithub, SearchOutline } from '@vicons/ionicons5'
 import { BuildingSkyscraper20Regular, Building20Filled, BuildingMultiple20Filled, Emoji16Filled } from '@vicons/fluent'
 import { useRouter, useRoute } from 'vue-router'
-import { computed, ref, onBeforeMount, nextTick } from 'vue'
+import { computed, ref, onBeforeMount, nextTick, onBeforeUnmount } from 'vue'
 import axios from 'axios'
 import { useUserStore } from '@/stores/user'
 import { storeToRefs } from 'pinia'
@@ -21,6 +21,11 @@ const socket = io('http://106.15.78.201:8082', {
   extraHeaders: {
     'userid': userID.value
   }
+})
+
+onBeforeUnmount(() => {
+  // 卸载组件前，断开socket连接
+  socket.disconnect()
 })
  
 // NavBar 中按钮

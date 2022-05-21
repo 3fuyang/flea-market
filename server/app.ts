@@ -23,13 +23,50 @@ import reportAPI from './routes/Admin/report'
 import { AddressInfo } from 'net'
 
 const app = express()
-const server = createServer(app)
 
-const io = new Server(server, {
-  cors: {
-    origin: 'http://localhost:8090'
-  }
+app
+  // 配置图片等静态资源  
+  .use('/public', express.static('public'))
+  // 配置各API路由
+  .use('/api', loginAPI)
+  .use('/api', homeAPI)
+  .use('/api', detailsAPI)
+  .use('/api', securityAPI)
+  .use('/api', chatAPI)
+  .use('/api', historyAPI)
+  .use('/api', favoriteAPI)
+  .use('/api', shoppingcartAPI)
+  .use('/api', infoAPI)
+  .use('/api', goodsAPI)
+  .use('/api', resultAPI)
+  .use('/api', confirmAPI)
+  .use('/api', orderAPI)
+  .use('/api', tradeAPI) 
+  .use('/api', reportAPI) 
+
+// 开启服务器
+const server = app.listen(8082, () => {
+  const host = (server.address() as AddressInfo).address
+  const port = (server.address() as AddressInfo).port
+  console.log(`Server is running at http://%s:%s`, host, port)
 })
+//const server = createServer(app)
+
+// 配置 Socket.io
+const io = new Server({
+  cors: {
+    origin: 'http://106.15.78.201:8084'
+  }
+}).listen(server)
+
+// The server object passed to socket.io was not the same 
+// as the server object I'm listening on.
+/* const io = new Server(app, {
+  cors: {
+    origin: 'http://106.15.78.201:8084'
+    //origin: 'http://localhost:8090'
+  }
+}) */
 
 // 消息类型
 interface Message {
@@ -89,29 +126,9 @@ io.on('connection', (socket) => {
   })
 })
 
-app
-  // 配置图片等静态资源  
-  .use('/public', express.static('public'))
-  // 配置各API路由
-  .use('/api', loginAPI)
-  .use('/api', homeAPI)
-  .use('/api', detailsAPI)
-  .use('/api', securityAPI)
-  .use('/api', chatAPI)
-  .use('/api', historyAPI)
-  .use('/api', favoriteAPI)
-  .use('/api', shoppingcartAPI)
-  .use('/api', infoAPI)
-  .use('/api', goodsAPI)
-  .use('/api', resultAPI)
-  .use('/api', confirmAPI)
-  .use('/api', orderAPI)
-  .use('/api', tradeAPI) 
-  .use('/api', reportAPI) 
-
 // 启动服务器
-server.listen(8082, () => {
+/* server.listen(8082, () => {
   const host = (server.address() as AddressInfo).address
   const port = (server.address() as AddressInfo).port
   console.log(`Server is running at http://%s:%s`, host, port)
-})
+}) */

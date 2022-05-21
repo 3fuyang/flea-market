@@ -1,6 +1,6 @@
 {
   "compilerOptions": {
-    "target": "esnext",
+    "target": "es6",
     "module": "commonjs",
     "rootDir": "./",
     "outDir": "./dist",
@@ -8,7 +8,10 @@
     "strict": true
   },
   "include": [                                /* 需要编译的文件 */
-    "/**/*.ts"
+    "./database/*.ts",
+    "./routes/*.ts",
+    "./*.ts",
+    "./**/*"
   ],
   "exclude": [                                /* 编译需要排除的文件 */
     "node_modules/**"

@@ -5,13 +5,13 @@
 ## 技术栈
 
 + 前端：Vue 3 + TypeScript + Pinia + Element Plus + Naive UI
-+ 后端：Express + MySQL
++ 后端：Express + MySQL + Socket.IO
 
 ## 运行方法
 
 ### 后端
 
-后端`/database/db.js`中的数据库配置请根据自己的实际情况修改，目录中提供了数据库的DDL语句。
+后端`/database/db.ts`中的数据库配置请根据自己的实际情况修改，目录中提供了数据库的DDL语句。
 
 ```
 # 进入后端根目录
@@ -21,6 +21,12 @@ cd server
 npm install
 
 # 运行后端
+# 直接运行ts
+ts-node(nodemon) app.ts
+# 运行转译后的js
+npm run build
+# 注意图片等资源
+cd dist
 node(nodemon) app.js
 ```
 
@@ -38,9 +44,107 @@ npm run dev
 
 ### Highlights
 
+#### 使用 Socket.IO 实现用户间实时聊天
+
+项目的聊天功能其实就是**Web 实时通信问题**，分为两个阶段实现。
+
+第一个阶段，使用古老的**短轮询（short polling）**方式，即聊天页面初始化时就用`window.setInterval`设置一个定时器，以每秒一次的频率向服务端请求数据，显然，不断地发送和关闭请求会为服务器造成较大的压力，而这之中的绝大多数请求是不必要的。
+
+第二个阶段，使用 **WebSocket** 协议实现。项目使用 **[Socket.IO](https://socket.io/docs/v4/)** 框架，Socket.IO 是一个在客户端、服务端间建立低延迟、全双工、**基于事件**的连接的库，它构建在 WebSocket 协议之上，且提供了在需要时回退到**长轮询（long polling）**的额外保证。
+
+**服务端**：在服务端开启了 Socket.IO 服务后，参考 Vue 3 响应式系统使用“**订阅--发布模式**”的设计，项目使用一个**桶（bucket）**来管理所有 socket 连接。
+
+``` typescript
+type UserID = string
+type SocketID = string
+// 消息类型
+interface Message {
+  a_user_id: string
+  b_user_id: string
+  speaker: number
+  date_time: string
+  details: string
+}
+
+// WebSocket 连接桶
+const sessionBucket = new Map<UserID, Set<SocketID>>()
+
+// 每当建立socket连接时
+io.on('connection', (socket) => {
+    // 客户端使用额外头部userid在建立连接时返回用户ID
+    let userID = socket.handshake.headers.userid
+    // 在桶中获取该userID对应的连接集合
+    let userSockets = sessionBucket.get(userID as UserID)
+    if (!userSockets) {
+        // 桶中不存在该userID对应的集合，新建集合
+        sessionBuskct.set(userID as string, userSockets = new Set([socket.id]))
+    } else {
+        // 桶中存在该对应集合，将新socket连接加入集合
+        userSockets.add(socket.id)
+    }
+    
+    // 用户发送消息
+    socket.on('send message', (msg: Message) => {
+        // 将消息加入数据库
+        // 对消息双方的socket连接，广播该消息
+        const aSockets = sessionBucket.get(msg.a_user_id)
+        const bSockets = sessionBucket.get(msg.b_user_id)
+        const relatedSockets = [...(aSockets ? Array.from(aSockets) : []), ...(bSockets ? Array.from(bSockets) : [])]
+        if (relatedSockets.length) {
+          // 向相关连接发送消息
+          io.to(relatedSockets).emit('deliver message', msg)
+        }
+    })
+    
+    socket.on('disconnect', () => {
+    	// 断开连接时，从集合中删除该连接
+    	(userSockets as Set<string>).delete(socket.id)
+	})
+})
+```
+
+**客户端**：由上可知，我们自定义了两个事件`send message`和`deliver message`，客户端需要对它们进行处理。
+
+``` typescript
+import { io } from 'socket.io-client'
+
+const socket = io(url, {
+  // 使用额外头部传递userID
+  extraHeaders: {
+    'userid': userID.value
+  }
+})
+
+// 发送消息
+function handleSendMessage () {
+      // 向 socket 连接传递"发送消息"事件
+      new Promise(() => {
+        socket.emit('send message', message)
+      }).then(() => {
+          // 获取消息列表
+          getMessage()
+        nextTick(() => {
+            // 滚动到底部
+            const scrollContainer = Array.from(document.getElementsByClassName('n-scrollbar-container'))[1]
+            scrollContainer.scrollTop = scrollContainer.scrollHeight
+        })
+}
+
+socket.on('deliver message', (msg) => {
+	// 获取对话者 ID，将其移至对话者列表的顶端
+	
+    // 修改视图中的最新消息
+    
+  	// 如果目前的对话者正是发来消息的对话者，则更新消息列表
+
+})
+```
+
+
+
 #### css-doodle 生成图案用作背景
 
-[css-doodle](https://css-doodle.com/)是使用网格容器来生成艺术图案的一个 Web Component，本项目将其用作背景的方案是使用`relative`和`absolute`布局。
+[css-doodle](https://css-doodle.com/)是使用网格（grid）容器来生成艺术图案的一个 Web Component，本项目将其用作背景的方案是使用`relative`和`absolute`布局。
 
 #### pinia 和动态路由鉴权
 
@@ -237,6 +341,64 @@ nextTick(() => {
 
 ### Bugs
 
+#### Socket.IO 部署到服务端后的跨域问题
+
+原本的服务端连接代码：
+
+``` typescript
+import express from 'express'
+import { createServer } from 'http'
+import { Server } from 'socket.io'
+
+const app = express()
+
+const server = createServer(app)
+
+const io = new Server(app, {
+    cors: {
+        origin: clientOrigin
+    }
+})
+
+server.listen(port, () => {
+    //...
+})
+```
+
+但是在生产模式下，`io`通过`cors`属性配置的 CORS 无法生效。
+
+检查 socket 连接的请求分组。
+
++ 预检请求（OPTIONS）：从请求头和响应头的匹配情况可以看出 CORS 应该是生效的，且状态码 204 代表预检通过。
+
+<img src="README.assets/5R2L68GXRAI9[4JEKZ6BP{8.png" alt="img" style="zoom:80%;border: 1px solid #eee;" />
+
++ 连接请求（GET）：`Origin`和`Host`与上面的也对应，但连接失败，火狐浏览器的 console 明确指出是 CORS 配置的问题。
+
+<img src="README.assets/]1ALC]RS8@2YLJZ}}[Q801.png" alt="img" style="zoom:80%;border: 1px solid #eee;" />
+
+查询官方文档后，其表示在浏览器中输入 Socket.IO 服务地址出现以下输出，就说明服务端连接是正常建立的，那么就应该是 CORS 的问题。
+
+<img src="README.assets/CYU5HZWR9O}R5Q%9HSPIKE.png" alt="img" style="zoom:80%;border: 1px solid #eee;" />
+
+从 StackOverflow 的[该问题](https://stackoverflow.com/questions/35713682/socket-io-gives-cors-error-even-if-i-allowed-cors-it-on-server)下找到答案：原本的服务端写法，传递给 Socket.IO 的服务器对象与最后监听的服务器对象不同。
+
+改写为以下连接方式，即可解决问题：
+
+``` typescript
+// 开启服务器
+const server = app.listen(port, () => {
+    // ...
+})
+
+// 配置 Socket.io
+const io = new Server({
+  cors: {
+    origin: clientOrigin
+  }
+}).listen(server)
+```
+
 #### 地址栏输入 url 或刷新页面导致 Vue Router 失效
 
 ##### 问题描述
@@ -353,14 +515,16 @@ flea-market // 前端根目录
 ├─ public
 ├─ README.md
 ├─ server // 后端根目录
-│  ├─ app.js  // 入口文件
+│  ├─ app.ts  // 入口文件
 │  ├─ database  // 数据库连接
+│  ├─ dist  // TS转译后的JS
 │  ├─ flea_now.sql  // DDL
 │  ├─ flea_old.sql
 │  ├─ package-lock.json
 │  ├─ package.json
 │  ├─ public  // 图片
 │  └─ routes  // 路由
+│  └─ tsconfig.json  // TSConfig
 ├─ src
 │  ├─ App.vue // 应用实例
 │  ├─ assets  // 字体、背景图片
@@ -371,6 +535,7 @@ flea-market // 前端根目录
 │  │  └─ index.ts
 │  ├─ stores  // 状态管理
 │  │  └─ user.ts
+│  ├─ tests  // 测试脚本
 │  ├─ types  // 类型定义
 │  └─ views // 视图
 ├─ tsconfig.json

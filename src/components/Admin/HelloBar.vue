@@ -1,6 +1,6 @@
 <template>
 <section class="hello-bar">
-  <el-avatar 
+  <n-avatar 
     class="avatar"
     :size="70"
     :src="'https://naive-ui-admin.vercel.app/assets/schoolboy.9f04cdf7.png'"/>
@@ -27,12 +27,13 @@
 
 <script setup lang="ts">
 import { computed } from 'vue'
+import { NAvatar } from 'naive-ui'
 
-const props = defineProps({
-  adminName: String,
-  completedNum: Number,
-  taskNum: Number
-})
+const props = defineProps<{
+  adminName: string
+  completedNum: number
+  taskNum: number
+}>()
 
 // 剩余待办数量
 const remainedNum = computed(() => (props.taskNum as number) - (props.completedNum as number))

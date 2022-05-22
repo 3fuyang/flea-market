@@ -1,8 +1,8 @@
 import{ createConnection, type ConnectionConfig } from 'mysql'
 
 // 数据库根据实际情况配置
-const host: string = ''
-const pwd: string = ''
+const host: string = '106.15.78.201'
+const pwd: string = '12345'
 
 const mysql_flea: ConnectionConfig = {
   host: host,

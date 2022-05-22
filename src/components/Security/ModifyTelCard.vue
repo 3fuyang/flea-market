@@ -137,7 +137,7 @@ function modifyTel () {
     <div 
       class="input-box" 
       v-if="telStep === 1">
-      <p class="little">{{`您的账号现在绑定的手机号码为: +86 ${props.telNum.substring(0,3)} **** ${props.telNum.substring(9,12)} ,请输入新的手机号码:`}}</p>
+      <p class="little">{{`您的账号现在绑定的手机号码为: +86 ${(props.telNum as string).substring(0,3)} **** ${(props.telNum as string).substring(9,12)} ,请输入新的手机号码:`}}</p>
       <n-form
         ref="telFormRef"
         :model="telFormModel"

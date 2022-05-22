@@ -168,7 +168,8 @@ function getChatList (newOponentID: string, newOponentName: string, newOponentAv
           latest: newLatest
         })
         currOponent.value = newOponentID
-        currOponentName.value = newOponentName 
+        currOponentName.value = newOponentName
+        getMessage(true)
       }          
     })
 }
@@ -275,16 +276,6 @@ function handleSendMessage () {
       scrollContainer.scrollTop = scrollContainer.scrollHeight
     })    
   })
-  
-  // 调用接口：传入（用户ID，对方ID，说话方，时间，内容） 返回（null）
-  /* axios.post('/api/sendMessage', message)
-    .then(() => {
-      getMessage()
-      nextTick(() => {
-        const scrollContainer = Array.from(document.getElementsByClassName('n-scrollbar-container'))[1]
-        scrollContainer.scrollTop = scrollContainer.scrollHeight
-      })
-    }) */
 
   textarea.value = ''
 }

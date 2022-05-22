@@ -1,7 +1,7 @@
 import{ createConnection, type ConnectionConfig } from 'mysql'
 
 const mysql_flea: ConnectionConfig = {
-  host: '106.15.78.201',
+  host: '127.0.0.1',
   port: 3306,
   user: 'root',
   // 数据库根据实际情况配置

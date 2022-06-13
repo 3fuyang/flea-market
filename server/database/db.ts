@@ -1,15 +1,17 @@
 import{ createConnection, type ConnectionConfig } from 'mysql'
 
 // 数据库根据实际情况配置
-const host: string = '106.15.78.201'
-const pwd: string = '12345'
+const root: string = ''
+const db: string = ''
+const host: string = ''
+const pwd: string = ''
 
 const mysql_flea: ConnectionConfig = {
   host: host,
   port: 3306,
-  user: 'root',
+  user: root,
   password: pwd,
-  database: 'tj-flea',
+  database: db,
   //database: 'flea',
   multipleStatements: true,
   // 注意时区的设置

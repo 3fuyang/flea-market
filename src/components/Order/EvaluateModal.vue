@@ -1,58 +1,37 @@
 <template>
-<Transition name="modal">
-  <div v-if="show" class="modal-mask">
-    <div class="modal-wrapper">
-      <div class="modal-container">
-        <span class="modal-title">
-          订单评价
-        </span>
-        <br/>
-        <span class="rate-wrapper">
-          <el-rate
-            v-model="grade"
-            :texts="['oops', 'disappointed', 'normal', 'good', 'great']"
-            show-score
-            size="large"
-            :disabled="submitted"
-          >
-          </el-rate>
-        </span>
-        <div class="modal-input">
-          <el-input 
-            :readonly="submitted"
-            v-model.trim="evaluation" 
-            placeholder="请输入您的评价。"
-            :rows="4"
-            maxlength="300"
-            show-word-limit
-            type="textarea">
-          </el-input>
-        </div>
-        <div class="modal-footer">
-          <el-row>
-            <el-col :span="12">
-              <el-button
-                v-if="!submitted"
-                @click="submitEvaluation"
-                type="primary"
-              >提交</el-button>
-            </el-col>
-            <el-col :span="12">
-              <el-button
-                v-if="!submitted"
-                @click="$emit('close')"
-              >取消</el-button>
-              <el-button
-                v-else
-                @click="$emit('close')"
-              >关闭</el-button>              
-            </el-col>
-          </el-row>
+  <Transition name="modal">
+    <div v-if="show" class="modal-mask">
+      <div class="modal-wrapper">
+        <div class="modal-container">
+          <span class="modal-title">
+            订单评价
+          </span>
+          <br />
+          <span class="rate-wrapper">
+            <el-rate v-model="grade" :texts="['oops', 'disappointed', 'normal', 'good', 'great']" show-score
+              size="large" :disabled="submitted">
+            </el-rate>
+          </span>
+          <div class="modal-input">
+            <el-input :readonly="submitted" v-model.trim="evaluation" placeholder="请输入您的评价。" :rows="4" maxlength="300"
+              show-word-limit type="textarea">
+            </el-input>
+          </div>
+          <div class="modal-footer">
+            <el-row>
+              <el-col :span="12">
+                <el-button v-if="!submitted" @click="submitEvaluation" type="primary">提交</el-button>
+              </el-col>
+              <el-col :span="12">
+                <el-button v-if="!submitted" @click="$emit('close')">取消</el-button>
+                <el-button v-else @click="$emit('close')">关闭</el-button>
+              </el-col>
+            </el-row>
+          </div>
         </div>
       </div>
     </div>
-  </div>
-</Transition>
+  </Transition>
 </template>
 
 <script setup lang="ts">
@@ -75,20 +54,20 @@ const emits = defineEmits<{
 const grade = ref(null) // 评分
 const evaluation = ref('') // 评价文本
 
-const submitted = computed(()=>{
+const submitted = computed(() => {
   return props.currOrderStatus === '已完成' ? true : false
 })  // 是否已提交过评价
 
 // 每次渲染时，重新计算星级和 textarea 的文本值
-onMounted(()=>{
-  if(submitted.value){
+onMounted(() => {
+  if (submitted.value) {
     // 调用接口：传入(订单ID) 返回（评价文本）
     axios.get(`/api/getOrderEvaulation/${props.currOrderId}`)
       .then(res => {
         evaluation.value = res.data[0].review
         grade.value = res.data[0].rate
       })
-  }else{
+  } else {
     evaluation.value = ''
   }
 })
@@ -104,16 +83,16 @@ onBeforeUpdate(() => {
   } else {
     evaluation.value = ''
     grade.value = null
-  }  
+  }
 })
 
 // 提交评价
-function submitEvaluation(){
+function submitEvaluation() {
   if (evaluation.value === '') {
     message.error('请输入您的评价！')
   }
   else if (grade.value === null) {
-    message.error('请为本次交易评分(0~5)！')    
+    message.error('请为本次交易评分(0~5)！')
   }
   else {
     let date = new Date()
@@ -148,11 +127,13 @@ function submitEvaluation(){
   display: table;
   transition: opacity 0.3s ease;
 }
+
 .modal-wrapper {
   display: table-cell;
   vertical-align: middle;
   border-radius: 5px;
 }
+
 .modal-container {
   width: 400px;
   margin: 0px auto;
@@ -162,27 +143,33 @@ function submitEvaluation(){
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.33);
   transition: all 0.3s ease;
 }
-.modal-title{
+
+.modal-title {
   display: inline-box;
   margin-bottom: 10px;
   float: left;
   font-size: 22px;
   font-weight: bold;
 }
-.rate-wrapper{
+
+.rate-wrapper {
   float: left;
 }
+
 /* el-rate 的icon和font尺寸 */
-.el-rate{
---el-rate-icon-size: 26px !important;
---el-rate-font-size: 20px !important;
+.el-rate {
+  --el-rate-icon-size: 26px !important;
+  --el-rate-font-size: 20px !important;
 }
-.modal-input{
+
+.modal-input {
   margin-bottom: 15px;
 }
-.modal-footer{
+
+.modal-footer {
   margin-bottom: 10px;
 }
+
 /*
  * The following styles are auto-applied to elements with
  * transition="modal" when their visibility is toggled
@@ -194,9 +181,11 @@ function submitEvaluation(){
 .modal-enter-from {
   opacity: 0;
 }
+
 .modal-leave-to {
   opacity: 0;
 }
+
 .modal-enter-from .modal-container,
 .modal-leave-to .modal-container {
   -webkit-transform: scale(1.1);

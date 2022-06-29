@@ -1,53 +1,45 @@
 <template>
-<div class="root">
-  <page-title>
-    <template #icon>
-      <history20-filled/>
-    </template>
-    <template #main-title>
-      浏览记录
-    </template>
-    <template #sub-title>
-      History
-    </template>
-  </page-title>
-  <div style="text-align: right;">
-    <el-button type="info"  style="width: 110px;margin-right: 200px;margin-bottom: -1em;"
-    @click="clearHistory">
-      <el-icon :size="17">
-        <delete/>
-      </el-icon>
-      &nbsp;清空记录
-    </el-button>
-  </div>
-  <el-row>
-    <el-col :span="2"/>
-    <el-col :span="20">
-      <div v-if="dateArray.length === 0">
-        <el-empty description="脑袋空空。"/>
-      </div>
-      <div v-for="(item) in dateArray" :key=item>
-        <div style="text-align: left;margin-bottom: 10px;">
-          <span class="date-tag">{{item}}</span>
+  <div class="root">
+    <page-title>
+      <template #icon>
+        <history20-filled />
+      </template>
+      <template #main-title>
+        浏览记录
+      </template>
+      <template #sub-title>
+        History
+      </template>
+    </page-title>
+    <div style="text-align: right;">
+      <el-button type="info" style="width: 110px;margin-right: 200px;margin-bottom: -1em;" @click="clearHistory">
+        <el-icon :size="17">
+          <delete />
+        </el-icon>
+        &nbsp;清空记录
+      </el-button>
+    </div>
+    <el-row>
+      <el-col :span="2" />
+      <el-col :span="20">
+        <div v-if="dateArray.length === 0">
+          <el-empty description="脑袋空空。" />
         </div>
-        <div class="date-wrapper">
-          <template
-            v-for="(goodItem) in historyData"
-            :key="goodItem.id">
-            <favorite-card
-              v-if="goodItem.date === item"
-              :good-i-d="goodItem.id"
-              :src="goodItem.image"
-              :price="goodItem.price"
-              :title="goodItem.title"
-              :removable="false"/>
-          </template>
-          <br/>
-        </div> 
-      </div>
-    </el-col>
-  </el-row>
-</div>
+        <div v-for="(item) in dateArray" :key=item>
+          <div style="text-align: left;margin-bottom: 10px;">
+            <span class="date-tag">{{ item }}</span>
+          </div>
+          <div class="date-wrapper">
+            <template v-for="(goodItem) in historyData" :key="goodItem.id">
+              <favorite-card v-if="goodItem.date === item" :good-i-d="goodItem.id" :src="goodItem.image"
+                :price="goodItem.price" :title="goodItem.title" :removable="false" />
+            </template>
+            <br />
+          </div>
+        </div>
+      </el-col>
+    </el-row>
+  </div>
 </template>
 
 <script lang="ts" setup>
@@ -104,7 +96,7 @@ axios.get(`/api/getTrack/${userID.value}`)
   })
 
 //点击卡片跳转商品详情页
-function jumpCard (itemID: string) {
+function jumpCard(itemID: string) {
   router.push({
     path: '/details',
     query: {
@@ -140,15 +132,18 @@ function clearHistory() {
 .root {
   width: 100%
 }
-.point{
+
+.point {
   cursor: pointer;
 }
+
 .date-tag {
   display: inline-block;
   font-size: 18px;
   font-weight: bold;
   margin-top: 1em;
 }
+
 .date-wrapper {
   display: flex;
   gap: 1.8em;

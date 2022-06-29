@@ -20,30 +20,20 @@ const contentStyle: CSSProperties = {
 </script>
 
 <template>
-  <n-card
-    class="good-card"
-    :content-style="contentStyle"
-    hoverble>
-    <n-image
-      class="image"
-      width="220"
-      height="200"
-      object-fit="scale-down"
-      alt="Good Image"
-      :src="src"
-      @click="$router.push({
-        path: '/details',
-        query: {
-          gid: props.goodID
-        }
-      })" />
+  <n-card class="good-card" :content-style="contentStyle" hoverble>
+    <n-image class="image" width="220" height="200" object-fit="scale-down" alt="Good Image" :src="src" @click="$router.push({
+      path: '/details',
+      query: {
+        gid: props.goodID
+      }
+    })" />
     <div class="title">
       <n-ellipsis>
-        {{props.title}}
+        {{ props.title }}
       </n-ellipsis>
     </div>
     <div class="price">
-      ￥{{props.price}}
+      ￥{{ props.price }}
     </div>
   </n-card>
 </template>

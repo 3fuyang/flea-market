@@ -19,13 +19,13 @@ export const useUserStore = defineStore({
   },
   actions: {
     // 登入
-    logIn (userID: string) {
+    logIn(userID: string) {
       this.userID = userID
     },
     // 登出
-    logOut () {
+    logOut() {
       // 清除用户ID
-      this.userID = ''    
+      this.userID = ''
     }
   },
   persist: true

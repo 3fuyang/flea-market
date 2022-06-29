@@ -1,24 +1,24 @@
 <template>
-<div class="root-wrapper">
-  <page-title>
-    <template #icon>
-      <Money20Regular/>
-    </template>
-    <template #main-title>
-      卖出闲置
-    </template>
-    <template #sub-title>
-      Trade
-    </template>
-  </page-title>
-  <div class="list-box">
-    <div class="sider"></div>
-    <NDialogProvider>
-      <TradeOrders/>
-    </NDialogProvider>
-    <div class="sider"></div>
+  <div class="root-wrapper">
+    <page-title>
+      <template #icon>
+        <Money20Regular />
+      </template>
+      <template #main-title>
+        卖出闲置
+      </template>
+      <template #sub-title>
+        Trade
+      </template>
+    </page-title>
+    <div class="list-box">
+      <div class="sider"></div>
+      <NDialogProvider>
+        <TradeOrders />
+      </NDialogProvider>
+      <div class="sider"></div>
+    </div>
   </div>
-</div>
 </template>
 
 <script setup lang="ts">
@@ -29,7 +29,7 @@ import PageTitle from '@/components/Public/PageTitle.vue'
 </script>
 
 <style scoped>
-.root-wrapper{
+.root-wrapper {
   width: 100%;
   display: flex;
   flex-direction: column;
@@ -37,7 +37,8 @@ import PageTitle from '@/components/Public/PageTitle.vue'
   justify-content: center;
   z-index: 1;
 }
-.total-title{
+
+.total-title {
   align-self: center;
   font-size: 1.3rem;
   font-weight: 600;
@@ -45,10 +46,12 @@ import PageTitle from '@/components/Public/PageTitle.vue'
   margin: 0;
   margin-bottom: 1em;
 }
-.list-box{
+
+.list-box {
   display: flex;
 }
-.sider{
+
+.sider {
   width: 60rem;
 }
 </style>

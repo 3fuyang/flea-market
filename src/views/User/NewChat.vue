@@ -27,7 +27,7 @@ onBeforeUnmount(() => {
   // 卸载组件前，断开socket连接
   socket.disconnect()
 })
- 
+
 // NavBar 中按钮
 const menuItems = [
   {
@@ -35,13 +35,13 @@ const menuItems = [
     onClick: () => {
       message.info(`...... nothing happens.`)
     }
-  }, 
+  },
   {
     title: 'home',
     onClick: () => {
       router.push('/home')
     }
-  }, 
+  },
   {
     title: 'github',
     onClick: () => {
@@ -81,7 +81,7 @@ const textarea = ref('')
 const emojiPickerSwitch = ref(false)
 
 // emoji-picker 点击事件
-function handleEmojiClick (detail: EmojiClickEventDetail) {
+function handleEmojiClick(detail: EmojiClickEventDetail) {
   textarea.value += detail.unicode
   emojiPickerSwitch.value = false
 }
@@ -122,7 +122,7 @@ const currOponent = ref('我的聊天')
 const currOponentName = ref('')
 
 // 切换聊天对象
-function changeOponent (oponentID: string, oponentName: string) {
+function changeOponent(oponentID: string, oponentName: string) {
   currOponent.value = oponentID
   currOponentName.value = oponentName
   textarea.value = ''
@@ -130,14 +130,14 @@ function changeOponent (oponentID: string, oponentName: string) {
 }
 
 // 关闭聊天窗口
-function closeChat () {
+function closeChat() {
   currOponent.value = '我的聊天'
   currOponentName.value = ''
-  textarea.value = ''  
+  textarea.value = ''
 }
 
 // 获取聊天对象列表
-function getChatList (newOponentID: string, newOponentName: string, newOponentAvatar: string, newLatest: string = ''){
+function getChatList(newOponentID: string, newOponentName: string, newOponentAvatar: string, newLatest: string = '') {
   // 调用接口：传入（用户ID，聊天对象ID） 返回（聊天对象列表：ID，名称）
   const newList: Oponent[] = []
   axios.get(`/api/getChatOponent/${userID.value}`)
@@ -170,12 +170,12 @@ function getChatList (newOponentID: string, newOponentName: string, newOponentAv
         currOponent.value = newOponentID
         currOponentName.value = newOponentName
         getMessage(true)
-      }          
+      }
     })
 }
 
 // 获取消息列表
-function getMessage (oponentChanged = false) {
+function getMessage(oponentChanged = false) {
   if (oponentChanged) {
     messageData.value.length = 0
   }
@@ -195,7 +195,7 @@ function getMessage (oponentChanged = false) {
         newMessage.push({
           day_time: item.date_time.substr(0, 19).replace('T', ' '),
           // 0 表示对方，1 表示该用户
-          speaker: isSelfA ? (item.speaker === 0 ? 1 : 0) : (item.speaker === 1 ? 1: 0),
+          speaker: isSelfA ? (item.speaker === 0 ? 1 : 0) : (item.speaker === 1 ? 1 : 0),
           details: item.details
         })
       })
@@ -212,13 +212,13 @@ function getMessage (oponentChanged = false) {
           scrollContainer.scrollTop = scrollContainer.scrollHeight
         })
       } else {
-          const scrollContainer = Array.from(document.getElementsByClassName('n-scrollbar-container'))[1]
-          // 判断滚动条是否在底部
-          if (scrollContainer.scrollHeight > scrollContainer.clientHeight && scrollContainer.scrollHeight - scrollContainer.scrollTop - scrollContainer.clientHeight < 1) {
-            nextTick(() => {
-              scrollContainer.scrollTop = scrollContainer.scrollHeight
-            })
-          } 
+        const scrollContainer = Array.from(document.getElementsByClassName('n-scrollbar-container'))[1]
+        // 判断滚动条是否在底部
+        if (scrollContainer.scrollHeight > scrollContainer.clientHeight && scrollContainer.scrollHeight - scrollContainer.scrollTop - scrollContainer.clientHeight < 1) {
+          nextTick(() => {
+            scrollContainer.scrollTop = scrollContainer.scrollHeight
+          })
+        }
       }
     })
 }
@@ -254,17 +254,17 @@ socket.on('deliver message', (msg) => {
 })
 
 // 发送消息
-function handleSendMessage () {
+function handleSendMessage() {
   let a_user_id = userID.value, b_user_id = currOponent.value
-  if(a_user_id as string > b_user_id){
+  if (a_user_id as string > b_user_id) {
     [a_user_id, b_user_id] = [b_user_id, a_user_id as string]
   }
   const date = new Date(+ new Date() + 8 * 3600 * 1000).toISOString().slice(0, 19).replace('T', ' ')
   let message = {
-    a_user_id, b_user_id, 
+    a_user_id, b_user_id,
     speaker: userID.value < currOponent.value ? '0' : '1',
     date_time: date,
-    details: textarea.value        
+    details: textarea.value
   }
   // 向 socket 连接传递"发送消息"事件
   new Promise(() => {
@@ -274,7 +274,7 @@ function handleSendMessage () {
     nextTick(() => {
       const scrollContainer = Array.from(document.getElementsByClassName('n-scrollbar-container'))[1]
       scrollContainer.scrollTop = scrollContainer.scrollHeight
-    })    
+    })
   })
 
   textarea.value = ''
@@ -283,23 +283,15 @@ function handleSendMessage () {
 
 <template>
   <!--css-doodle背景-->
-  <sunset-city/>
+  <sunset-city />
 
   <!--聊天窗口-->
-  <n-card
-    :content-style="cardContentStyle"
-    hoverable
-    :bordered="false"
-    class="chat-frame">
+  <n-card :content-style="cardContentStyle" hoverable :bordered="false" class="chat-frame">
 
     <!--左端导航栏-->
     <div class="nav">
-      <n-icon
-        v-for="item in menuItems"
-        class="nav-icon"
-        size="24"
-        @click="item.onClick">
-        <chatbox-ellipses-outline v-if="item.title === 'chat'"/>
+      <n-icon v-for="item in menuItems" class="nav-icon" size="24" @click="item.onClick">
+        <chatbox-ellipses-outline v-if="item.title === 'chat'" />
         <home v-else-if="item.title === 'home'" />
         <logo-github v-else />
       </n-icon>
@@ -309,13 +301,7 @@ function handleSendMessage () {
     <div class="friends-nav">
 
       <!--搜索框-->
-      <n-input
-        v-if="oponentsList.length > 0"
-        class="search-input"
-        round
-        placeholder="Search"
-        size="small"
-        clearable
+      <n-input v-if="oponentsList.length > 0" class="search-input" round placeholder="Search" size="small" clearable
         v-model:value="filter">
         <template #suffix>
           <n-icon>
@@ -325,30 +311,19 @@ function handleSendMessage () {
       </n-input>
 
       <!--聊天对象列表-->
-      <n-scrollbar
-        class="oponent-list"
-        style="max-height: 40em">
-        <n-empty
-          description="No Data"
-          v-if="oponentsView.length === 0"/>
-        <n-card
-          v-for="item in oponentsView"
-          class="oponent-card"
-          :content-style="oponentCardStyle"
-          hoverable
+      <n-scrollbar class="oponent-list" style="max-height: 40em">
+        <n-empty description="No Data" v-if="oponentsView.length === 0" />
+        <n-card v-for="item in oponentsView" class="oponent-card" :content-style="oponentCardStyle" hoverable
           @click="changeOponent(item.uid, item.uname)">
           <!--头像-->
-          <n-avatar
-            round
-            fallback-src="https://www.naiveui.com/assets/naivelogo.93278402.svg"
-            :src="item.avatar"/>
+          <n-avatar round fallback-src="https://www.naiveui.com/assets/naivelogo.93278402.svg" :src="item.avatar" />
           <!--昵称-->
           <div class="nickname">
             <n-ellipsis class="ellipsis">
-              {{`${item.uid} ${item.uname}`}}
+              {{ `${item.uid} ${item.uname}` }}
             </n-ellipsis>
             <span class="native-ellipsis">
-              {{item.latest}}
+              {{ item.latest }}
             </span>
           </div>
         </n-card>
@@ -358,111 +333,66 @@ function handleSendMessage () {
     <!--聊天区-->
     <div class="message-box">
       <!--窗口标题-->
-      <n-text
-        class="oponent-title"
-        strong>
-        {{`${currOponent} ${currOponentName}`}}
-        <span
-          v-if="currOponent !== '我的聊天'"
-          class="dash">_</span>
+      <n-text class="oponent-title" strong>
+        {{ `${currOponent} ${currOponentName}` }}
+        <span v-if="currOponent !== '我的聊天'" class="dash">_</span>
       </n-text>
 
-      <n-divider class="divider"/>
+      <n-divider class="divider" />
       <!--未选中对象时-->
-      <div
-        class="empty-wrapper"
-        v-if="currOponent === '我的聊天'">
-        <n-empty
-          description="Can anybody find me somebody to TALK ~">
+      <div class="empty-wrapper" v-if="currOponent === '我的聊天'">
+        <n-empty description="Can anybody find me somebody to TALK ~">
           <template #icon>
             <div style="display: flex;justify-content: center;">
               <n-icon>
-                <Building20Filled/>
+                <Building20Filled />
               </n-icon>
               <n-icon>
-                <BuildingMultiple20Filled/>
+                <BuildingMultiple20Filled />
               </n-icon>
               <n-icon>
-                <BuildingSkyscraper20Regular/>
-              </n-icon>              
+                <BuildingSkyscraper20Regular />
+              </n-icon>
             </div>
           </template>
         </n-empty>
       </div>
       <!--消息列表-->
-      <div
-        class="chat-wrapper"
-        v-if="currOponent !== '我的聊天'">
-        <n-scrollbar
-          style="max-height: 29.2em;"
-          class="message-list">
-          <div
-            v-for="item in messageData"
-            class="message-item">
-            <n-tag
-              class="time-tag"
-              round
-              size="small"
-              :color="{ color: '#E39BB6', textColor: '#FFF'}">
-              {{item.day_time}}
-            </n-tag>          
+      <div class="chat-wrapper" v-if="currOponent !== '我的聊天'">
+        <n-scrollbar style="max-height: 29.2em;" class="message-list">
+          <div v-for="item in messageData" class="message-item">
+            <n-tag class="time-tag" round size="small" :color="{ color: '#E39BB6', textColor: '#FFF' }">
+              {{ item.day_time }}
+            </n-tag>
             <div class="message-row">
-              <div
-                v-if="item.speaker !== 0"
-                class="polyfill"/>
-              <div
-                :class="item.speaker === 0 ? 'oponent-bubble' : 'self-bubble'">
-                {{item.details}}
+              <div v-if="item.speaker !== 0" class="polyfill" />
+              <div :class="item.speaker === 0 ? 'oponent-bubble' : 'self-bubble'">
+                {{ item.details }}
               </div>
-              <div
-                v-if="item.speaker === 0"
-                class="polyfill"/>
+              <div v-if="item.speaker === 0" class="polyfill" />
             </div>
           </div>
         </n-scrollbar>
 
-        <n-divider class="divider"/>
+        <n-divider class="divider" />
         <!--输入框-->
-        <n-input
-          class="message-input"
-          type="textarea"
-          placeholder="Type your message."
-          :autosize="{ minRows: 4, maxRows: 4 }"
-          clearable
-          maxlength="200" 
-          show-count
-          v-model:value="textarea"/>
+        <n-input class="message-input" type="textarea" placeholder="Type your message."
+          :autosize="{ minRows: 4, maxRows: 4 }" clearable maxlength="200" show-count v-model:value="textarea" />
         <!--聊天工具栏-->
         <div class="tool-bar">
-          <vuemoji-picker
-            v-if="emojiPickerSwitch"
-            class="emoji-picker"
-            @emoji-click="handleEmojiClick"/>
-          <n-icon
-            class="emoji-icon"
-            depth="4"
-            size="24"
-            @click="emojiPickerSwitch = !emojiPickerSwitch">
-            <emoji16-filled/>
-          </n-icon>      
-          <div class="polyfill"/>
-          <n-button
-            size="small"
-            round
-            class="btn"
-            @click="closeChat">
+          <vuemoji-picker v-if="emojiPickerSwitch" class="emoji-picker" @emoji-click="handleEmojiClick" />
+          <n-icon class="emoji-icon" depth="4" size="24" @click="emojiPickerSwitch = !emojiPickerSwitch">
+            <emoji16-filled />
+          </n-icon>
+          <div class="polyfill" />
+          <n-button size="small" round class="btn" @click="closeChat">
             关闭
-          </n-button>        
-          <n-button
-            size="small"
-            round
-            color="#7BC4EF"
-            class="btn"
-            @click="handleSendMessage">
+          </n-button>
+          <n-button size="small" round color="#7BC4EF" class="btn" @click="handleSendMessage">
             发送
           </n-button>
         </div>
-      </div> 
+      </div>
     </div>
   </n-card>
 </template>
@@ -474,7 +404,7 @@ $smoke: #F3F3F3;
 $grey: #aaa;
 $purple: #B062A9;
 $green: #55D2CA;
-$deep-green: hsl(176,50%,50%);
+$deep-green: hsl(176, 50%, 50%);
 $blue: #7BC4EF;
 
 .chat-frame {
@@ -501,6 +431,7 @@ $blue: #7BC4EF;
   transition: color .6s ease-out;
   cursor: pointer;
   color: $shallow;
+
   &:hover {
     color: white;
   }
@@ -515,7 +446,7 @@ $blue: #7BC4EF;
 .search-input {
   text-align: left;
   padding-left: 1em;
-  margin-bottom: .8em;  
+  margin-bottom: .8em;
 }
 
 .oponent-list {
@@ -527,6 +458,7 @@ $blue: #7BC4EF;
   border-radius: 1em;
   height: 4em;
   cursor: pointer;
+
   &:not(:first-child) {
     margin-top: .5em;
   }
@@ -569,7 +501,7 @@ $blue: #7BC4EF;
 
 .dash {
   font-weight: bold;
-  animation: blink 1.5s steps(2, end)  infinite;
+  animation: blink 1.5s steps(2, end) infinite;
 }
 
 .divider {
@@ -599,14 +531,15 @@ $blue: #7BC4EF;
 .message-item {
   display: flex;
   flex-direction: column;
+
   &:not(:last-child) {
     margin-bottom: .6em;
-  }    
+  }
 }
 
 .time-tag {
   align-self: center;
-  margin-bottom: .8em;  
+  margin-bottom: .8em;
 }
 
 
@@ -617,7 +550,7 @@ $blue: #7BC4EF;
 .oponent-bubble {
   max-width: 16em;
   align-self: flex-start;
-  border-radius: .6em;  
+  border-radius: .6em;
   margin-left: 1em;
   font-size: 1em;
   background-color: $green;
@@ -627,9 +560,11 @@ $blue: #7BC4EF;
   color: white;
   transition: box-shadow .4s ease-in-out;
   position: relative;
+
   &:hover {
     box-shadow: 0 7px 5px -5px $grey;
   }
+
   &::before {
     content: "";
     position: absolute;
@@ -645,7 +580,7 @@ $blue: #7BC4EF;
 .self-bubble {
   max-width: 16em;
   align-self: flex-end;
-  border-radius: .6em;  
+  border-radius: .6em;
   margin-right: 1em;
   font-size: 1em;
   background-color: $blue;
@@ -655,9 +590,11 @@ $blue: #7BC4EF;
   color: white;
   transition: box-shadow .4s ease-in-out;
   position: relative;
+
   &:hover {
     box-shadow: 0 7px 5px -5px $grey;
   }
+
   &::before {
     content: "";
     position: absolute;
@@ -704,7 +641,9 @@ $blue: #7BC4EF;
   align-self: flex-start;
   cursor: pointer;
   transition: box-shadow .2s ease-out;
-  &:hover, &:active {
+
+  &:hover,
+  &:active {
     box-shadow: 0 0 2px $grey;
   }
 }
@@ -713,15 +652,18 @@ $blue: #7BC4EF;
   align-self: flex-start;
   cursor: pointer;
   transition: box-shadow .2s ease-out;
-  &:hover, &:active {
+
+  &:hover,
+  &:active {
     box-shadow: 0 0 2px $grey;
-  }  
+  }
 }
 
 @keyframes blink {
   from {
     color: white;
   }
+
   to {
     color: $purple;
   }

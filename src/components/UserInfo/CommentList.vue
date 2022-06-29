@@ -1,71 +1,56 @@
 <template>
-<el-card
-  class="commentInfo"
-  :body-style="{ padding: '0px' }">
-  <page-title style="margin: 0;justify-content: flex-start;transform: scale(.8) translate(-4em, 0);">
-    <template #icon>
-      <person-chat16-regular/>
-    </template>
-    <template #main-title>
-      顾客评价
-    </template>
-    <template #sub-title>
-      Customer Review
-    </template>
-  </page-title>
-  <el-divider class="divider"/>
-  <div class="commentCardList">
-    <div v-if="commentList.length">
-      <el-card
-        v-for="(comment, index) in selectComments"
-        :key="index"
-        class="commentCard"
-        :body-style="{ padding: '0px' }">
-        <div class="time">
-          {{ comment.time }}
-        </div>
-        <div class="commentCotent">
-          <div class="commentatorInfo"> 
-            <div class="commentAvatar">
-              <el-avatar :src="comment.avatar" :size="50"/>
+  <el-card class="commentInfo" :body-style="{ padding: '0px' }">
+    <page-title style="margin: 0;justify-content: flex-start;transform: scale(.8) translate(-4em, 0);">
+      <template #icon>
+        <person-chat16-regular />
+      </template>
+      <template #main-title>
+        顾客评价
+      </template>
+      <template #sub-title>
+        Customer Review
+      </template>
+    </page-title>
+    <el-divider class="divider" />
+    <div class="commentCardList">
+      <div v-if="commentList.length">
+        <el-card v-for="(comment, index) in selectComments" :key="index" class="commentCard"
+          :body-style="{ padding: '0px' }">
+          <div class="time">
+            {{ comment.time }}
+          </div>
+          <div class="commentCotent">
+            <div class="commentatorInfo">
+              <div class="commentAvatar">
+                <el-avatar :src="comment.avatar" :size="50" />
+              </div>
+              {{ comment.name }}
             </div>
-            {{ comment.name }}
+            <div class="commentText">
+              <el-scrollbar>
+                {{ comment.text }}
+              </el-scrollbar>
+            </div>
+            <div class="commentStar">
+              <el-row>
+                <p style="width: 30%;float: left;margin: 0;">评分:</p>
+                <el-rate v-model="comment.rate" disabled :show-score="comment.rate !== 0" text-color="#ff9900"
+                  style="width: 60%;float: left;height: auto;" />
+              </el-row>
+            </div>
           </div>
-          <div class="commentText">
-            <el-scrollbar>
-              {{ comment.text }}
-            </el-scrollbar>
-          </div>
-          <div class="commentStar">
-            <el-row>
-              <p style="width: 30%;float: left;margin: 0;">评分:</p>
-              <el-rate
-                v-model="comment.rate"
-                disabled 
-                :show-score="comment.rate !== 0"
-                text-color="#ff9900" 
-                style="width: 60%;float: left;height: auto;"/>
-            </el-row>
-          </div>
+        </el-card>
+        <div class="pagination">
+          <el-row justify="center">
+            <el-pagination :page-size="pageSize" layout="prev, pager, next" :total="commentList.length"
+              :hide-on-single-page="true" v-model:currentPage="currentPage">
+            </el-pagination>
+          </el-row>
         </div>
-      </el-card>
-      <div class="pagination">
-        <el-row justify="center">
-          <el-pagination
-            :page-size="pageSize" 
-            layout="prev, pager, next" 
-            :total="commentList.length"
-            :hide-on-single-page="true"
-            v-model:currentPage="currentPage">
-          </el-pagination>
-        </el-row>
       </div>
+      <el-empty v-else description="暂时还没有评论。" />
     </div>
-    <el-empty 
-      v-else 
-      description="暂时还没有评论。" />
-  </div>        
-</el-card>
+  </el-card>
 </template>
 
 <script lang="ts" setup>
@@ -156,58 +141,69 @@ commentList.value = [
   height: 600px;
   float: left;
 }
-.comment-title{
+
+.comment-title {
   margin: 0 0 .5em .5em;
   float: left;
   font-size: 1.3em;
   font-weight: 600;
 }
-.divider{
+
+.divider {
   clear: left;
   margin: .2em 0;
 }
-.commentCardList{
+
+.commentCardList {
   clear: left;
   width: 400px;
   height: 500px;
   margin: 0 auto;
   position: relative;
 }
-.pagination{
+
+.pagination {
   position: absolute;
   bottom: 10px;
   width: 100%;
 }
-.commentCard{
+
+.commentCard {
   margin-top: 30px;
   min-height: 120px;
   max-height: 130px;
   font-family: 'FZHeiBJW';
   padding: 0px;
 }
-.time{
+
+.time {
   font-family: '楷体';
   margin-top: 5px;
   height: 20px;
 }
-.commentContent{
+
+.commentContent {
   width: 360px;
 }
-.commentAvatar{
+
+.commentAvatar {
   height: 60px;
 }
-.commentatorInfo{
+
+.commentatorInfo {
   width: 25%;
   float: left;
 }
-.commentText{
+
+.commentText {
   width: 60%;
   float: right;
   margin-right: 50px;
   margin-top: 15px;
   height: 45px;
 }
-.commentStar{
+
+.commentStar {
   width: 60%;
   float: left;
   margin-top: 10px;

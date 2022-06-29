@@ -1,49 +1,38 @@
 <template>
-<Transition name="modal" mode="out-in">
-  <div v-if="show" class="modal-mask">
-    <div class="modal-wrapper">
-      <div class="modal-container">
-        <div class="modal-title">
+  <Transition name="modal" mode="out-in">
+    <div v-if="show" class="modal-mask">
+      <div class="modal-wrapper">
+        <div class="modal-container">
+          <div class="modal-title">
+            <span>
+              举报
+            </span>
+          </div>
           <span>
-            举报
-          </span>
-        </div>     
-        <span>
-          <el-tag v-if="props.reported" class="reported" type="warning" effect="light">
-            {{reported === '待处理' ? '您的举报已收悉，工作人员将在三个工作日内给予回复。' : reply}}
-          </el-tag>
-        </span><br/>
-        <div class="modal-input">
-          <el-input 
-            v-model="reasonView" 
-            placeholder="请输入举报理由。"
-            :rows="6"
-            maxlength="300"
-            show-word-limit
-            :readonly="props.reported"
-            type="textarea">
-          </el-input>
-        </div>
-        <div class="modal-footer">
-          <el-row>
-            <el-col :span="12">
-              <el-button
-                @click="reportOrder"
-                type="primary"
-                v-if="!props.reported"
-              >确定</el-button>
-            </el-col>
-            <el-col :span="12">
-              <el-button
-                @click="$emit('close', 'normal', props.currOrderId)"
-              >{{reported === '待处理' ? '返回' : '关闭'}}</el-button>
-            </el-col>
-          </el-row>
+            <el-tag v-if="props.reported" class="reported" type="warning" effect="light">
+              {{ reported === '待处理' ? '您的举报已收悉，工作人员将在三个工作日内给予回复。' : reply }}
+            </el-tag>
+          </span><br />
+          <div class="modal-input">
+            <el-input v-model="reasonView" placeholder="请输入举报理由。" :rows="6" maxlength="300" show-word-limit
+              :readonly="props.reported" type="textarea">
+            </el-input>
+          </div>
+          <div class="modal-footer">
+            <el-row>
+              <el-col :span="12">
+                <el-button @click="reportOrder" type="primary" v-if="!props.reported">确定</el-button>
+              </el-col>
+              <el-col :span="12">
+                <el-button @click="$emit('close', 'normal', props.currOrderId)">{{ reported === '待处理' ? '返回' : '关闭' }}
+                </el-button>
+              </el-col>
+            </el-row>
+          </div>
         </div>
       </div>
     </div>
-  </div>
-</Transition>
+  </Transition>
 </template>
 
 <script lang="ts" setup>
@@ -65,7 +54,7 @@ const reply = ref('') // 管理员回复
 const replyer = ref('') // 回复者
 const replyTime = ref('') // 回复时间
 
-function getReportData () {
+function getReportData() {
   if (props.reported && props.reported !== '未举报') {
     // 调用接口：传入（订单ID） 返回（举报理由，状态，回复，回复时间）
     axios.get(`/api/getReport/${props.currOrderId}`)
@@ -76,7 +65,7 @@ function getReportData () {
         replyer.value = res.data[0].replyer
         replyTime.value = res.data[0].reply_time
       })
-  }  
+  }
 }
 
 onBeforeMount(getReportData)
@@ -84,7 +73,7 @@ onBeforeMount(getReportData)
 onUpdated(getReportData)
 
 // 提交举报
-function reportOrder(){
+function reportOrder() {
   if (reasonView.value === '') {
     message.error('举报理由不能为空！')
   } else {
@@ -98,7 +87,7 @@ function reportOrder(){
     // 调用接口：传入（订单ID，举报理由）
     axios.post(`/api/reportOrder`, body)
       .then(() => {
-        reported.value  = '待处理'
+        reported.value = '待处理'
         message.success('举报成功，敬请等待管理员回复！')
         // 注意这里用defineEmits返回的emits在脚本中发出事件的方法！
         emits('close', 'reported')
@@ -119,11 +108,13 @@ function reportOrder(){
   display: table;
   transition: opacity 0.3s ease;
 }
+
 .modal-wrapper {
   display: table-cell;
   vertical-align: middle;
   border-radius: 5px;
 }
+
 .modal-container {
   width: 400px;
   margin: 0px auto;
@@ -133,22 +124,27 @@ function reportOrder(){
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.33);
   transition: all 0.3s ease;
 }
-.modal-title{
+
+.modal-title {
   text-align: left;
   font-size: 22px;
   font-weight: bold;
   margin-bottom: 5px;
 }
-.reported{
+
+.reported {
   font-size: 13px;
 }
-.modal-input{
+
+.modal-input {
   margin-top: 10px;
   margin-bottom: 15px;
 }
-.modal-footer{
+
+.modal-footer {
   margin-bottom: 10px;
 }
+
 /*
  * The following styles are auto-applied to elements with
  * transition="modal" when their visibility is toggled
@@ -157,9 +153,11 @@ function reportOrder(){
  * You can easily play with the modal transition by editing
  * these styles.
  */
-.modal-enter-from, .modal-leave-to {
+.modal-enter-from,
+.modal-leave-to {
   opacity: 0;
 }
+
 .modal-enter-from .modal-container,
 .modal-leave-to .modal-container {
   transition: opacity 0.8s ease;

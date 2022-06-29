@@ -1,127 +1,61 @@
 <template>
-    <el-card class="baseInfo">
-      <n-avatar
-        :src="userInfo?.avatar"
-        round
-        bordered
-        :size="100" />
-      <div
-        class="nickName"
-        v-if="!changingInfo">
-        {{ userInfo?.nickName }}
-      </div>
-      <div
-        class="selfIntroduction"
-        v-if="!changingInfo">
-        {{ userInfo?.selfIntro }}
-      </div>
-      <el-divider />
-      <el-form
-        label-width="75px" 
-        class="infoForm" 
-        :model="userInfo">
-        <el-form-item
-          v-if="changingInfo"
-          prop="nickName">
-          <template #label>
-            昵称:
-          </template>
-          <el-input
-            v-if="changingInfo"
-            v-model="newInfo.nickName"
-          ></el-input>
-          <div v-else>{{ userInfo?.college }}</div>
-        </el-form-item>
-        <el-form-item
-          v-if="changingInfo"
-          prop="selfIntroduction">
-          <template #label>个人简介:</template>
-          <el-input
-            v-if="changingInfo"
-            v-model="newInfo.selfIntro"
-            type="textarea"
-            :max-length="25"
-            :autosize="{ minRows: 2, maxRows: 4}"
-          ></el-input>
-        </el-form-item>
-        <el-form-item prop="college">
-          <template #label>学院:</template>
-          <el-select
-            v-if="changingInfo"
-            v-model="newInfo.college"
-          >
-            <el-option
-              v-for="item in collegeOptions"
-              :key="item.value"
-              :label="item.label"
-              :value="item.value"
-            />
-          </el-select>
-          <div v-else>
-            {{ userInfo?.college }}
-          </div>
-        </el-form-item>
-        <el-form-item prop="gender">
-          <template #label>性别:</template>
-          <el-select
-            v-if="changingInfo"
-            v-model="newInfo.gender">
-            <el-option
-              v-for="item in genderOptions"
-              :key="item.value"
-              :label="item.label"
-              :value="item.value"
-            />
-          </el-select>
-          <div v-else>{{ userInfo?.gender }}</div>
-        </el-form-item>
-        <el-form-item prop="birthday">
-          <template #label>生日:</template>
-          <el-date-picker
-            v-if="changingInfo"
-            v-model="newInfo.birthday"
-            type="date"
-            size="small"
-            :editable="false"
-            placeholder="选择您的生日"
-            format="YYYY 年 MM 月 DD 日"
-            value-format="YYYY-MM-DD">
-          </el-date-picker>          
-          <div v-else>{{ userInfo?.birthday }}</div>
-        </el-form-item>
-        <el-button
-          v-if="changingInfo"
-          type="success"
-          plain
-          @click="changeInfoConfirm"
-          >保存更改</el-button
-        >
-        <el-button
-          v-if="changingInfo" 
-          type="info"
-          plain 
-          @click="cancelEdit"
-          >取消编辑</el-button>        
-        <el-button 
-          v-if="!changingInfo" 
-          plain 
-          color="#3399CC"
-          @click="changeBaseInfo"
-          >编辑个人信息</el-button>          
-      </el-form>
-      <el-divider style="margin: 10px 0" />
-      <el-form label-width="75px" class="infoForm">
-        <el-form-item label="卖家评分:">
-          <el-rate
-            v-if="userInfo?.sellerRate"
-            v-model="userInfo.sellerRate"
-            disabled
-            text-color="#ff9900"
-            style="margin-top: 7px"
-          />
-        </el-form-item>
-      </el-form>
-    </el-card>
+  <el-card class="baseInfo">
+    <n-avatar :src="userInfo?.avatar" round bordered :size="100" />
+    <div class="nickName" v-if="!changingInfo">
+      {{ userInfo?.nickName }}
+    </div>
+    <div class="selfIntroduction" v-if="!changingInfo">
+      {{ userInfo?.selfIntro }}
+    </div>
+    <el-divider />
+    <el-form label-width="75px" class="infoForm" :model="userInfo">
+      <el-form-item v-if="changingInfo" prop="nickName">
+        <template #label>
+          昵称:
+        </template>
+        <el-input v-if="changingInfo" v-model="newInfo.nickName"></el-input>
+        <div v-else>{{ userInfo?.college }}</div>
+      </el-form-item>
+      <el-form-item v-if="changingInfo" prop="selfIntroduction">
+        <template #label>个人简介:</template>
+        <el-input v-if="changingInfo" v-model="newInfo.selfIntro" type="textarea" :max-length="25"
+          :autosize="{ minRows: 2, maxRows: 4 }"></el-input>
+      </el-form-item>
+      <el-form-item prop="college">
+        <template #label>学院:</template>
+        <el-select v-if="changingInfo" v-model="newInfo.college">
+          <el-option v-for="item in collegeOptions" :key="item.value" :label="item.label" :value="item.value" />
+        </el-select>
+        <div v-else>
+          {{ userInfo?.college }}
+        </div>
+      </el-form-item>
+      <el-form-item prop="gender">
+        <template #label>性别:</template>
+        <el-select v-if="changingInfo" v-model="newInfo.gender">
+          <el-option v-for="item in genderOptions" :key="item.value" :label="item.label" :value="item.value" />
+        </el-select>
+        <div v-else>{{ userInfo?.gender }}</div>
+      </el-form-item>
+      <el-form-item prop="birthday">
+        <template #label>生日:</template>
+        <el-date-picker v-if="changingInfo" v-model="newInfo.birthday" type="date" size="small" :editable="false"
+          placeholder="选择您的生日" format="YYYY 年 MM 月 DD 日" value-format="YYYY-MM-DD">
+        </el-date-picker>
+        <div v-else>{{ userInfo?.birthday }}</div>
+      </el-form-item>
+      <el-button v-if="changingInfo" type="success" plain @click="changeInfoConfirm">保存更改</el-button>
+      <el-button v-if="changingInfo" type="info" plain @click="cancelEdit">取消编辑</el-button>
+      <el-button v-if="!changingInfo" plain color="#3399CC" @click="changeBaseInfo">编辑个人信息</el-button>
+    </el-form>
+    <el-divider style="margin: 10px 0" />
+    <el-form label-width="75px" class="infoForm">
+      <el-form-item label="卖家评分:">
+        <el-rate v-if="userInfo?.sellerRate" v-model="userInfo.sellerRate" disabled text-color="#ff9900"
+          style="margin-top: 7px" />
+      </el-form-item>
+    </el-form>
+  </el-card>
 </template>
 
 <script setup lang="ts">
@@ -178,19 +112,19 @@ axios.get(`/api/getUserInfo/${props.userID}`)
   .then((res: any) => {
     const data = res.data[0]
     userInfo.value.userID = props.userID as string,
-    userInfo.value.nickName = data.nickname,
-    userInfo.value.selfIntro = data.biography,
-    userInfo.value.college = data.college,
-    userInfo.value.gender = data.gender,
-    userInfo.value.birthday = data.birthday,
-    userInfo.value.avatar = `http://106.15.78.201:8082/public/avatars/${data.avatar}`,
-    userInfo.value.sellerRate = 4
-    
+      userInfo.value.nickName = data.nickname,
+      userInfo.value.selfIntro = data.biography,
+      userInfo.value.college = data.college,
+      userInfo.value.gender = data.gender,
+      userInfo.value.birthday = data.birthday,
+      userInfo.value.avatar = `http://106.15.78.201:8082/public/avatars/${data.avatar}`,
+      userInfo.value.sellerRate = 4
+
   })
   .then(() => {
-    for(let property in userInfo.value){
+    for (let property in userInfo.value) {
       newInfo.value[property] = userInfo.value[property]
-    }  
+    }
   })
 
 const collegeOptions = [
@@ -223,7 +157,7 @@ const genderOptions = [
   {
     value: '女',
     label: '女',
-  },  
+  },
 ]
 // 编辑表单显示开关
 const changingInfo = ref(false)
@@ -250,9 +184,9 @@ const resetEdit = () => {
   // 恢复修改后的用户信息
   for (let property in userInfo.value) {
     newInfo.value[property] = userInfo.value[property]
-  }  
+  }
 }
-const cancelEdit= () => {
+const cancelEdit = () => {
   if (edited.value) {
     dialog.warning({
       title: '提示',
@@ -263,7 +197,7 @@ const cancelEdit= () => {
         resetEdit()
       }
     })
-  }else{
+  } else {
     resetEdit()
   }
 }
@@ -283,12 +217,12 @@ const changeInfoConfirm = () => {
         }
         else if (!newInfo.value.birthday.length) {
           message.error('生日不可为空!')
-          return false        
+          return false
         }
         else if (!newInfo.value.selfIntro.length) {
           message.error("个性签名不可为空!")
-          return false        
-        }      
+          return false
+        }
         // 调用接口：传入（用户ID，新用户信息） 返回（修改结果）
         axios.post(`api/modifyUserInfo`, newInfo.value)
           .then(() => {
@@ -320,6 +254,7 @@ const changeInfoConfirm = () => {
   height: 600px;
   float: left;
 }
+
 .commentInfo {
   margin-top: 10px;
   margin-bottom: 10px;
@@ -330,6 +265,7 @@ const changeInfoConfirm = () => {
   height: 600px;
   float: left;
 }
+
 .nickName {
   margin: 15px 0 10px;
   font-size: 40px;
@@ -337,14 +273,17 @@ const changeInfoConfirm = () => {
   color: #262626;
   font-family: "楷体";
 }
+
 .selfIntroduction {
   font-family: "FZHeiBJW";
   margin-top: 15px;
 }
+
 .infoForm {
   padding: 5px 20px;
   font-family: "FZHeiBJW";
 }
+
 .infoChange {
   padding: 5px 50px;
   font-family: "FZHeiBJW";

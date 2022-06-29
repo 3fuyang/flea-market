@@ -1,25 +1,21 @@
 <template>
-<div class="recommend-wrapper">
-  <p class="recommend-label">
-    商品精选
-  </p>
-  <div class="recommend-card" v-for="item in recommendList">
-    <div class="big-image-container">
-      <el-image
-        :src="item.imageURL"
-        lazy
-        class="big-image"
-        @click="navigateDetails(item.goodID)">
-      </el-image>
+  <div class="recommend-wrapper">
+    <p class="recommend-label">
+      商品精选
+    </p>
+    <div class="recommend-card" v-for="item in recommendList">
+      <div class="big-image-container">
+        <el-image :src="item.imageURL" lazy class="big-image" @click="navigateDetails(item.goodID)">
+        </el-image>
+      </div>
+      <p class="price-label">
+        ￥{{ item.goodPrice }}
+      </p>
+      <p class="good-title" @click="navigateDetails(item.goodID)">
+        {{ item.goodTitle }}
+      </p>
     </div>
-    <p class="price-label">
-      ￥{{item.goodPrice}}
-    </p>
-    <p class="good-title" @click="navigateDetails(item.goodID)">
-      {{item.goodTitle}}
-    </p>
   </div>
-</div>
 </template>
 
 <script setup lang="ts">
@@ -63,7 +59,7 @@ function navigateDetails(id: string) {
 </script>
 
 <style scoped>
-.recommend-wrapper{
+.recommend-wrapper {
   border: 1px solid #eee;
   border-right: none;
   box-sizing: border-box;
@@ -74,7 +70,8 @@ function navigateDetails(id: string) {
   background: white;
   z-index: 1;
 }
-.recommend-label{
+
+.recommend-label {
   font-size: .875rem;
   margin: 0;
   margin-left: .5em;
@@ -82,25 +79,29 @@ function navigateDetails(id: string) {
   font-weight: 600;
   color: #666;
 }
-.recommend-card{
- display: flex;
- flex-direction: column;
- margin: 1em 0;
+
+.recommend-card {
+  display: flex;
+  flex-direction: column;
+  margin: 1em 0;
 }
-.big-image{
+
+.big-image {
   object-fit: scale-down;
-	border: 1px solid #EEE;
-  cursor: pointer;  
+  border: 1px solid #EEE;
+  cursor: pointer;
 }
-.price-label{
-  padding-left: .5rem;  
+
+.price-label {
+  padding-left: .5rem;
   font-size: .9em;
   font-weight: 500;
   color: #FF9933;
-	margin: .5em 0;
+  margin: .5em 0;
   align-self: flex-start;
 }
-.good-title{
+
+.good-title {
   padding-left: .5rem;
   box-sizing: border-box;
   text-align: left;
@@ -117,7 +118,8 @@ function navigateDetails(id: string) {
   color: #666;
   cursor: pointer;
 }
-.good-title:hover{
+
+.good-title:hover {
   color: #3399CC;
 }
 </style>

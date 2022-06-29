@@ -1,149 +1,92 @@
 <template>
-<div class="root-wrapper">
-	<el-steps 
-    :space="200" 
-    :active="active" 
-    process-status="finish" 
-    finish-status="success" 
-    align-center>
-    <el-step title="基本信息"></el-step>
-    <el-step title="简介和图片"></el-step>
-    <el-step title="交易信息"></el-step>
-    <el-step title="内容审核"></el-step>
-  </el-steps>  
-  <el-card class="contentCard">
-    <div v-if="active==0">
-      <div>
-        标题:
-        <el-input 
-          v-model="goodInfo.title" 
-          placeholder="为你的商品起一个响亮的标题" 
-          class="titleInput"/>
-      </div>
-      <div>
-        商品类型:     
-        <el-select 
-          v-model="goodInfo.type" 
-          placeholder="选择商品类型" 
-          size="large" 
-          class="typeSelect">
-          <el-option 
-            v-for="item in typeOptions" 
-            :key="item" 
-            :label="item" 
-            :value="item"/>
-        </el-select>
-      </div>
-      <div>
-        商品名称:
-        <el-input 
-          v-model="goodInfo.name" 
-          placeholder="你想出售的商品是什么" 
-          class="nameInput"/>
-      </div>
-      <div>
-        关键词:     
-        <el-input 
-          v-model="goodInfo.keywords" 
-          placeholder="输入搜索关键词，用分号分隔" 
-          class="keywordsInput"/>
-      </div>
-      <div>
-        校区:     
-        <el-select 
-          v-model="goodInfo.campus" 
-          placeholder="选择发布校区" 
-          size="large" 
-          class="campusSelect">
-          <el-option 
-            v-for="item in campusOptions" 
-            :key="item" 
-            :label="item" 
-            :value="item"/>
-        </el-select>
-      </div>
-    </div>
-    <div v-if="active === 1">
-      <div>
-        <span class="introTitle">简介:</span><br/>
-        <el-input 
-          v-model="goodInfo.intro" 
-          placeholder="快来简单介绍一下你的商品吧" 
-          :rows="3" 
-          type="textarea" 
-          class="introductionInput"/>
-      </div>
-      <div>
-        <div class="imgTitle">
-          商品实物图:
+  <div class="root-wrapper">
+    <el-steps :space="200" :active="active" process-status="finish" finish-status="success" align-center>
+      <el-step title="基本信息"></el-step>
+      <el-step title="简介和图片"></el-step>
+      <el-step title="交易信息"></el-step>
+      <el-step title="内容审核"></el-step>
+    </el-steps>
+    <el-card class="contentCard">
+      <div v-if="active == 0">
+        <div>
+          标题:
+          <el-input v-model="goodInfo.title" placeholder="为你的商品起一个响亮的标题" class="titleInput" />
         </div>
-        <!-- 图片上传组件 -->
-        <el-upload
-          ref="upload"
-          class="uploadImg" 
-          action="/api/uploadImage"
-          :auto-upload="false"
-          :before-upload="handleBeforeUpload"
-          :on-success="handleOnSuccess"
-          :on-error="handleOnError"
-          :limit="3"
-          :on-exceed="handleExceed">
-          <div v-if="imgLocalUrl.length > 0" class="avatarWrapper">
-            <img v-for="item in imgLocalUrl" :src="item" class="avatar"/>
+        <div>
+          商品类型:
+          <el-select v-model="goodInfo.type" placeholder="选择商品类型" size="large" class="typeSelect">
+            <el-option v-for="item in typeOptions" :key="item" :label="item" :value="item" />
+          </el-select>
+        </div>
+        <div>
+          商品名称:
+          <el-input v-model="goodInfo.name" placeholder="你想出售的商品是什么" class="nameInput" />
+        </div>
+        <div>
+          关键词:
+          <el-input v-model="goodInfo.keywords" placeholder="输入搜索关键词，用分号分隔" class="keywordsInput" />
+        </div>
+        <div>
+          校区:
+          <el-select v-model="goodInfo.campus" placeholder="选择发布校区" size="large" class="campusSelect">
+            <el-option v-for="item in campusOptions" :key="item" :label="item" :value="item" />
+          </el-select>
+        </div>
+      </div>
+      <div v-if="active === 1">
+        <div>
+          <span class="introTitle">简介:</span><br />
+          <el-input v-model="goodInfo.intro" placeholder="快来简单介绍一下你的商品吧" :rows="3" type="textarea"
+            class="introductionInput" />
+        </div>
+        <div>
+          <div class="imgTitle">
+            商品实物图:
           </div>
+          <!-- 图片上传组件 -->
+          <el-upload ref="upload" class="uploadImg" action="/api/uploadImage" :auto-upload="false"
+            :before-upload="handleBeforeUpload" :on-success="handleOnSuccess" :on-error="handleOnError" :limit="3"
+            :on-exceed="handleExceed">
+            <div v-if="imgLocalUrl.length > 0" class="avatarWrapper">
+              <img v-for="item in imgLocalUrl" :src="item" class="avatar" />
+            </div>
             <template #tip>
               <div class="el-upload__tip">
                 limit less than 3 jpg/png files with a size of 220*190.
               </div>
-            </template>          
+            </template>
             <template #trigger>
               <el-button type="primary">
                 选择文件
               </el-button>
             </template>
-            <el-button 
-              class="buttonGutter" 
-              type="success"
-              @click="submitUpload">
-                确定上传
+            <el-button class="buttonGutter" type="success" @click="submitUpload">
+              确定上传
             </el-button>
-        </el-upload>
+          </el-upload>
+        </div>
       </div>
+      <div v-if="active === 2">
+        <span class="priceTitle">
+          价格(CNY):
+        </span><br />
+        <el-input-number v-model="goodInfo.price" :min="0" class="priceInput" />
+        <br />
+        <span class="detailTitle">
+          交易信息:
+        </span>
+        <el-input v-model="goodInfo.detail" placeholder="你期望的交易时间、地点以及其他细节。" :rows="4" class="detailInput"
+          type="textarea"></el-input>
+      </div>
+      <div v-if="active === 3">
+        <el-result icon="success" title="审核成功" sub-title="点击发布按钮就可以完成上架了！" />
+      </div>
+    </el-card>
+    <div v-if="active < 4" class="controlButton">
+      <el-button @click="preStep" type="primary">上一步</el-button>
+      <el-button @click="nextStep" type="primary">{{ buttonInfo }}</el-button>
     </div>
-    <div v-if="active === 2">
-      <span class="priceTitle">
-        价格(CNY):
-      </span><br/>
-      <el-input-number 
-        v-model="goodInfo.price" 
-        :min="0" 
-        class="priceInput"/>
-      <br/>
-      <span class="detailTitle">
-        交易信息:
-      </span>
-      <el-input 
-        v-model="goodInfo.detail" 
-        placeholder="你期望的交易时间、地点以及其他细节。" 
-        :rows="4" 
-        class="detailInput" 
-        type="textarea"></el-input>
-    </div>
-    <div v-if="active === 3">
-      <el-result
-        icon="success"
-        title="审核成功"
-        sub-title="点击发布按钮就可以完成上架了！"
-      />
-    </div>
-  </el-card>  
-  <div v-if="active < 4" class="controlButton">
-    <el-button 
-      @click="preStep" 
-      type="primary">上一步</el-button>
-    <el-button @click="nextStep" type="primary">{{buttonInfo}}</el-button>
-  </div>  
-</div>
+  </div>
 </template>
 
 <script setup lang="ts">
@@ -194,7 +137,7 @@ function preStep() {
 }
 
 // 下一步
-function nextStep () {
+function nextStep() {
   switch (active.value) {
     case 0:
       if (goodInfo.value.title == "") {
@@ -250,7 +193,7 @@ function nextStep () {
             goodInfo.value.intro,
             goodInfo.value.detail,
             imgServerName.value.join(';'),
-            date.toISOString().slice(0, 19).replace('T', ' ')         
+            date.toISOString().slice(0, 19).replace('T', ' ')
           ]
           axios.post('/api/addGood', newGood)
             .then(() => {
@@ -261,38 +204,38 @@ function nextStep () {
             })
         },
         onNegativeClick: () => {
-          return false 
+          return false
         }
       })
   }
 }
 
 // 使用ref获取el-upload元素
-const upload = ref<UploadInstance | null>(null) 
+const upload = ref<UploadInstance | null>(null)
 // 注意：不需要额外添加头部声明content-type, 否则会引发后端报错: 
 // Error: Multipart: Boundary not found
 //const headers = {'content-type': 'multipart/form-data'} // 请求头, 固定数据类型
 const imgLocalUrl = ref<string[]>([]) // 上传图片后返回的本地 url
 const imgServerName = ref<string[]>([]) // 上传图片后返回的服务端名称
-const limitMax = 2200*1900 // 允许上传的最大尺寸
+const limitMax = 2200 * 1900 // 允许上传的最大尺寸
 // on-exceed hook
-function handleExceed () {
+function handleExceed() {
   message.warning('只能为商品上传最多三张图片!')
   return false
 }
 // before-upload hook
-function handleBeforeUpload (file: UploadRawFile) {
+function handleBeforeUpload(file: UploadRawFile) {
   if (file.size > limitMax) {
     message.error('大小超出限制')
     return false
   }
 }
 // 手动上传文件
-function submitUpload () {
+function submitUpload() {
   upload.value && upload.value.submit()
 }
 // on-success hook
-function handleOnSuccess (res: any, file: UploadFile) {
+function handleOnSuccess(res: any, file: UploadFile) {
   imgLocalUrl.value.push(URL.createObjectURL(file.raw as UploadRawFile))
   // 后端的文件信息逐个以数组的形式返回
   imgServerName.value.push(res[0].path.split('/')[3])
@@ -300,97 +243,115 @@ function handleOnSuccess (res: any, file: UploadFile) {
   // 注意：图片统一存储在服务器 ./pulic/images 目录下，用名称区分
 }
 // on-error hook
-function handleOnError (err: Error) {
+function handleOnError(err: Error) {
   console.log(err)
 }
 </script>
 
 <style scoped>
-.root-wrapper{
+.root-wrapper {
   width: 500px;
   min-height: 400px;
   margin: 0 auto;
   position: relative;
 }
-.contentCard{
+
+.contentCard {
   background-color: #f5f5f5;
   margin-top: 20px;
   margin-bottom: 10px;
 }
-.titleInput{
+
+.titleInput {
   width: 300px;
-  margin-left:10px;
+  margin-left: 10px;
   margin-top: 16px;
 }
-.nameInput{
+
+.nameInput {
   width: 200px;
-  margin-left:10px;
+  margin-left: 10px;
   margin-top: 16px;
-  margin-right:132px;
+  margin-right: 132px;
 }
-.typeSelect{
-  width:150px;
-  margin-left:10px;
-  margin-right:182px;
+
+.typeSelect {
+  width: 150px;
+  margin-left: 10px;
+  margin-right: 182px;
   margin-top: 20px;
 }
-.keywordsInput{
-  width:300px;
-  margin-left:10px;
-  margin-right:16px;
+
+.keywordsInput {
+  width: 300px;
+  margin-left: 10px;
+  margin-right: 16px;
   margin-top: 20px;
 }
-.campusSelect{
-  width:150px;
-  margin-left:10px;
-  margin-right:150px;
+
+.campusSelect {
+  width: 150px;
+  margin-left: 10px;
+  margin-right: 150px;
   margin-top: 20px;
 }
-.introTitle{
+
+.introTitle {
   float: left;
   font-weight: bold;
 }
+
 .introductionInput {
   margin: 10px 28px 0px 0px;
 }
-.imgTitle{
+
+.imgTitle {
   font-weight: bold;
   float: left;
   margin-top: 10px;
 }
-.uploadImg{
+
+.uploadImg {
   clear: both;
 }
-.avatarWrapper{
+
+.avatarWrapper {
   display: block;
   margin: 5px auto;
 }
-.avatar{
+
+.avatar {
   width: 220px;
   height: 190px;
   padding: 1px;
   border: 1px solid #f5f5f5;
 }
-.el-upload__tip{
+
+.el-upload__tip {
   color: red;
 }
-.buttonGutter{
+
+.buttonGutter {
   margin-left: 10px;
 }
-.priceTitle{
+
+.priceTitle {
   font-weight: bold;
   float: left;
 }
-.priceInput{
+
+.priceInput {
   clear: both;
   margin-right: 70px;
 }
-.detailTitle{
+
+.detailTitle {
   line-height: 32px;
   font-weight: bold;
   float: left;
 }
-.detailInput{
+
+.detailInput {
   width: 440px;
   margin: 0px 0px 0px 1px;
 }

@@ -37,7 +37,7 @@ const loginData = ref<{
 const rules: FormRules = {
   userID: [{
     required: true,
-    validator (rule: FormItemRule, value: string) {
+    validator(rule: FormItemRule, value: string) {
       if (!value) {
         return new Error('请输入账号')
       } else if (loginData.value.type === 'member' && value.length !== 7) {
@@ -57,7 +57,7 @@ const rules: FormRules = {
 
 const router = useRouter()
 // 登录函数
-function logIn (): void {
+function logIn(): void {
   // 对输入进行校验
   loginRef.value?.validate((errors) => {
     if (!errors) {
@@ -67,7 +67,7 @@ function logIn (): void {
       }
       switch (loginData.value.type) {
         case 'member':
-          axios.post('/api/userlogin',id_pwd)
+          axios.post('/api/userlogin', id_pwd)
             .then((is_e) => {
               if (is_e.data) {
                 message.success('用户登录成功！')
@@ -83,15 +83,15 @@ function logIn (): void {
                 // 将endRoutes移至尾部
                 endRoutes.forEach((route) => {
                   router.addRoute(route)
-                })                
-                router.push('/home')          
+                })
+                router.push('/home')
               } else {
                 message.error('账号或密码错误！')
               }
             })
           break
         case 'admin':
-          axios.post('/api/adminlogin', id_pwd).then((is_e)=>{
+          axios.post('/api/adminlogin', id_pwd).then((is_e) => {
             if (is_e.data) {
               message.success('管理员登录成功！')
               userStore.logIn(loginData.value.userID)
@@ -105,13 +105,13 @@ function logIn (): void {
               // 将endRoutes移至尾部
               endRoutes.forEach((route) => {
                 router.addRoute(route)
-              })          
+              })
               router.push('/admin/report')
             } else {
               message.error('账号或密码错误！')
             }
           })
-          break      
+          break
       }
     } else {
       console.log(errors)
@@ -121,92 +121,50 @@ function logIn (): void {
 </script>
 
 <template>
-<n-card
-  content-style="display: flex;flex-direction: column;align-items: center;padding-bottom: 0;"
-  header-style="padding-bottom: 0;"
-  footer-style="padding: 0 6em 1em 8em"
-  class="login-card">
-  <template #header>
-    <el-page-header
-      title="返回首页"
-      @back="$router.push('/home')"/>
-  </template>
-  <template #header-extra>
-    <n-button
-      text
-      size="tiny"
-      color="#2080F0"
-      :disabled="loginData.type === 'admin'"
-      @click="$emit('show-retrieve')">
-      <template #icon>
-        <n-icon>
-          <lock-open-outline />
-        </n-icon>
-      </template>      
-      忘记密码
-    </n-button>
-  </template>
-  <p class="login-title">用户登录</p>
-  <n-form
-    ref="loginRef"
-    :model="loginData"
-    :rules="rules"
-    label-placement="left"
-    label-width="auto">
-    <n-form-item
-      label="类型"
-      path="type"
-      :show-feedback="false"
-      style="margin-bottom: .6em;">
-      <div class="radios-wrapper">
-        <n-radio-group
-          v-model:value="loginData.type">
-            <n-radio-button
-              class="radio-btn"
-              value="member">
+  <n-card content-style="display: flex;flex-direction: column;align-items: center;padding-bottom: 0;"
+    header-style="padding-bottom: 0;" footer-style="padding: 0 6em 1em 8em" class="login-card">
+    <template #header>
+      <el-page-header title="返回首页" @back="$router.push('/home')" />
+    </template>
+    <template #header-extra>
+      <n-button text size="tiny" color="#2080F0" :disabled="loginData.type === 'admin'" @click="$emit('show-retrieve')">
+        <template #icon>
+          <n-icon>
+            <lock-open-outline />
+          </n-icon>
+        </template>
+        忘记密码
+      </n-button>
+    </template>
+    <p class="login-title">用户登录</p>
+    <n-form ref="loginRef" :model="loginData" :rules="rules" label-placement="left" label-width="auto">
+      <n-form-item label="类型" path="type" :show-feedback="false" style="margin-bottom: .6em;">
+        <div class="radios-wrapper">
+          <n-radio-group v-model:value="loginData.type">
+            <n-radio-button class="radio-btn" value="member">
               用户
             </n-radio-button>
-            <n-radio-button
-              class="radio-btn"
-              value="admin">
+            <n-radio-button class="radio-btn" value="admin">
               管理员
             </n-radio-button>
-        </n-radio-group>
+          </n-radio-group>
+        </div>
+      </n-form-item>
+      <n-form-item label="账号" path="userID">
+        <n-input v-model:value="loginData.userID" :placeholder="''" class="input" />
+      </n-form-item>
+      <n-form-item label="密码" path="password">
+        <n-input v-model:value="loginData.password" :placeholder="''" class="input" type="password"
+          show-password-on="click" @keyup.enter="logIn" />
+      </n-form-item>
+    </n-form>
+    <template #footer>
+      <div class="btns-wrapper">
+        <n-button type="info" @click="$emit('show-register')">注册</n-button>
+        <n-button type="success" @click="logIn">登录</n-button>
       </div>
-    </n-form-item>
-    <n-form-item
-      label="账号"
-      path="userID">
-      <n-input
-        v-model:value="loginData.userID"
-        :placeholder="''"
-        class="input"
-        />
-    </n-form-item>
-    <n-form-item
-      label="密码"
-      path="password">
-      <n-input
-        v-model:value="loginData.password"
-        :placeholder="''"
-        class="input"
-        type="password"
-        show-password-on="click"         
-        @keyup.enter="logIn"
-        />
-    </n-form-item>
-  </n-form>
-  <template #footer>
-    <div class="btns-wrapper">
-      <n-button
-        type="info"
-        @click="$emit('show-register')">注册</n-button>
-      <n-button
-        type="success"
-        @click="logIn">登录</n-button>
-    </div>
-  </template>
-</n-card>
+    </template>
+  </n-card>
 </template>
 
 <style scoped>
@@ -215,23 +173,28 @@ function logIn (): void {
   font-size: 1rem;
   background-color: rgba(255, 255, 255, .6);
 }
+
 .login-title {
   font-weight: bold;
   font-size: 1.6em;
   margin: 0;
   margin-bottom: .6em;
 }
+
 .radios-wrapper {
   display: flex;
   justify-content: center;
   width: 100%;
 }
+
 .radio-btn {
   background-color: #fff;
 }
+
 .input {
   text-align: left;
 }
+
 .btns-wrapper {
   display: flex;
   justify-content: space-evenly;

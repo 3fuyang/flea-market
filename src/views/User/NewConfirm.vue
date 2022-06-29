@@ -1,47 +1,37 @@
 <template>
-<div class="root-wrapper">
-  <p class="confirm-title">确认订单</p>
-  <el-scrollbar class="list-wrapper">
-    <GoodMediaObject 
-      v-for="item in goodsInfo" 
-      :good-i-d="item.goodID"
-      :seller-name="item.sellerName"
-      :good-title="item.goodTitle"
-      :image="item.image"
-      :price="Number.parseFloat(item.price)"/>
-  </el-scrollbar>
-  <div class="price-box">
-    <p class="price-label">
-      应付总额：
-      <span class="price-total">
-        ￥{{totalPrice.toFixed(2)}}
-      </span>
-    </p>
-    <p class="buyer-info">
-      收货人：{{userName}} ({{`${telNum.substring(0, 3)} XXXX ${telNum.substring(7, 11)}`}})
-    </p>
+  <div class="root-wrapper">
+    <p class="confirm-title">确认订单</p>
+    <el-scrollbar class="list-wrapper">
+      <GoodMediaObject v-for="item in goodsInfo" :good-i-d="item.goodID" :seller-name="item.sellerName"
+        :good-title="item.goodTitle" :image="item.image" :price="Number.parseFloat(item.price)" />
+    </el-scrollbar>
+    <div class="price-box">
+      <p class="price-label">
+        应付总额：
+        <span class="price-total">
+          ￥{{ totalPrice.toFixed(2) }}
+        </span>
+      </p>
+      <p class="buyer-info">
+        收货人：{{ userName }} ({{ `${telNum.substring(0, 3)} XXXX ${telNum.substring(7, 11)}` }})
+      </p>
+    </div>
+    <div class="btn-box">
+      <button class="submit-btn" @click="payBill">
+        提交订单
+      </button>
+    </div>
   </div>
-  <div class="btn-box">
-    <button 
-      class="submit-btn"
-      @click="payBill">
-      提交订单
-    </button>
-  </div>
-</div>
-<Teleport to="main">
-  <PayQRCode
-    :show="showQRModal"
-    :price="totalPrice"
-    @close="closeModal">
-    <template #header>
-      请扫描付款码，进行付款。
-    </template>
-    <template #body>
-      <img style="object-fit: scale-down;width: 60%;" src="/src/assets/payment.jpg"/>
-    </template>       
-  </PayQRCode>
-</Teleport>
+  <Teleport to="main">
+    <PayQRCode :show="showQRModal" :price="totalPrice" @close="closeModal">
+      <template #header>
+        请扫描付款码，进行付款。
+      </template>
+      <template #body>
+        <img style="object-fit: scale-down;width: 60%;" src="/src/assets/payment.jpg" />
+      </template>
+    </PayQRCode>
+  </Teleport>
 </template>
 
 <script lang="ts" setup>
@@ -102,7 +92,7 @@ axios.get(`/api/getBuyerInfo/${userID.value}`)
     telNum.value = res.data[0].telnum
   })
 
-const showQRModal = ref(false)  
+const showQRModal = ref(false)
 
 // 关闭付款窗口，根据参数paid改变订单的相应状态
 function closeModal(paid: boolean) {
@@ -118,7 +108,7 @@ function closeModal(paid: boolean) {
   const promises = []
   for (let item of goodsInfo.value) {
     let date = new Date()
-		date.setHours(date.getHours() + 8)
+    date.setHours(date.getHours() + 8)
     order.seller = item.sellerID
     order.goodID = item.goodID
     order.price = Number.parseFloat(item.price)
@@ -128,12 +118,12 @@ function closeModal(paid: boolean) {
   }
   Promise.all(promises)
     .then(() => {
-        message.success('提交成功，即将为您跳转到订单页！')
-        window.setTimeout(() => router.push('/order'), 500)
+      message.success('提交成功，即将为您跳转到订单页！')
+      window.setTimeout(() => router.push('/order'), 500)
     })
     .catch(err => {
       console.log(err)
-    })  
+    })
 }
 
 function payBill() {
@@ -143,31 +133,34 @@ function payBill() {
 </script>
 
 <style scoped>
-.root-wrapper{
+.root-wrapper {
   display: flex;
   justify-content: center;
   flex-direction: column;
   align-items: center;
   background-color: #fff;
 }
-.confirm-title{
+
+.confirm-title {
   margin: 1em 0;
   font-size: 1.4rem;
   font-weight: 600;
   color: #666;
 }
-.list-wrapper{
+
+.list-wrapper {
   display: flex;
   justify-content: center;
   flex-direction: column;
   align-items: center;
-  max-height: 75vh;  
+  max-height: 75vh;
   overflow: auto;
   border: 1px solid #99CCFF;
   padding: 1em;
 }
-.price-box{
-  width: calc(35vw + 4.5rem);  
+
+.price-box {
+  width: calc(35vw + 4.5rem);
   background-color: #F4F4F4;
   box-sizing: border-box;
   border: 1px solid #eee;
@@ -176,39 +169,45 @@ function payBill() {
   flex-direction: column;
   align-items: flex-end;
 }
-.price-label{
+
+.price-label {
   font-size: .8rem;
 }
-.price-total{
+
+.price-total {
   margin: .5em 1em .5em 0;
   font-size: 1.1rem;
   font-weight: 600;
   color: red;
 }
-.buyer-info{
+
+.buyer-info {
   margin: 0 1em 1em 0;
   font-size: .8rem;
   color: #aaa;
 }
-.btn-box{
+
+.btn-box {
   width: calc(35vw + 4rem);
   margin: 1em auto;
   display: flex;
   flex-direction: row-reverse;
 }
-.submit-btn{
+
+.submit-btn {
   flex-grow: 0;
   font-size: 1.1rem;
   outline: none;
   cursor: pointer;
   box-sizing: border-box;
-	border-color: #FF9900;
-	background: #FF9900;
-	color: #fff;
-	text-align: center;	
+  border-color: #FF9900;
+  background: #FF9900;
+  color: #fff;
+  text-align: center;
 }
-.submit-btn:hover{
-	border-color: #ff6f00;
-	background: #ff6f00;
+
+.submit-btn:hover {
+  border-color: #ff6f00;
+  background: #ff6f00;
 }
 </style>

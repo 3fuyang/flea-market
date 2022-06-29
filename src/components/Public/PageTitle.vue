@@ -6,18 +6,14 @@ import { NIcon } from 'naive-ui'
 <template>
   <div class="title-wrapper">
     <div class="page-title">
-      <n-icon
-        :size="50">
+      <n-icon :size="50">
         <slot name="icon"></slot>
       </n-icon>
       <div class="title-text">
-        <p
-          class="main-title"
-          depth="3">
+        <p class="main-title" depth="3">
           <slot name="main-title"></slot>
         </p>
-        <p
-          class="sub-title">
+        <p class="sub-title">
           <slot name="sub-title"></slot>
         </p>
       </div>
@@ -26,7 +22,6 @@ import { NIcon } from 'naive-ui'
 </template>
 
 <style scoped lang="scss">
-
 .title-wrapper {
   display: flex;
   justify-content: center;

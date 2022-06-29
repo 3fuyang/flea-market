@@ -1,55 +1,58 @@
 <template>
-<div class="root-wrapper">
-  <page-title>
-    <template #icon>
-      <star-line-horizontal320-regular/>
-    </template>
-    <template #main-title>
-      我的收藏
-    </template>
-    <template #sub-title>
-      Favorite
-    </template>
-  </page-title>
-  <div style="text-align: right;margin-bottom: 10px;">     
-  <el-button v-show="searching === 1" type="text"  round style="margin-right: 800px;"
-  @click="cancelSearch()"><el-icon :size="18"><arrow-left/></el-icon>Cancel</el-button>  
-  <el-input v-model.trim="keyWord" placeholder="Search in collections." style="width: 250px;margin-right: 240px;" @keyup.enter="searchFavorite()">
-    <template #prefix>
-      <el-icon :size="18" style="margin-top: 5px;"><search/></el-icon>
-    </template>
-    <template #suffix>
-      <el-button plain type="primary" size="small" round style="margin-top: 4px;" @click="searchFavorite()">搜索</el-button>         
-    </template>        
-  </el-input>  
-  </div> 
-  <el-row>
-    <el-col :span="2"></el-col>
-    <el-col :span="20">
-      <div v-if="showData.length === 0">
-        <el-empty description="您暂时没有收藏！"></el-empty>
-      </div>
-      <el-row>
-      <template v-for="(goodItem) in showData" :key="goodItem.id">
-        <favorite-card
-          :good-i-d="goodItem.id"
-          :src="goodItem.path"
-          :price="goodItem.price"
-          :title="goodItem.name"
-          :removable="true"/>
-        <!-- <el-card :body-style="{ padding: '0px' }" style="width: 220px;height: 250px;margin: 0px 5px 10px 5px;" >
+  <div class="root-wrapper">
+    <page-title>
+      <template #icon>
+        <star-line-horizontal320-regular />
+      </template>
+      <template #main-title>
+        我的收藏
+      </template>
+      <template #sub-title>
+        Favorite
+      </template>
+    </page-title>
+    <div style="text-align: right;margin-bottom: 10px;">
+      <el-button v-show="searching === 1" type="text" round style="margin-right: 800px;" @click="cancelSearch()">
+        <el-icon :size="18">
+          <arrow-left />
+        </el-icon>Cancel
+      </el-button>
+      <el-input v-model.trim="keyWord" placeholder="Search in collections." style="width: 250px;margin-right: 240px;"
+        @keyup.enter="searchFavorite()">
+        <template #prefix>
+          <el-icon :size="18" style="margin-top: 5px;">
+            <search />
+          </el-icon>
+        </template>
+        <template #suffix>
+          <el-button plain type="primary" size="small" round style="margin-top: 4px;" @click="searchFavorite()">搜索
+          </el-button>
+        </template>
+      </el-input>
+    </div>
+    <el-row>
+      <el-col :span="2"></el-col>
+      <el-col :span="20">
+        <div v-if="showData.length === 0">
+          <el-empty description="您暂时没有收藏！"></el-empty>
+        </div>
+        <el-row>
+          <template v-for="(goodItem) in showData" :key="goodItem.id">
+            <favorite-card :good-i-d="goodItem.id" :src="goodItem.path" :price="goodItem.price" :title="goodItem.name"
+              :removable="true" />
+            <!-- <el-card :body-style="{ padding: '0px' }" style="width: 220px;height: 250px;margin: 0px 5px 10px 5px;" >
           <el-image class="point" :src="goodItem.path" @click="jumpCard(goodItem.id)" fit="scale-down" />
             <span style="display: inline-block;font-size: 13px;color: #808080;margin-top: 3px;">{{goodItem.name}}</span><br/>
             <span style="display: inline-block;font-size: 18px;color: #FF9900;margin-top: 3px;">￥{{goodItem.price}}</span>
             <el-icon class="point" style="font-size: 20px;color: #999999;font-weight: bold;margin-top: 5px;float: right;"
             @click="deleteFavorite(goodItem.id)"><close/></el-icon>
-        </el-card> --> 
-      </template>
-      <br/>
-      </el-row> 
-    </el-col>
-  </el-row>
-</div>
+        </el-card> -->
+          </template>
+          <br />
+        </el-row>
+      </el-col>
+    </el-row>
+  </div>
 </template>
 
 <script setup lang="ts">
@@ -108,9 +111,9 @@ axios.get(`/api/getCollection/${userID.value}`)
 // 点击卡片跳转商品详情页
 function jumpCard(itemID: string) {
   router.push({
-    path:'/details',
-    query:{
-      gid:itemID,
+    path: '/details',
+    query: {
+      gid: itemID,
     }
   })
 }
@@ -127,7 +130,7 @@ function searchFavorite() {
     }
   } else {
     message.error('请输入关键字进行搜索')
-  }      
+  }
 }
 
 // 取消搜素
@@ -137,7 +140,7 @@ function cancelSearch() {
 }
 
 // 取消收藏
-function deleteFavorite (gid: string) {
+function deleteFavorite(gid: string) {
   dialog.warning({
     title: '确认',
     content: '将从收藏夹中删除这件商品,是否继续操作?',
@@ -161,7 +164,7 @@ function deleteFavorite (gid: string) {
           }
           favoriteData.value.splice(index, 1)
 
-          index= 0
+          index = 0
           for (let item of showData.value) {
             if (item.id === gid) {
               break
@@ -173,7 +176,7 @@ function deleteFavorite (gid: string) {
           message.success('删除成功！')
         })
     }
-  })  
+  })
 }
 </script>
 
@@ -181,7 +184,8 @@ function deleteFavorite (gid: string) {
 .root-wrapper {
   width: 100%;
 }
-.point{
+
+.point {
   cursor: pointer;
 }
 </style>

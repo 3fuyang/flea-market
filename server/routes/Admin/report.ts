@@ -65,7 +65,7 @@ app.post(`/banAccusedAccount`, (req, res) => {
   connection.query(
     `update userAccount set available='1' where user_id=?;
      update reportData set reply=?,reply_time=?,replyer=? where order_id=?`,
-     [req.body.userID, req.body.reply, req.body.replyTime, req.body.replyer, req.body.orderID],
+     [ req.body.userID, req.body.reply, req.body.replyTime, req.body.replyer, req.body.orderID ],
     (err, result) => {
       if (err) throw err
       res.end(JSON.stringify(result))

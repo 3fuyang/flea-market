@@ -123,23 +123,23 @@ export const loginRoutes: RouteRecordRaw[] = [
 
 // 末尾路由
 export const endRoutes: RouteRecordRaw[] = [
-/* 	{
-		name: '404',
-		path: '/404',
-		component: NotFound
-	}	,
-	{
-		name: 'notFound',
-		path: '/:pathMatch(.*)',
-		redirect: '/404'
-	} */
+	/* 	{
+			name: '404',
+			path: '/404',
+			component: NotFound
+		}	,
+		{
+			name: 'notFound',
+			path: '/:pathMatch(.*)',
+			redirect: '/404'
+		} */
 ]
 
 
 const router = createRouter({
-  history: createWebHistory(import.meta.env.BASE_URL),
-  routes: [...publicRoutes, ...loginRoutes, ...endRoutes],
-	scrollBehavior (to, from, savedPosition) {
+	history: createWebHistory(import.meta.env.BASE_URL),
+	routes: [...publicRoutes, ...loginRoutes, ...endRoutes],
+	scrollBehavior(to, from, savedPosition) {
 		return { top: 0 }
 	}
 })
@@ -179,13 +179,13 @@ router.beforeEach((to, from, next) => {
 			endRoutes.forEach((route) => {
 				router.addRoute(route)
 			})
-			next(to.path)    
+			next(to.path)
 		} else {
 			next()
 		}
 	} else if (userStore.identity === 'visitor') {
 		next()
-	}	else {
+	} else {
 		next()
 	}
 })

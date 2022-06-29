@@ -20,7 +20,7 @@ watch(route, () => {
   loadingBar.start()
   window.setTimeout(() => {
     loadingBar.finish()
-  }, 0)  
+  }, 0)
 })
 
 const userStore = useUserStore()
@@ -67,7 +67,7 @@ const visitorOptions: MenuOption[] = [
         { default: () => '登录/注册' }
       ),
     key: 'go-login'
-  },  
+  },
 ]
 
 // 普通会员选项
@@ -90,7 +90,7 @@ const memberOptions: MenuOption[] = [
     key: 'info-center',
     children: [
       {
-        label: () => 
+        label: () =>
           h(
             RouterLink,
             {
@@ -106,7 +106,7 @@ const memberOptions: MenuOption[] = [
         key: 'info'
       },
       {
-        label: () => 
+        label: () =>
           h(
             RouterLink,
             {
@@ -120,7 +120,7 @@ const memberOptions: MenuOption[] = [
             { default: () => '安全中心' }
           ),
         key: 'security'
-      },      
+      },
     ]
   },
   {
@@ -128,7 +128,7 @@ const memberOptions: MenuOption[] = [
     key: 'browse-management',
     children: [
       {
-        label: () => 
+        label: () =>
           h(
             RouterLink,
             {
@@ -144,7 +144,7 @@ const memberOptions: MenuOption[] = [
         key: 'shopping-cart'
       },
       {
-        label: () => 
+        label: () =>
           h(
             RouterLink,
             {
@@ -158,23 +158,23 @@ const memberOptions: MenuOption[] = [
             { default: () => '收藏夹' }
           ),
         key: 'favorite'
-      },   
+      },
       {
-        label: () => 
+        label: () =>
           h(
             RouterLink,
             {
               to: {
                 name: 'history'
               },
-              onClick: () => { 
+              onClick: () => {
                 activeKey.value = 'browse-management'
               }
             },
             { default: () => '浏览记录' }
           ),
         key: 'history'
-      },          
+      },
     ]
   },
   {
@@ -182,7 +182,7 @@ const memberOptions: MenuOption[] = [
     key: 'my-bussiness',
     children: [
       {
-        label: () => 
+        label: () =>
           h(
             RouterLink,
             {
@@ -198,7 +198,7 @@ const memberOptions: MenuOption[] = [
         key: 'order'
       },
       {
-        label: () => 
+        label: () =>
           h(
             RouterLink,
             {
@@ -212,9 +212,9 @@ const memberOptions: MenuOption[] = [
             { default: () => '商品管理' }
           ),
         key: 'goods'
-      },   
+      },
       {
-        label: () => 
+        label: () =>
           h(
             RouterLink,
             {
@@ -228,9 +228,9 @@ const memberOptions: MenuOption[] = [
             { default: () => '卖出闲置' }
           ),
         key: 'trade'
-      }, 
+      },
       {
-        label: () => 
+        label: () =>
           h(
             RouterLink,
             {
@@ -244,11 +244,11 @@ const memberOptions: MenuOption[] = [
             { default: () => '我的聊天' }
           ),
         key: 'chat'
-      },               
+      },
     ]
   },
   {
-    label: () => 
+    label: () =>
       h(
         NButton,
         {
@@ -258,7 +258,7 @@ const memberOptions: MenuOption[] = [
         { default: () => '注销' }
       ),
     key: 'logout'
-  },    
+  },
 ]
 
 // 管理员选项
@@ -290,7 +290,7 @@ const adminOptions: MenuOption[] = [
     key: 'go-report'
   },
   {
-    label: () => 
+    label: () =>
       h(
         NButton,
         {
@@ -300,11 +300,11 @@ const adminOptions: MenuOption[] = [
         { default: () => '注销' }
       ),
     key: 'logout'
-  },  
+  },
 ]
 
 // 登出
-function logOut () {
+function logOut() {
   //对话框询问
   dialog.warning({
     title: '确认',
@@ -314,7 +314,7 @@ function logOut () {
     onPositiveClick: () => {
       //用store的actions设置登录状态为false
       const preIdentity = identity.value
-      userStore.logOut()    
+      userStore.logOut()
       // 移除权限路由
       switch (preIdentity) {
         case 'member':
@@ -343,24 +343,18 @@ function logOut () {
     },
     onNegativeClick: () => {
       message.info('取消注销')
-    }    
+    }
   })
 }
 </script>
 
 <template>
   <div class="top-wrapper">
-    <h1
-      class="wave-wrapper"
-      @click="$router.push('/home')">
+    <h1 class="wave-wrapper" @click="$router.push('/home')">
       TJ Flea <span class="dash">_</span>
     </h1>
-    <div class="gap"/>
-    <n-menu
-      class="menu"
-      v-model:value="activeKey"
-      mode="horizontal"
-      :options="currOptions">
+    <div class="gap" />
+    <n-menu class="menu" v-model:value="activeKey" mode="horizontal" :options="currOptions">
     </n-menu>
   </div>
 </template>
@@ -376,6 +370,7 @@ function logOut () {
   padding-left: 2em;
   border-bottom: 1px solid #f4f4f5;
 }
+
 .wave-wrapper {
   margin: 0;
   letter-spacing: .05em;
@@ -386,7 +381,9 @@ function logOut () {
   overflow: hidden;
   padding: 0 .8em 0 1em;
   cursor: pointer;
-  &::before, &::after {
+
+  &::before,
+  &::after {
     content: "";
     position: absolute;
     top: 33em;
@@ -400,18 +397,22 @@ function logOut () {
     z-index: 1;
     mix-blend-mode: darken;
   }
+
   &::after {
     border-radius: 43% 47% 44% 48%;
-    animation: rotate 10s infinite .5s linear; 
-  }  
+    animation: rotate 10s infinite .5s linear;
+  }
 }
+
 .dash {
   font-weight: bold;
   color: hsl(200, 80%, 55%);
 }
+
 .gap {
   flex: 4;
 }
+
 .menu {
   flex-grow: 1;
   flex-shrink: 0;
@@ -421,6 +422,7 @@ function logOut () {
   0% {
     transform: translate(-50%, -50%) rotate(0);
   }
+
   100% {
     transform: translate(-50%, -50%) rotate(360deg);
   }

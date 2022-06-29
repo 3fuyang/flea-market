@@ -7,7 +7,7 @@ const props = defineProps<{
 }>()
 
 const emits = defineEmits<{
-  (e:'close', paid: boolean): void
+  (e: 'close', paid: boolean): void
 }>()
 
 </script>
@@ -26,16 +26,8 @@ const emits = defineEmits<{
           </div>
 
           <div class="modal-footer">
-            <n-button
-              type="warning"
-              class="modal-default-button"
-              @click="$emit('close', false)"
-            >暂不付款</n-button>
-            <n-button
-              type="info"
-              class="modal-default-button"
-              @click="$emit('close', true)"
-              >完成付款</n-button>            
+            <n-button type="warning" class="modal-default-button" @click="$emit('close', false)">暂不付款</n-button>
+            <n-button type="info" class="modal-default-button" @click="$emit('close', true)">完成付款</n-button>
           </div>
         </div>
       </div>

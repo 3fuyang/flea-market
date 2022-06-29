@@ -2,17 +2,15 @@
 import 'css-doodle'
 
 // 点击更新doodle
-function update (e: Event) {
+function update(e: Event) {
   (e.target as any).update()
 }
 </script>
 
 <template>
-  <css-doodle
-    class="base-doodle"
-    @click="update">
+  <css-doodle class="base-doodle" @click="update">
     :doodle {
-      @grid: 7 / 100%;
+    @grid: 7 / 100%;
     }
     width: 5em;
     height: 5em;

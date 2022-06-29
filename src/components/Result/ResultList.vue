@@ -1,23 +1,16 @@
 <template>
-<div class="total-wrapper">
-  <div class="gl-wrapper" v-if="resultGoodsView.length > 0">
-    <GoodCard 
-      v-for="good in resultGoodsView" 
-      :good-i-d="good.goodID.toString()"
-      :price="good.price"
-      :title="good.title" 
-      :images="good.images" />
+  <div class="total-wrapper">
+    <div class="gl-wrapper" v-if="resultGoodsView.length > 0">
+      <GoodCard v-for="good in resultGoodsView" :good-i-d="good.goodID.toString()" :price="good.price"
+        :title="good.title" :images="good.images" />
+    </div>
+    <el-empty v-else description="啥也没搜到? Don't Panick. 这很正常。" />
+    <div class="pagination-wrapper">
+      <n-pagination v-if="resultGoods.length !== 0" v-model:page="page" :item-count="resultGoods.length"
+        :page-size="24">
+      </n-pagination>
+    </div>
   </div>
-  <el-empty v-else description="啥也没搜到? Don't Panick. 这很正常。"/>
-  <div class="pagination-wrapper">
-    <n-pagination
-      v-if="resultGoods.length !== 0"
-      v-model:page="page" 
-      :item-count="resultGoods.length"
-      :page-size="24">
-    </n-pagination>
-  </div>  
-</div>
 </template>
 
 <script setup lang="ts">
@@ -63,7 +56,7 @@ const parseQuery = (route: RouteLocationNormalized) => {
   let body: RequestBody = { keywords: keywords as string }
   // 解析filters
   if (filters) {
-    for(let property in filters) {
+    for (let property in filters) {
       if (property !== 'minPrice' && property !== 'maxPrice' && filters[property].length === 0) {
         delete filters[property]
       }
@@ -97,7 +90,7 @@ onBeforeRouteUpdate((to, from, next) => {
 </script>
 
 <style scoped>
-.total-wrapper{
+.total-wrapper {
   border: 1px solid #eee;
   box-sizing: border-box;
   padding: .4em 0;
@@ -106,13 +99,15 @@ onBeforeRouteUpdate((to, from, next) => {
   min-height: 44em;
   z-index: 1;
 }
-.gl-wrapper{
+
+.gl-wrapper {
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
   justify-content: flex-start;
 }
-.pagination-wrapper{
+
+.pagination-wrapper {
   align-self: center;
 }
 </style>

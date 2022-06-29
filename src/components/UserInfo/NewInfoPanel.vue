@@ -38,25 +38,25 @@ axios.get(`/api/getUserInfo/${props.userID}`)
   .then((res: any) => {
     const data = res.data[0]
     userInfo.value.userID = props.userID as string,
-    userInfo.value.nickName = data.nickname,
-    userInfo.value.selfIntro = data.biography,
-    userInfo.value.college = data.college,
-    userInfo.value.gender = data.gender,
-    userInfo.value.birthday = data.birthday,
-    userInfo.value.avatar = `http://106.15.78.201:8082/public/avatars/${data.avatar}`,
-    userInfo.value.sellerRate = 4
+      userInfo.value.nickName = data.nickname,
+      userInfo.value.selfIntro = data.biography,
+      userInfo.value.college = data.college,
+      userInfo.value.gender = data.gender,
+      userInfo.value.birthday = data.birthday,
+      userInfo.value.avatar = `http://106.15.78.201:8082/public/avatars/${data.avatar}`,
+      userInfo.value.sellerRate = 4
 
     copy()
   })
 
-function copy () {
+function copy() {
   for (let property in newInfo.value) {
     if (property === 'birthday') {
       newInfo.value[property] = Date.parse(userInfo.value.birthday as string)
     } else {
       newInfo.value[property] = userInfo.value[property]
     }
-  }  
+  }
 }
 
 // 修改后的信息，与表单绑定
@@ -85,12 +85,12 @@ const rules: FormRules = {
   gender: {
     key: 'gender',
     required: true,
-    message: '请选择性别'    
+    message: '请选择性别'
   },
   birthday: {
     key: 'birthday',
     required: true,
-    message: '请选择生日'    
+    message: '请选择生日'
   }
 }
 
@@ -98,7 +98,7 @@ const rules: FormRules = {
 const changingInfo = ref(false)
 
 // 重置修改
-function resetEdit () {
+function resetEdit() {
   message.info('取消编辑个人信息。')
   changingInfo.value = false
   edited.value = false
@@ -107,7 +107,7 @@ function resetEdit () {
 }
 
 // 修改编辑状态
-function changeEditStatus () {
+function changeEditStatus() {
   if (!changingInfo.value) {
     changingInfo.value = true
   } else if (edited.value) {
@@ -119,7 +119,7 @@ function changeEditStatus () {
       onPositiveClick: () => {
         resetEdit()
       }
-    })    
+    })
   } else {
     resetEdit()
   }
@@ -170,7 +170,7 @@ const infoItems: InfoItem[] = [
 ]
 
 // 提交修改
-function confirmEdit () {
+function confirmEdit() {
   if (edited.value) {
     dialog.info({
       title: '提示',
@@ -181,25 +181,25 @@ function confirmEdit () {
         // 校验表单
         formRef.value?.validate((errors) => {
           if (!errors) {
-          // 调用接口：传入（用户ID，新用户信息） 返回（修改结果）
-          axios.post(`api/modifyUserInfo`, newInfo.value)
-            .then(() => {
-              // 修改视图
-              for (let property in newInfo.value) {
-                (userInfo.value as UserInfo)[property] = newInfo.value[property]
-              }
-              changingInfo.value = false
-              edited.value = false
-              message.success('个人信息已修改!')
-            })
+            // 调用接口：传入（用户ID，新用户信息） 返回（修改结果）
+            axios.post(`api/modifyUserInfo`, newInfo.value)
+              .then(() => {
+                // 修改视图
+                for (let property in newInfo.value) {
+                  (userInfo.value as UserInfo)[property] = newInfo.value[property]
+                }
+                changingInfo.value = false
+                edited.value = false
+                message.success('个人信息已修改!')
+              })
           }
-        })      
+        })
       }
     })
   } else {
     //console.log(userInfo.value, newInfo.value)
     message.warning('您没有要保存的修改。')
-  }  
+  }
 }
 
 // 头像上传组件ref对象
@@ -209,7 +209,7 @@ const uploadRef = ref<UploadInst | null>(null)
 const fileListLength = ref(0)
 
 // 打开上传头像对话框
-function openAvatarModal () {
+function openAvatarModal() {
   dialog.create({
     title: '上传头像',
     content: () => h(
@@ -276,7 +276,7 @@ const footerStyle: CSSProperties = {
 
 // 描述内容样式
 const descriptionContentStyle: CSSProperties = {
-  
+
 }
 
 // 标题样式
@@ -301,45 +301,27 @@ const genderOptions: SelectOption[] = ['男', '女'].map(item => ({
 </script>
 
 <template>
-  <n-card
-    class="info-card"
-    :content-style="contentStyle"
-    :footer-style="footerStyle">
-    <n-popover
-      trigger="hover"
-      >
+  <n-card class="info-card" :content-style="contentStyle" :footer-style="footerStyle">
+    <n-popover trigger="hover">
       <template #trigger>
-        <n-avatar
-          class="avatar"
-          :src="userInfo?.avatar"
-          round
-          color="white"
-          :size="100"
-          @click="openAvatarModal" />
+        <n-avatar class="avatar" :src="userInfo?.avatar" round color="white" :size="100" @click="openAvatarModal" />
       </template>
       更换头像
     </n-popover>
     <template v-if="!changingInfo">
       <p class="nickname">
-        {{userInfo.nickName}}
+        {{ userInfo.nickName }}
       </p>
-      <n-text
-        :depth="3"
-        class="intro">
-        {{userInfo.selfIntro}}
+      <n-text :depth="3" class="intro">
+        {{ userInfo.selfIntro }}
       </n-text>
-      <n-divider class="divider"/>
-      <n-descriptions
-        class="description-box"
-        :content-style="descriptionContentStyle"
-        v-if="!changingInfo"
-        label-placement="left"
-        :columns="1">
+      <n-divider class="divider" />
+      <n-descriptions class="description-box" :content-style="descriptionContentStyle" v-if="!changingInfo"
+        label-placement="left" :columns="1">
         <template #header>
-          <page-title
-            :style="pageTitleStyle">
+          <page-title :style="pageTitleStyle">
             <template #icon>
-              <person-info16-filled/>
+              <person-info16-filled />
             </template>
             <template #main-title>
               基本信息
@@ -349,104 +331,53 @@ const genderOptions: SelectOption[] = ['男', '女'].map(item => ({
             </template>
           </page-title>
         </template>
-        <n-descriptions-item
-          v-for="item in infoItems">
+        <n-descriptions-item v-for="item in infoItems">
           <template #label>
-              <span class="label">
-                {{item.label}}
-              </span>
+            <span class="label">
+              {{ item.label }}
+            </span>
           </template>
-          <n-text 
-            class="item-value"
-            depth="3">
-            {{userInfo[item.key]}}
+          <n-text class="item-value" depth="3">
+            {{ userInfo[item.key] }}
           </n-text>
         </n-descriptions-item>
       </n-descriptions>
     </template>
     <template v-else>
-      <n-form
-        class="form"
-        ref="formRef"
-        :rules="rules"
-        label-placement="left"
-        label-width="auto"
-        require-mark-placement="right-hanging"
-        size="small"
-        :model="newInfo">
-        <n-form-item
-          label="昵称"
-          path="nickName">
-          <n-input
-            placeholder="Nickname"
-            class="input"
-            :maxlength="20"
-            v-model:value="newInfo.nickName"/>
+      <n-form class="form" ref="formRef" :rules="rules" label-placement="left" label-width="auto"
+        require-mark-placement="right-hanging" size="small" :model="newInfo">
+        <n-form-item label="昵称" path="nickName">
+          <n-input placeholder="Nickname" class="input" :maxlength="20" v-model:value="newInfo.nickName" />
         </n-form-item>
-        <n-form-item
-          label="个性签名"
-          path="selfIntro">
-          <n-input
-            placeholder="Self Introduction"
-            class="input"
-            type="textarea"
-            :maxlength="60"
-            :autosize="{ minRows: 3, maxRows: 3 }"
-            v-model:value="newInfo.selfIntro"/>
+        <n-form-item label="个性签名" path="selfIntro">
+          <n-input placeholder="Self Introduction" class="input" type="textarea" :maxlength="60"
+            :autosize="{ minRows: 3, maxRows: 3 }" v-model:value="newInfo.selfIntro" />
         </n-form-item>
-        <n-form-item
-          label="学院"
-          path="college">
-          <n-select
-            v-model:value="newInfo.college"
-            placeholder="College"
-            :options="collegeOptions"/>
+        <n-form-item label="学院" path="college">
+          <n-select v-model:value="newInfo.college" placeholder="College" :options="collegeOptions" />
         </n-form-item>
-        <n-form-item
-          label="性别"
-          path="gender">
-          <n-select
-            v-model:value="newInfo.gender"
-            placeholder="Gender"
-            :options="genderOptions"/>
-        </n-form-item>  
-        <n-form-item
-          label="生日"
-          path="birthday">
-          <n-date-picker
-            v-model:value="(newInfo.birthday as number)"
-            type="date"
-            clearable />
-        </n-form-item>                
+        <n-form-item label="性别" path="gender">
+          <n-select v-model:value="newInfo.gender" placeholder="Gender" :options="genderOptions" />
+        </n-form-item>
+        <n-form-item label="生日" path="birthday">
+          <n-date-picker v-model:value="(newInfo.birthday as number)" type="date" clearable />
+        </n-form-item>
       </n-form>
     </template>
     <div class="button-area">
-      <n-button
-        v-if="!changingInfo"
-        size="small"
-        color="#39C"
-        @click="changeEditStatus">
+      <n-button v-if="!changingInfo" size="small" color="#39C" @click="changeEditStatus">
         编辑个人信息
       </n-button>
-      <n-button
-        v-if="changingInfo"
-        size="small"
-        type="success"
-        @click="confirmEdit">
+      <n-button v-if="changingInfo" size="small" type="success" @click="confirmEdit">
         保存更改
       </n-button>
-      <n-button
-        v-if="changingInfo"
-        size="small"
-        @click="changeEditStatus">
+      <n-button v-if="changingInfo" size="small" @click="changeEditStatus">
         取消编辑
-      </n-button>      
+      </n-button>
     </div>
     <template #footer>
       <n-text>顾客评分：</n-text>
-      <n-rate
-        readonly
-        :value="userInfo.sellerRate"/>
+      <n-rate readonly :value="userInfo.sellerRate" />
     </template>
   </n-card>
 </template>
@@ -454,7 +385,7 @@ const genderOptions: SelectOption[] = ['男', '女'].map(item => ({
 <style scoped lang="scss">
 .info-card {
   width: 28%;
-  box-shadow: 0 4px 12px  rgba(0,0,0,0.08);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
 }
 
 .avatar {
@@ -462,6 +393,7 @@ const genderOptions: SelectOption[] = ['男', '女'].map(item => ({
   padding: 0;
   cursor: pointer;
   transition: transform .6s;
+
   &:hover {
     transform: rotate(360deg);
   }
@@ -500,6 +432,7 @@ const genderOptions: SelectOption[] = ['男', '女'].map(item => ({
 .item-value {
   font-size: 1.1rem;
   letter-spacing: 1px;
+
   &:hover {
     text-decoration: underline;
     color: #2B7489;
@@ -510,6 +443,7 @@ const genderOptions: SelectOption[] = ['男', '女'].map(item => ({
 .form {
   margin-top: 1em;
 }
+
 .button-area {
   display: flex;
   gap: 1em;
@@ -524,6 +458,7 @@ const genderOptions: SelectOption[] = ['男', '女'].map(item => ({
   from {
     margin-left: -10em;
   }
+
   to {
     margin-left: 0;
   }

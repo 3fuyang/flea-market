@@ -14,8 +14,8 @@ const pinia = createPinia()
 pinia.use(piniaPluginPersistedstate)
 
 app
-  .use(pinia) 
-  .use(router)  
+  .use(pinia)
+  .use(router)
   .use(VueAxios, axios)
   .use(VueCssDoodle)
   .mount('#app')

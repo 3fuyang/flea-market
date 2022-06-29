@@ -4,51 +4,39 @@
 			<div class="good-container">
 				<div class="left-flex-item">
 					<div class="big-image-container">
-						<el-image
-							:src="currImageURL"
-							:preview-src-list="imageCollection"
-							lazy
-							class="big-image">
+						<el-image :src="currImageURL" :preview-src-list="imageCollection" lazy class="big-image">
 							<template #placeholder>
 								<div class="loading-container">
 									<div class="line"></div>
 									<div class="line"></div>
 									<div class="line"></div>
 									<div class="line"></div>
-								</div>								
-							</template>								
+								</div>
+							</template>
 							<template #error>
-								<p class="placeholder">Error !</p>							
-							</template>						
+								<p class="placeholder">Error !</p>
+							</template>
 						</el-image>
 					</div>
 					<div class="sub-images-container">
-						<img
-							class="sub-image"
-							v-for="(image, index) of imageCollection"
-							:src="image"
-							:id="index.toString()"/>
+						<img class="sub-image" v-for="(image, index) of imageCollection" :src="image" :id="index.toString()" />
 					</div>
-					<p class="declaration">商品类型：{{goodInfo.type}}</p>
+					<p class="declaration">商品类型：{{ goodInfo.type }}</p>
 				</div>
 				<div class="right-flex-item">
 					<el-row>
 						<el-col :span="21">
 							<p class="good-title">
-								{{goodInfo.goodTitle}}
+								{{ goodInfo.goodTitle }}
 							</p>
 						</el-col>
 						<el-col :span="3">
-							<el-icon 
-								class="star" 
-								:size="'2em'" 
-								color="orange"
-								@click="changeLike">
-								<star-filled v-if="liked"/>
+							<el-icon class="star" :size="'2em'" color="orange" @click="changeLike">
+								<star-filled v-if="liked" />
 								<star v-else />
-							</el-icon><br/>
-							<p class="likes">({{goodInfo.likes}})</p>
-						</el-col>					
+							</el-icon><br />
+							<p class="likes">({{ goodInfo.likes }})</p>
+						</el-col>
 					</el-row>
 					<div class="price-container">
 						<el-row>
@@ -56,8 +44,8 @@
 								<p class="price-label">价格</p>
 							</el-col>
 							<el-col :span="18">
-								<span class="price">￥{{goodInfo.price}}</span>
-								<span class="onshelf-date">（上架于 {{goodInfo.onshelfTime}}）</span>
+								<span class="price">￥{{ goodInfo.price }}</span>
+								<span class="onshelf-date">（上架于 {{ goodInfo.onshelfTime }}）</span>
 							</el-col>
 						</el-row>
 					</div>
@@ -67,64 +55,57 @@
 								<p class="campus-label">校区</p>
 							</el-col>
 							<el-col :span="6">
-								<p class="campus">{{goodInfo.campus}}</p>
+								<p class="campus">{{ goodInfo.campus }}</p>
 							</el-col>
 							<el-col :span="6">
 								<p class="campus-label">配送</p>
 							</el-col>
 							<el-col :span="6">
 								<p class="campus">线下/其他</p>
-							</el-col>							
+							</el-col>
 						</el-row>
-						<p class="intro-label">商品简介</p><br/>
+						<p class="intro-label">商品简介</p><br />
 						<div class="intro-container">
-							<p class="intro-text">{{goodInfo.intro}}</p>
+							<p class="intro-text">{{ goodInfo.intro }}</p>
 						</div>
 					</div>
 					<div class="button-container">
 						<el-row justify="space-around">
 							<el-col :span="10">
-								<n-button
-									type="warning"
-									:disabled="userID === goodInfo.sellerID"
-									class="buy-it-now"
-									@click="goConfirm">
+								<n-button type="warning" :disabled="userID === goodInfo.sellerID" class="buy-it-now" @click="goConfirm">
 									立即购买
 								</n-button>
 							</el-col>
 							<el-col :span="10">
-								<n-button
-									color="#FF4400"								
-									:disabled="userID === goodInfo.sellerID"
-									class="add-to-cart"
+								<n-button color="#FF4400" :disabled="userID === goodInfo.sellerID" class="add-to-cart"
 									@click="addToCart">
-									{{ inCart ? '已加入购物车' :'加入购物车' }}
-								</n-button>							
-							</el-col>							
+									{{ inCart ? '已加入购物车' : '加入购物车' }}
+								</n-button>
+							</el-col>
 						</el-row>
 					</div>
-				</div>				
+				</div>
 			</div>
 		</el-col>
 		<el-col :span="4">
-		<n-message-provider :max="1">
-		  <div class="seller-container">
-				<good-seller-panel v-if="goodInfo.sellerID" :sellerID="goodInfo.sellerID"/>
-			</div>
-		</n-message-provider>
+			<n-message-provider :max="1">
+				<div class="seller-container">
+					<good-seller-panel v-if="goodInfo.sellerID" :sellerID="goodInfo.sellerID" />
+				</div>
+			</n-message-provider>
 		</el-col>
 	</el-row>
 	<div class="bottom-box">
 		<div class="comment-container">
 			<p class="seller-comment-title">
 				<el-icon :size="20" color="#1C93F5" class="shop-icon">
-					<shop/>
+					<shop />
 				</el-icon>
 				卖家评论
 			</p>
 			<div class="comments">
-				<comments v-if="goodInfo.sellerID"  :user-i-d="goodInfo.sellerID"/>
-			</div>	
+				<comments v-if="goodInfo.sellerID" :user-i-d="goodInfo.sellerID" />
+			</div>
 		</div>
 	</div>
 </template>
@@ -193,10 +174,10 @@ goodID.value = router.resolve(router.currentRoute.value).query.gid as string
 getGoodInfo()
 
 // 获取商品信息
-function getGoodInfo () {
+function getGoodInfo() {
 	axios.get(`/api/checkAvailable/${goodID.value}`)
 		.then(res => {
-			if(!res.data){
+			if (!res.data) {
 				message.error('该商品已下架！')
 				router.back()
 			}
@@ -207,8 +188,8 @@ function getGoodInfo () {
 				.then(response => {
 					goodInfo.value.goodTitle = response.data.title
 					goodInfo.value.onshelfTime = response.data.onshelf_time.substr(0, 19).replace('T', ' '),
-					goodInfo.value.sellerID = response.data.seller_id,
-					goodInfo.value.likes = response.data.likes
+						goodInfo.value.sellerID = response.data.seller_id,
+						goodInfo.value.likes = response.data.likes
 					goodInfo.value.type = response.data.category
 					goodInfo.value.campus = response.data.campus
 					goodInfo.value.images = response.data.images.split(';')
@@ -252,11 +233,11 @@ const initialize = () => {
 	// 对于用户账号
 	if (identity.value === 'member') {
 		// 调用接口：传入（用户ID）	返回（用户是否将该商品收藏、加入购物车)
-		axios.post(`/api/checkCollected`, {userID: userID.value, goodID: goodID.value})
+		axios.post(`/api/checkCollected`, { userID: userID.value, goodID: goodID.value })
 			.then(res => {
 				liked.value = res.data
 			})
-		axios.post(`/api/checkInCart`, {userID: userID.value, goodID: goodID.value})
+		axios.post(`/api/checkInCart`, { userID: userID.value, goodID: goodID.value })
 			.then(res => {
 				inCart.value = res.data
 			})
@@ -268,7 +249,7 @@ const initialize = () => {
 	}
 }
 
-function addImgEvent () {
+function addImgEvent() {
 	// 为缩略图添加鼠标事件监听器
 	const subImages = document.getElementsByClassName('sub-image')
 	// 注意：由于Vue的mounted钩子不会承诺所有的子组件一起被挂载
@@ -280,7 +261,7 @@ function addImgEvent () {
 				debounceShowBigImg(Number.parseInt((e.target as HTMLElement).id))
 			})
 		})
-	}, 500)	
+	}, 500)
 }
 
 if (identity.value === 'member') {
@@ -309,7 +290,7 @@ onBeforeRouteUpdate((to) => {
 
 // 收藏或取消收藏
 const changeLike = () => {
-	if(identity.value === 'visitor'){
+	if (identity.value === 'visitor') {
 		// 未登录，跳转到登录页面
 		router.push('/login')
 	} else {
@@ -321,18 +302,18 @@ const changeLike = () => {
 			time: date.toISOString().slice(0, 19).replace('T', ' ')
 		}
 		// 调用接口：传入（用户ID，商品ID） 返回（收藏结果）
-		if(!liked.value){
+		if (!liked.value) {
 			axios.post('/api/collectGood', data)
 				.then(() => {
 					liked.value = !liked.value
 					goodInfo.value.likes++
 				})
-		}else{
-			axios.post('/api/cancelCollection', {userID: data.userID, goodID: data.goodID})
+		} else {
+			axios.post('/api/cancelCollection', { userID: data.userID, goodID: data.goodID })
 				.then(() => {
 					liked.value = !liked.value
 					goodInfo.value.likes--
-				})			
+				})
 		}
 	}
 }
@@ -342,9 +323,9 @@ const goConfirm = () => {
 	if (identity.value === 'member') {
 		router.push({
 			path: '/confirm',
-			query:{
+			query: {
 				gid: goodID.value,
-			}	
+			}
 		})
 	} else if (identity.value === 'admin') {
 		message.warning(`请使用普通账号执行该操作。`)
@@ -356,19 +337,19 @@ const goConfirm = () => {
 // 加入购物车
 const addToCart = () => {
 	// 用户未登录
-	if(identity.value === 'visitor'){
+	if (identity.value === 'visitor') {
 		// 跳转到登录页面
 		router.push('/login')
 	}
 	// 管理员账号
-	else if(identity.value === 'admin'){
+	else if (identity.value === 'admin') {
 		message.warning('请登录普通用户账号进行该操作！')
 	}
 	// 普通用户
-	else if(identity.value === 'member'){
-		if(!inCart.value){
+	else if (identity.value === 'member') {
+		if (!inCart.value) {
 			let date = new Date()
-			date.setHours(date.getHours() + 8)			
+			date.setHours(date.getHours() + 8)
 			// 调用接口-加入购物车：传入（用户ID，商品ID） 返回（添加结果）
 			const data = {
 				userID: userID.value,
@@ -379,7 +360,7 @@ const addToCart = () => {
 				.then(() => {
 					inCart.value = true
 				})
-		}else{
+		} else {
 			// 已在购物车中，跳转到购物车页面
 			router.push('/shoppingcart')
 		}
@@ -388,13 +369,14 @@ const addToCart = () => {
 </script>
 
 <style scoped>
-.root-container{
+.root-container {
 	margin: .8em 0 .4em 0;
 	overflow: auto;
 	width: 100%;
 	z-index: 1;
 }
-.good-container{
+
+.good-container {
 	background-color: #fff;
 	border: .08em solid #e8e8e8;
 	border-right: none;
@@ -402,19 +384,22 @@ const addToCart = () => {
 	display: flex;
 	padding: 2vh;
 }
-.seller-container{
+
+.seller-container {
 	background-color: #fff;
 	border: .08em solid hsl(212, 95%, 77%);
 	padding: 2vh;
 	height: 51vh;
 }
-.left-flex-item{
+
+.left-flex-item {
 	margin-top: 1em;
 	width: 15em;
 	flex-grow: 0;
 	overflow: auto;
 }
-.big-image-container{
+
+.big-image-container {
 	padding: 0 .5em;
 	padding-top: .1em;
 	height: 12.2em;
@@ -423,13 +408,15 @@ const addToCart = () => {
 	justify-content: center;
 	align-items: center;
 }
-.big-image{
+
+.big-image {
 	width: 100%;
 	height: 100%;
 	object-fit: scale-down;
 	border: 1px solid #E0E0E0;
 }
-.loading-container{
+
+.loading-container {
 	position: relative;
 	display: inline-block;
 	box-sizing: border-box;
@@ -437,34 +424,41 @@ const addToCart = () => {
 	width: 25%;
 	height: 140px;
 }
-.line{
-  position: absolute;
-  top: 50%;
-  margin-left: 10px;
-  width: 60px;
-  height: 4px;
-  background: #FFF;
-  animation: spin 1.5s infinite ease;
+
+.line {
+	position: absolute;
+	top: 50%;
+	margin-left: 10px;
+	width: 60px;
+	height: 4px;
+	background: #FFF;
+	animation: spin 1.5s infinite ease;
 }
-.line:nth-of-type(2) { 
-	animation-delay: 0.1s; 
-}  
-.line:nth-of-type(3) { 
-	animation-delay: 0.2s; 
+
+.line:nth-of-type(2) {
+	animation-delay: 0.1s;
 }
-.line:nth-of-type(4) { 
-	animation-delay: 0.3s; 
+
+.line:nth-of-type(3) {
+	animation-delay: 0.2s;
 }
-@keyframes spin { 
-  100% { 
-    transform: rotate(360deg); 
-  } 
-} 
-.placeholder{
+
+.line:nth-of-type(4) {
+	animation-delay: 0.3s;
+}
+
+@keyframes spin {
+	100% {
+		transform: rotate(360deg);
+	}
+}
+
+.placeholder {
 	color: #08C;
 	font-size: 1.5em;
 }
-.sub-images-container{
+
+.sub-images-container {
 	white-space: nowrap;
 	width: calc(100% - 1em);
 	margin: .2em .5em;
@@ -474,7 +468,8 @@ const addToCart = () => {
 	overflow-x: auto;
 	animation: switch 5s ease-out infinite;
 }
-.sub-image{
+
+.sub-image {
 	flex-shrink: 0;
 	margin: 0 .4em 0 0;
 	height: calc(100% - 2px);
@@ -483,108 +478,129 @@ const addToCart = () => {
 	cursor: pointer;
 	border: 1px solid white;
 }
-.sub-image:hover{
+
+.sub-image:hover {
 	border: 1px solid red;
 }
-.declaration{
+
+.declaration {
 	margin: 0;
 	margin-top: 1.2em;
 	font-size: .8em;
 	color: #888;
 }
-.right-flex-item{
+
+.right-flex-item {
 	margin-top: 1em;
 	flex: 1;
 }
-.good-title{
+
+.good-title {
 	margin: 0;
 	font-weight: 600;
 	font-size: 1.2em;
 	color: #666666;
 }
-.star{
+
+.star {
 	cursor: pointer;
 }
-.likes{
+
+.likes {
 	font-size: .6em;
 	color: #6c6c6c;
 	margin: 0;
 }
-.price-container{
+
+.price-container {
 	margin: .8em 0 0 0;
 	background-color: #F0F8FF;
 	padding: .8em .6em;
 }
-.price-label{
+
+.price-label {
 	color: #6c6c6c;
 	font-size: .8em;
 	font-weight: 500;
 	margin: .6em 0 0 0;
 }
-.price{
+
+.price {
 	float: left;
-  font-size: 1.4em;
-  font-weight: bold;
-  color: #FF9900;
+	font-size: 1.4em;
+	font-weight: bold;
+	color: #FF9900;
 	margin: 0;
 }
-.onshelf-date{
+
+.onshelf-date {
 	display: inline-block;
 	margin: 1em 0 0 0;
 	font-size: .6em;
 	color: #6c6c6c;
 }
-.brief-info-container{
+
+.brief-info-container {
 	padding: .8em .6em .4em;
 }
-.campus-label{
+
+.campus-label {
 	color: #6c6c6c;
 	font-size: .8em;
-	font-weight: 500;	
+	font-weight: 500;
 	margin: 0;
 }
-.campus{
+
+.campus {
 	font-size: .6em;
 	margin: 0;
 	text-decoration: underline;
 }
-.intro-label{
+
+.intro-label {
 	margin: .8em 0 .8em 2.2em;
 	font-size: .8em;
 	color: #6c6c6c;
 	font-weight: 600;
 	float: left;
 }
-.intro-container{
-	margin: .8em 0 .8em 2.1em;	
+
+.intro-container {
+	margin: .8em 0 .8em 2.1em;
 	clear: left;
 	text-align: left;
 	max-height: 4em;
 	min-height: 2em;
 	overflow: auto;
 }
-.intro-text{
+
+.intro-text {
 	margin: 0;
 	color: #6c6c6c;
 	padding: .5em;
 	font-size: .8em;
-	border: 1px dashed hsl(212, 95%, 77%);	
+	border: 1px dashed hsl(212, 95%, 77%);
 }
-.button-container{
+
+.button-container {
 	padding: 0 .6em;
 }
-.buy-it-now{
+
+.buy-it-now {
 	padding: .4em .8em;
 }
-.add-to-cart{
-	padding: .4em .8em;	
+
+.add-to-cart {
+	padding: .4em .8em;
 }
-.bottom-box{
+
+.bottom-box {
 	display: flex;
 	justify-content: center;
 	z-index: 5;
 }
-.seller-comment-title{
+
+.seller-comment-title {
 	margin: 0;
 	float: left;
 	padding-left: 1em;
@@ -594,17 +610,20 @@ const addToCart = () => {
 	display: flex;
 	align-items: center;
 }
-.shop-icon{
+
+.shop-icon {
 	padding: .1em;
 }
-.comment-container{
+
+.comment-container {
 	flex: 0 0 55.5rem;
 	background-color: #FFF;
 	border: .08em solid #e8e8e8;
 	padding: .8em;
 	box-sizing: border-box;
 }
-.comments{
+
+.comments {
 	padding: 0 10em;
 }
 </style>

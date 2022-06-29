@@ -1,18 +1,11 @@
 <template>
-<article class="root-box">
-  <HelloBar 
-    :admin-name="adminName" 
-    :completed-num="completed" 
-    :task-num="reports.length"/>
-  <section class="task-wrapper">
-    <NDataTable
-      :columns="columns"
-      :striped="true"
-      v-model:data="reports"
-      :row-key="rowKey"
-      :pagination="pagination"/>
-  </section>
-</article>
+  <article class="root-box">
+    <HelloBar :admin-name="adminName" :completed-num="completed" :task-num="reports.length" />
+    <section class="task-wrapper">
+      <NDataTable :columns="columns" :striped="true" v-model:data="reports" :row-key="rowKey"
+        :pagination="pagination" />
+    </section>
+  </article>
 </template>
 
 <script setup lang="ts">
@@ -57,11 +50,11 @@ const createColumns = () => [
   {
     title: '举报者',
     key: 'reporter'
-  },  
+  },
   {
     title: '被告',
     key: 'accused'
-  },  
+  },
   {
     title: '订单ID',
     key: 'orderId'
@@ -71,7 +64,7 @@ const createColumns = () => [
     key: 'state',
     render(row: Report) {
       return h(
-        NTag, 
+        NTag,
         {
           type: row.state === '待处理' ? 'info' : (row.state === '已封禁' ? 'success' : 'warning')
         },
@@ -88,11 +81,11 @@ const createColumns = () => [
       {
         size: 18,
         color: '#666'
-      },{
-        default: () => h(
+      }, {
+      default: () => h(
         Create
       )
-      }
+    }
     ),
     expandable: () => true,
     renderExpand: (rowData: Report) => {
@@ -123,7 +116,7 @@ const createColumns = () => [
                   label: '订单信息',
                 },
                 {
-                  default: () =>`${rowData.goodTitle} (${rowData.tradeTime})`
+                  default: () => `${rowData.goodTitle} (${rowData.tradeTime})`
                 }
               ),
               h(
@@ -132,16 +125,16 @@ const createColumns = () => [
                   label: '举报理由',
                 },
                 {
-                  default: () =>`${rowData.reason}`
+                  default: () => `${rowData.reason}`
                 }
-              ),              
+              ),
             ]
           ),
           h(
             NInput,
             {
               value: replys.value[rowData.orderId],
-              onUpdateValue (value) {
+              onUpdateValue(value) {
                 replys.value[rowData.orderId] = value
               },
               placeholder: '请输入对举报者的回复，不超过50字。',
@@ -173,7 +166,7 @@ const createColumns = () => [
                 marginLeft: '1em'
               }
             }, { default: () => rowData.state === '待处理' ? '驳回举报' : '已处理' }
-          )          
+          )
         ]
       )
     }
@@ -187,7 +180,7 @@ const pagination = ref({
 })
 const completed = ref(0)
 
-function banAccused(row: Report){
+function banAccused(row: Report) {
   let date = new Date()
   date.setHours(date.getHours() + 8)
   let data = {
@@ -229,7 +222,7 @@ function refuseReport(row: Report) {
   axios.post(`/api/modifyOrderReported`, { reported: '已驳回', orderID: row.orderId })
 }
 
-onBeforeMount(() => {  
+onBeforeMount(() => {
   columns.value.push(...createColumns())
   // 调用接口：传入（管理员ID） 返回（待处理的举报列表：举报ID，举报者ID，被举报者ID，订单ID，举报时间，举报理由，处理状态）
   let counter = 0
@@ -287,14 +280,15 @@ onBeforeMount(() => {
 </script>
 
 <style scoped>
-.root-box{
+.root-box {
   width: 100%;
   display: flex;
   flex-direction: column;
   align-items: center;
   z-index: 1;
 }
-.task-wrapper{
+
+.task-wrapper {
   background-color: #fff;
   border-radius: .3em;
   display: flex;

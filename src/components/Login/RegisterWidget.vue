@@ -51,19 +51,19 @@ watch(countDown, () => {
 let timer: number
 
 // 获取验证码
-function getCAPTCHA () {
+function getCAPTCHA() {
   // 要应用的部分规则
   const keys = ['userID', 'name', 'password', 'reenteredPassword', 'telNum']
   registerRef.value?.validate((errors) => {
     if (!errors) {
       // 调用接口：传入（手机号） 返回（验证码）
       useCAPTCHA(registerData.value.telNum, 1)
-        .then(code => { 
+        .then(code => {
           if (code !== 'error' && code !== 'Wrong phone number') {
             timer = window.setInterval(() => {
               countDown.value--
             }, 1000)
-            ssrCAPTCHA.value = code 
+            ssrCAPTCHA.value = code
             hasCAPTCHA.value = true
           } else {
             console.log('获取验证码失败:', code)
@@ -73,9 +73,9 @@ function getCAPTCHA () {
       console.log(errors)
     }
   },
-  (rule) => {
-    return keys.includes(rule?.key as string)
-  })
+    (rule) => {
+      return keys.includes(rule?.key as string)
+    })
 }
 
 // 信息表单开关
@@ -103,17 +103,17 @@ const collegeOptions = colleges.map(item => ({
   value: item
 }))
 // 前往填写信息表单
-function goFillInfo () {
+function goFillInfo() {
   registerRef.value?.validate((errors) => {
     if (!errors) {
       const id_tel = {
         id: registerData.value.userID,
         telnum: registerData.value.telNum
       }
-      axios.post('/api/isRepeated/',id_tel)
+      axios.post('/api/isRepeated/', id_tel)
         .then((is_r) => {
           if (!is_r.data) {
-            atInfo.value = true       
+            atInfo.value = true
           } else {
             message.error('账号或手机号已被注册！')
             return false
@@ -125,7 +125,7 @@ function goFillInfo () {
   })
 }
 // 确认注册
-function completeInfo () {
+function completeInfo() {
   infoRef.value?.validate((errors) => {
     if (!errors) {
       const reg_info = {
@@ -135,10 +135,10 @@ function completeInfo () {
         telnum: registerData.value.telNum,
         gender: infoData.value.gender,
         college: infoData.value.college,
-        birthday: new Date(infoData.value.birthday as number).toISOString().slice(0, 10), 
+        birthday: new Date(infoData.value.birthday as number).toISOString().slice(0, 10),
       }
       console.log(reg_info)
-      axios.post('/api/register',reg_info)
+      axios.post('/api/register', reg_info)
         .then(() => {
           message.success('注册成功,1秒后将为您自动登录...')
           userStore.logIn(registerData.value.userID)
@@ -153,10 +153,10 @@ function completeInfo () {
           // 将endRoutes移至尾部
           endRoutes.forEach((route) => {
             router.addRoute(route)
-          })          
+          })
           setTimeout(() => {
             router.push('/home')
-          }, 1000)          
+          }, 1000)
         })
     }
   })
@@ -167,7 +167,7 @@ const registerRules: FormRules = {
   userID: [{
     key: 'userID',
     required: true,
-    validator (rule: FormItemRule, value: string) {
+    validator(rule: FormItemRule, value: string) {
       if (!value) {
         return new Error('请输入学工号')
       } else if (value.length !== 7) {
@@ -180,12 +180,12 @@ const registerRules: FormRules = {
   password: [{
     key: 'password',
     required: true,
-    validator (rule: FormItemRule, value: string) {
+    validator(rule: FormItemRule, value: string) {
       if (!value) {
         return new Error('请输入密码')
       } else if (value.length < 8 || value.length > 20) {
         return new Error('密码长度应在8位~20位。')
-      } else if ( !(/\d+/.test(value) && /[a-zA-Z]+/.test(value)) ) {
+      } else if (!(/\d+/.test(value) && /[a-zA-Z]+/.test(value))) {
         return new Error('密码应同时包含数字和英文字母')
       } else {
         return true
@@ -195,7 +195,7 @@ const registerRules: FormRules = {
   reenteredPassword: [{
     key: 'reenteredPassword',
     required: true,
-    validator (rule: FormItemRule, value: string) {
+    validator(rule: FormItemRule, value: string) {
       if (!value) {
         return new Error('请再次输入密码')
       } else if (value !== registerData.value.password) {
@@ -203,7 +203,7 @@ const registerRules: FormRules = {
       } else {
         return true
       }
-    }    
+    }
   }],
   name: [{
     key: 'name',
@@ -213,7 +213,7 @@ const registerRules: FormRules = {
   telNum: [{
     key: 'telNum',
     required: true,
-    validator (rule: FormItemRule, value: string) {
+    validator(rule: FormItemRule, value: string) {
       if (!/\d{11}/.test(value)) {
         return new Error('手机号码格式错误')
       } else {
@@ -223,7 +223,7 @@ const registerRules: FormRules = {
   }],
   CAPTCHA: [{
     required: true,
-    validator (rule: FormItemRule, value: string) {
+    validator(rule: FormItemRule, value: string) {
       if (!hasCAPTCHA.value) {
         return new Error('请先点击下方按钮，获取验证码')
       } else if (value !== ssrCAPTCHA.value) {
@@ -253,148 +253,67 @@ const infoRules: FormRules = {
 </script>
 
 <template>
-<!--注册窗口-->
-<n-card
-  v-show="!atInfo"
-  content-style="display: flex;flex-direction: column;align-items: center;padding-bottom: 0;"
-  header-style="padding-bottom: 0;"
-  footer-style="padding: 0 6em 1em 8em"
-  class="register-card">
-  <template #header>
-    <el-page-header
-      title="取消注册"
-      @back="$emit('off-register')"/>
-  </template>
-  <p class="register-title">用户注册</p>
-  <n-form
-    ref="registerRef"
-    :model="registerData"
-    :rules="registerRules"
-    label-placement="left"
-    label-width="auto">
-    <n-form-item
-      label="学号"
-      path="userID">
-      <n-input
-        v-model:value="registerData.userID"
-        :placeholder="''"
-        class="input"
-        />
-    </n-form-item>
-    <n-form-item
-      label="姓名"
-      path="name">
-      <n-input
-        v-model:value="registerData.name"
-        :placeholder="''"
-        class="input"
-        />
-    </n-form-item>    
-    <n-form-item
-      label="密码"
-      path="password">
-      <n-input
-        v-model:value="registerData.password"
-        :placeholder="''"
-        class="input"
-        type="password"
-        show-password-on="click"        
-        />
-    </n-form-item>
-    <n-form-item
-      label="确认密码"
-      path="reenteredPassword">
-      <n-input
-        v-model:value="registerData.reenteredPassword"
-        :placeholder="''"
-        class="input"
-        type="password"
-        show-password-on="click"         
-        />
-    </n-form-item>
-    <n-form-item
-      label="手机号"
-      path="telNum">
-      <n-input
-        v-model:value="registerData.telNum"
-        :placeholder="''"
-        class="input"
-        />
-    </n-form-item>
-    <n-form-item
-      label="验证码"
-      path="CAPTCHA">
-      <n-input
-        v-model:value="registerData.CAPTCHA"
-        :placeholder="''"
-        class="input"
-        />
-    </n-form-item>         
-  </n-form>
-  <template #footer>
-    <div class="btns-wrapper">
-      <n-button
-        type="info"
-        @click="goFillInfo">下一步</n-button>
-      <n-button
-        type="success"
-        :disabled="hasCAPTCHA"
-        @click="getCAPTCHA">获取验证码</n-button>
-    </div>
-  </template>
-</n-card>
+  <!--注册窗口-->
+  <n-card v-show="!atInfo" content-style="display: flex;flex-direction: column;align-items: center;padding-bottom: 0;"
+    header-style="padding-bottom: 0;" footer-style="padding: 0 6em 1em 8em" class="register-card">
+    <template #header>
+      <el-page-header title="取消注册" @back="$emit('off-register')" />
+    </template>
+    <p class="register-title">用户注册</p>
+    <n-form ref="registerRef" :model="registerData" :rules="registerRules" label-placement="left" label-width="auto">
+      <n-form-item label="学号" path="userID">
+        <n-input v-model:value="registerData.userID" :placeholder="''" class="input" />
+      </n-form-item>
+      <n-form-item label="姓名" path="name">
+        <n-input v-model:value="registerData.name" :placeholder="''" class="input" />
+      </n-form-item>
+      <n-form-item label="密码" path="password">
+        <n-input v-model:value="registerData.password" :placeholder="''" class="input" type="password"
+          show-password-on="click" />
+      </n-form-item>
+      <n-form-item label="确认密码" path="reenteredPassword">
+        <n-input v-model:value="registerData.reenteredPassword" :placeholder="''" class="input" type="password"
+          show-password-on="click" />
+      </n-form-item>
+      <n-form-item label="手机号" path="telNum">
+        <n-input v-model:value="registerData.telNum" :placeholder="''" class="input" />
+      </n-form-item>
+      <n-form-item label="验证码" path="CAPTCHA">
+        <n-input v-model:value="registerData.CAPTCHA" :placeholder="''" class="input" />
+      </n-form-item>
+    </n-form>
+    <template #footer>
+      <div class="btns-wrapper">
+        <n-button type="info" @click="goFillInfo">下一步</n-button>
+        <n-button type="success" :disabled="hasCAPTCHA" @click="getCAPTCHA">获取验证码</n-button>
+      </div>
+    </template>
+  </n-card>
 
-<!--填写信息窗口-->
-<n-card
-  v-show="atInfo"
-  content-style="display: flex;flex-direction: column;align-items: center;padding-bottom: 0;"
-  header-style="padding-bottom: 0;"
-  footer-style="padding: 0 6em 1em 8em"
-  class="register-card">
-  <template #header>
-    <el-page-header
-      title="取消注册"
-      @back="$emit('off-register')"/>
-  </template>
-  <p class="register-title">完善用户信息</p>
-  <n-form
-    ref="infoRef"
-    :model="infoData"
-    :rules="infoRules"
-    label-placement="left"
-    label-width="auto">
-    <n-form-item
-      label="性别"
-      path="gender">
-      <n-select
-        v-model:value="infoData.gender"
-        placeholder="Select"
-        :options="genderOptions"
-      />      
-    </n-form-item>
-    <n-form-item
-      label="学院"
-      path="college">
-      <n-select
-        v-model:value="infoData.college"
-        placeholder="Select"
-        :options="collegeOptions"
-      />
-    </n-form-item>    
-    <n-form-item
-      label="生日"
-      path="birthday">
-      <n-date-picker v-model:value="infoData.birthday" type="date" clearable />
-    </n-form-item>        
-  </n-form>
-  <template #footer>
-    <div class="btns-wrapper">
-      <n-button
-        type="success"
-        @click="completeInfo">完成注册</n-button>
-    </div>
-  </template>
-</n-card>
+  <!--填写信息窗口-->
+  <n-card v-show="atInfo" content-style="display: flex;flex-direction: column;align-items: center;padding-bottom: 0;"
+    header-style="padding-bottom: 0;" footer-style="padding: 0 6em 1em 8em" class="register-card">
+    <template #header>
+      <el-page-header title="取消注册" @back="$emit('off-register')" />
+    </template>
+    <p class="register-title">完善用户信息</p>
+    <n-form ref="infoRef" :model="infoData" :rules="infoRules" label-placement="left" label-width="auto">
+      <n-form-item label="性别" path="gender">
+        <n-select v-model:value="infoData.gender" placeholder="Select" :options="genderOptions" />
+      </n-form-item>
+      <n-form-item label="学院" path="college">
+        <n-select v-model:value="infoData.college" placeholder="Select" :options="collegeOptions" />
+      </n-form-item>
+      <n-form-item label="生日" path="birthday">
+        <n-date-picker v-model:value="infoData.birthday" type="date" clearable />
+      </n-form-item>
+    </n-form>
+    <template #footer>
+      <div class="btns-wrapper">
+        <n-button type="success" @click="completeInfo">完成注册</n-button>
+      </div>
+    </template>
+  </n-card>
 </template>
 
 <style scoped>
@@ -403,15 +322,18 @@ const infoRules: FormRules = {
   font-size: 1rem;
   background-color: rgba(255, 255, 255, .6);
 }
+
 .register-title {
   font-weight: bold;
   font-size: 1.6em;
   margin: 0;
   margin-bottom: .6em;
 }
+
 .input {
   text-align: left;
 }
+
 .btns-wrapper {
   display: flex;
   justify-content: space-evenly;

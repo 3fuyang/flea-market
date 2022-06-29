@@ -1,57 +1,43 @@
 <template>
-<div class="root">
-  <page-title>
-    <template #icon>
-      <ClipboardTaskListRtl20Regular/>
-    </template>
-    <template #main-title>
-      订单管理
-    </template>
-    <template #sub-title>
-      Order
-    </template>
-  </page-title>
-  <el-row>
-    <el-col :span="2"></el-col>
-    <el-col :span="20">
-      <OrderListTable
-        :orderList="orderList" 
-        @show-report-modal="showReportModal" 
-        @show-evaluate-modal="showEvaluateModal"
-        @show-pay-modal="showQRModal"/>
-    </el-col>
-    <el-col :span="2"></el-col>
-  </el-row>
-  <Teleport to="main">
-    <ReportModal 
-      :show="showReport" 
-      :currOrderId="currentOrderId"
-      :reported="currentOrderReported"
-      @close="closeReport"/>
-  </Teleport>
-  <Teleport to="main">
-    <EvaluateModal
-      v-if="showEvaluate"
-      :show="showEvaluate" 
-      :currOrderId="currentOrderId" 
-      :currOrderStatus="currentOrderStatus" 
-      @order-done="completeOrder"
-      @close="showEvaluate = false"/>
-  </Teleport>
-  <Teleport to="main">
-    <PayQRCode
-      :show="showQR"
-      :price="currentOrderPrice"
-      @close="closeQRModal">
-      <template #header>
-        请扫描付款码，进行付款。
+  <div class="root">
+    <page-title>
+      <template #icon>
+        <ClipboardTaskListRtl20Regular />
       </template>
-      <template #body>
-        <img style="object-fit: scale-down;width: 60%;" src="/src/assets/payment.jpg"/>
-      </template>       
-    </PayQRCode>
-  </Teleport>  
-</div>
+      <template #main-title>
+        订单管理
+      </template>
+      <template #sub-title>
+        Order
+      </template>
+    </page-title>
+    <el-row>
+      <el-col :span="2"></el-col>
+      <el-col :span="20">
+        <OrderListTable :orderList="orderList" @show-report-modal="showReportModal"
+          @show-evaluate-modal="showEvaluateModal" @show-pay-modal="showQRModal" />
+      </el-col>
+      <el-col :span="2"></el-col>
+    </el-row>
+    <Teleport to="main">
+      <ReportModal :show="showReport" :currOrderId="currentOrderId" :reported="currentOrderReported"
+        @close="closeReport" />
+    </Teleport>
+    <Teleport to="main">
+      <EvaluateModal v-if="showEvaluate" :show="showEvaluate" :currOrderId="currentOrderId"
+        :currOrderStatus="currentOrderStatus" @order-done="completeOrder" @close="showEvaluate = false" />
+    </Teleport>
+    <Teleport to="main">
+      <PayQRCode :show="showQR" :price="currentOrderPrice" @close="closeQRModal">
+        <template #header>
+          请扫描付款码，进行付款。
+        </template>
+        <template #body>
+          <img style="object-fit: scale-down;width: 60%;" src="/src/assets/payment.jpg" />
+        </template>
+      </PayQRCode>
+    </Teleport>
+  </div>
 </template>
 
 <script setup lang="ts">
@@ -110,13 +96,13 @@ axios.get(`/api/getOrders/${userID.value}`)
         commentStars: 1,
         price: Number.parseFloat(item.price).toFixed(2),
         comment: item.review,
-        reported: item.reported     
+        reported: item.reported
       })
     })
   })
 
 // 打开举报窗口
-function showReportModal(oid: string, orp: string){
+function showReportModal(oid: string, orp: string) {
   currentOrderId.value = oid
   currentOrderReported.value = orp
   showReport.value = true
@@ -134,10 +120,10 @@ function closeReport(mode: string, oid: string) {
 }
 
 // 打开评价窗口
-function showEvaluateModal(oid: string, ost: string){
+function showEvaluateModal(oid: string, ost: string) {
   currentOrderId.value = oid
   currentOrderStatus.value = ost
-  showEvaluate.value = true  
+  showEvaluate.value = true
 }
 
 // 关闭评价窗口
@@ -159,7 +145,7 @@ function showQRModal(oid: string, price: number) {
 // 关闭付款窗口
 function closeQRModal(paid: boolean) {
   if (paid) {
-    axios.post(`/api/payOrder`, {orderID: currentOrderId.value})
+    axios.post(`/api/payOrder`, { orderID: currentOrderId.value })
       .then(() => {
         let index = orderList.value.findIndex(item => item.orderId === currentOrderId.value)
         if (index >= 0) {
@@ -179,7 +165,8 @@ function closeQRModal(paid: boolean) {
   width: 100%;
   z-index: 1;
 }
-.title{
+
+.title {
   display: inline-block;
   color: #000000;
   margin: 20px 0px 10px 20px;

@@ -8,15 +8,14 @@ import { Airplane } from '@vicons/ionicons5'
   <div class="empty-wrapper">
     <n-empty size="huge">
       <template #icon>
-        <airplane/>
+        <airplane />
       </template>
       哼，想逃?
       <span class="del">
         (指路由)
       </span>
       <template #extra>
-        <n-button
-          @click="$router.push('/home')">
+        <n-button @click="$router.push('/home')">
           重返嘉园
         </n-button>
       </template>
@@ -33,6 +32,7 @@ import { Airplane } from '@vicons/ionicons5'
   justify-content: center;
   align-items: center;
 }
+
 .del {
   text-decoration: line-through;
 }

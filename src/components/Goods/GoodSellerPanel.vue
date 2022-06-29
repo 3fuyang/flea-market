@@ -2,74 +2,48 @@
   <div class="float-wrapper">
     <p class="seller-title">卖家信息</p>
   </div>
-  <hr class="divider"/>
+  <hr class="divider" />
   <el-row>
     <el-col :span="14">
       <p class="seller-name">
-        {{sellerInfo.sellerName}}
+        {{ sellerInfo.sellerName }}
       </p>
       <p class="reputation">
-        信誉: &nbsp;&nbsp;{{sellerInfo.reputation}}
+        信誉: &nbsp;&nbsp;{{ sellerInfo.reputation }}
       </p>
       <p class="concact-label">
-      联系：
-      <el-button
-        type="primary"
-        plain
-        size="small"
-        :disabled="userID === props.sellerID"
-        @click="concactSeller">
-        <el-icon>
-          <chat-dot-round/>
-        </el-icon>
-        和我联系
-      </el-button>
+        联系：
+        <el-button type="primary" plain size="small" :disabled="userID === props.sellerID" @click="concactSeller">
+          <el-icon>
+            <chat-dot-round />
+          </el-icon>
+          和我联系
+        </el-button>
       </p>
     </el-col>
-    <el-col 
-      :span="10" 
-      class="avatar-container">
-      <el-avatar class="avatar" :src="sellerInfo.avatarUrl" :size="75" alt="Seller Avatar"/>
+    <el-col :span="10" class="avatar-container">
+      <el-avatar class="avatar" :src="sellerInfo.avatarUrl" :size="75" alt="Seller Avatar" />
     </el-col>
   </el-row>
   <div class="score-row">
     <div class="vertical-center-wrapper">
       <p class="score-label">评分: &nbsp;&nbsp;</p>
     </div>
-    <n-rate 
-      v-model:value="sellerInfo.score"
-      allow-half
-      size="small"
-      readonly/>
+    <n-rate v-model:value="sellerInfo.score" allow-half size="small" readonly />
   </div>
-  <hr class="divider"/>
+  <hr class="divider" />
   <div class="trend-container">
     <span class="trend-label">为您推荐</span>
-    <el-icon 
-      class="refresh-btn" 
-      :size="18"
-      @click="getTrends">
-      <refresh-left/>
+    <el-icon class="refresh-btn" :size="18" @click="getTrends">
+      <refresh-left />
     </el-icon>
     <div class="trend-img-box">
-      <div 
-        class="trend-card" 
-        v-for="(item, index) of trendGoods"
-        :key="index"
-        @click="goToDetail(item.goodID)">
-        <el-tooltip
-          :content="item.goodTitle" 
-          :placement="getPlacement(index)" 
-          effect="light" 
-          :show-arrow="false"
-          :show-after="500"
-          :offset="0">
-          <el-image
-            class="img"
-            :src="item.imgUrl"
-            @click="handleClickImage(item.goodID)"/>
+      <div class="trend-card" v-for="(item, index) of trendGoods" :key="index" @click="goToDetail(item.goodID)">
+        <el-tooltip :content="item.goodTitle" :placement="getPlacement(index)" effect="light" :show-arrow="false"
+          :show-after="500" :offset="0">
+          <el-image class="img" :src="item.imgUrl" @click="handleClickImage(item.goodID)" />
         </el-tooltip>
-        <p class="good-price">￥{{item.price}}</p>
+        <p class="good-price">￥{{ item.price }}</p>
       </div>
     </div>
   </div>
@@ -104,22 +78,22 @@ const sellerInfo = ref({
   score: 0
 }) // 卖家信息
 
-function getSellerInfo () {
+function getSellerInfo() {
   // 调用接口：传入（卖家ID） 返回（卖家信息：卖家昵称、信誉、头像URL）
   axios.get(`/api/getSellerInfo/${props.sellerID}`)
-    .then((res) => {     
-        sellerInfo.value.sellerName = res.data.nickname
-        sellerInfo.value.avatarUrl = `http://106.15.78.201:8082/public/avatars/${res.data.avatar}`
-        sellerInfo.value.reputation = res.data.reputation
-        sellerInfo.value.score = Number.parseFloat(res.data.score)
-        if (props.sellerID === userID.value) {
-          message.info(
-            '注意：你正在浏览自己的闲置物品',
-            {
-              keepAliveOnHover: true,
-            }
-          )
-        }
+    .then((res) => {
+      sellerInfo.value.sellerName = res.data.nickname
+      sellerInfo.value.avatarUrl = `http://106.15.78.201:8082/public/avatars/${res.data.avatar}`
+      sellerInfo.value.reputation = res.data.reputation
+      sellerInfo.value.score = Number.parseFloat(res.data.score)
+      if (props.sellerID === userID.value) {
+        message.info(
+          '注意：你正在浏览自己的闲置物品',
+          {
+            keepAliveOnHover: true,
+          }
+        )
+      }
     })
 }
 
@@ -153,7 +127,7 @@ const concactSeller = () => {
   if (identity.value === 'member') {
     // 在新窗口打开聊天页面。
     const routeUrl = router.resolve({
-      path:'/chat',
+      path: '/chat',
       query: {
         oponentID: props.sellerID,
         oponentName: sellerInfo.value.sellerName,
@@ -189,7 +163,7 @@ interface TrendGood {
 const trendGoods = ref<TrendGood[]>([])
 // 计算tip位置
 const getPlacement = (index: number) => {
-  switch(index){
+  switch (index) {
     case 0:
       return 'left-start'
     case 1:
@@ -201,7 +175,7 @@ const getPlacement = (index: number) => {
   }
 }
 // 获取趋势商品
-function getTrends () {
+function getTrends() {
   // 清空趋势商品数组
   trendGoods.value.length = 0
   // 调用接口： 传入（null） 返回（随机四个商品的简要信息：ID、名称、价格、图片URL）  
@@ -212,7 +186,7 @@ function getTrends () {
           goodID: item.good_id,
           goodTitle: item.title,
           price: Number.parseFloat(item.price).toFixed(2),
-          imgUrl: `http://106.15.78.201:8082/public/images/${item.images.split(';')[0]}`          
+          imgUrl: `http://106.15.78.201:8082/public/images/${item.images.split(';')[0]}`
         })
       })
     })
@@ -221,7 +195,7 @@ function getTrends () {
 getTrends()
 
 // 点击查看其他商品详情页
-function handleClickImage (gid: string) {
+function handleClickImage(gid: string) {
   router.push({
     path: '/details',
     query: {
@@ -232,109 +206,128 @@ function handleClickImage (gid: string) {
 </script>
 
 <style scoped>
-.seller-title{
-	margin: 0;
-	float: left;
-	font-size: .9em;
-	font-weight: 600;
-	color: #666;
+.seller-title {
+  margin: 0;
+  float: left;
+  font-size: .9em;
+  font-weight: 600;
+  color: #666;
 }
-.float-wrapper::after{
+
+.float-wrapper::after {
   content: '';
   clear: left;
   display: block;
 }
-.divider{
-	clear: both;
-	border: none;
-	height: 1px;
+
+.divider {
+  clear: both;
+  border: none;
+  height: 1px;
   background-color: #e5e5e5;
 }
-.seller-name{
-	margin: .5em 0 0 0;
-	font-size: .8em;
-	font-weight: 600;
-	color: #666;
+
+.seller-name {
+  margin: .5em 0 0 0;
+  font-size: .8em;
+  font-weight: 600;
+  color: #666;
   float: left;
 }
-.reputation{
+
+.reputation {
   float: left;
-	font-size: .7em;
-	color: #888;
+  font-size: .7em;
+  color: #888;
   margin: .8em 0;
   clear: left;
 }
-.concact-label{
-	margin: 0 0 .8em;
-	font-size: .7em;
-	color: #888;
+
+.concact-label {
+  margin: 0 0 .8em;
+  font-size: .7em;
+  color: #888;
   clear: left;
   float: left;
 }
-.avatar-container{
+
+.avatar-container {
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
 }
-.avatar{
+
+.avatar {
   cursor: pointer;
 }
-.avatar:hover{
+
+.avatar:hover {
   box-shadow: .1em 0em .2em #8ACEFF;
 }
-.score-row{
+
+.score-row {
   display: flex;
   margin-top: -.5em;
 }
-.vertical-center-wrapper{
+
+.vertical-center-wrapper {
   display: flex;
   flex-direction: column;
   justify-content: center;
 }
-.score-label{
-	font-size: .7em;
-	color: #888;
+
+.score-label {
+  font-size: .7em;
+  color: #888;
   margin: 0;
 }
-.trend-container{
+
+.trend-container {
   overflow: auto;
 }
-.trend-label{
+
+.trend-label {
   float: left;
-	font-size: .9em;
+  font-size: .9em;
   font-weight: 600;
-	color: #666;
+  color: #666;
   margin: 0;
 }
-.refresh-btn{
+
+.refresh-btn {
   float: right;
   cursor: pointer;
   color: #888;
 }
-.trend-img-box{
+
+.trend-img-box {
   clear: left;
   display: flex;
   padding: .5em;
   flex-wrap: wrap;
 }
-.trend-card{
+
+.trend-card {
   flex: 0 0 50%;
   cursor: pointer;
   display: flex;
   flex-direction: column;
   align-items: center;
 }
-.img{
+
+.img {
   height: 4.5em;
   width: 4.5em;
   border: 1px solid #AAA;
   display: block;
 }
-.img:hover{
+
+.img:hover {
   border: 1px solid red;
 }
-.good-price{
+
+.good-price {
   margin: 0;
   font-size: .8em;
   color: #FF9900;

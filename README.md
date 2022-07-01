@@ -4,10 +4,15 @@
 
 ## 技术栈
 
-+ 前端：Vue 3 + TypeScript + Pinia + Element Plus + Naive UI
-+ 后端：Express + MySQL + Socket.IO
+*   前端：Vue 3 + TypeScript + Pinia + Element Plus + Naive UI
 
-Online Demo: [http://106.15.78.201:8084/](http://106.15.78.201:8084/)
+*   后端：Express + MySQL + Socket.IO
+
+Online Demo: <http://106.15.78.201:8084/>
+
+## Changelog
+
+> 2022/7/1 修复了编辑个人信息页面的日期选择校验bug，由于正在对接 TypeORM 后端，还未同步到生产模式。
 
 ## 运行方法
 
@@ -15,32 +20,28 @@ Online Demo: [http://106.15.78.201:8084/](http://106.15.78.201:8084/)
 
 后端 `/database/db.ts`中的数据库配置请根据自己的实际情况修改，目录中提供了数据库的DDL语句。
 
-```
-# 进入后端根目录
-cd server
+    # 进入后端根目录
+    cd server
 
-# 安装依赖
-npm install
+    # 安装依赖
+    npm install
 
-# 运行后端
-# 直接运行ts
-ts-node(nodemon) app.ts
-# 运行转译后的js
-npm run build
-# 注意图片等资源
-cd dist
-node(nodemon) app.js
-```
+    # 运行后端
+    # 直接运行ts
+    ts-node(nodemon) app.ts
+    # 运行转译后的js
+    npm run build
+    # 注意图片等资源
+    cd dist
+    node(nodemon) app.js
 
 ### 前端
 
-```
-# 进入项目根目录
-npm install
+    # 进入项目根目录
+    npm install
 
-# 运行前端
-npm run dev
-```
+    # 运行前端
+    npm run dev
 
 ## 开发所遇问题与解决方案
 
@@ -285,31 +286,33 @@ app.get('/onShelfGoods/:user_id', (req, res) => {
 
 ##### 参考资料
 
-<img src="README.assets/image-20220515192226569.png" alt="image-20220515192226569" style="zoom:80%;border: 1px solid #eee;" />
+*   Element.scrollTop：一个元素的内容垂直滚动的像素数(一个**非整数**)，其值是这个元素的**内容顶部**到其视口可见内容（**的顶部**）的距离的度量。当一个元素的内容没有产生垂直方向的滚动条，那么它的 `scrollTop`值为 0。
 
-+ Element.scrollTop：一个元素的内容垂直滚动的像素数(一个**非整数**)，其值是这个元素的**内容顶部**到其视口可见内容（**的顶部**）的距离的度量。当一个元素的内容没有产生垂直方向的滚动条，那么它的 `scrollTop`值为 0。
-  + 因为 `scrollTop`是三个属性中**唯一一个可写**的，所以要注意其赋值规范：
-  + 如果一个元素不能被滚动（例如，它没有溢出，或者这个元素有一个"**non-scrollable"**属性）， `scrollTop`将被设置为 `0`。
-  + 设置 `scrollTop`的值小于0，`scrollTop` 被设为 `0`
-  + **如果设置了超出这个容器可滚动的值, `scrollTop` 会被设为最大值。**
+    *   因为 `scrollTop`是三个属性中**唯一一个可写**的，所以要注意其赋值规范：
 
-<img src="README.assets/image-20220515191124166.png" alt="image-20220515191124166" style="zoom:80%;" />
+    *   如果一个元素不能被滚动（例如，它没有溢出，或者这个元素有一个"\*\*non-scrollable"\*\*属性）， `scrollTop`将被设置为 `0`。
 
-+ Element.scrollHeight：一个元素的**总高度**（**整数**），包括由于溢出而无法展示在网页的不可见部分。
+    *   设置 `scrollTop`的值小于0，`scrollTop` 被设为 `0`
+
+    *   **如果设置了超出这个容器可滚动的值, `scrollTop` 会被设为最大值。**
+
+<!---->
+
+*   Element.scrollHeight：一个元素的**总高度**（**整数**），包括由于溢出而无法展示在网页的不可见部分。
 
 ![img](README.assets/scrollheight.png)
 
-+ Element.clientHeight：只读属性，是一个**整数**，即元素视口可见内容的高度。
-
-<img src="README.assets/image-20220515190952040.png" alt="image-20220515190952040" style="zoom:80%;" />
+*   Element.clientHeight：只读属性，是一个**整数**，即元素视口可见内容的高度。
 
 ##### 解决方案
 
-+ 在两种情况下，需要操作滚动条到底部：
+*   在两种情况下，需要操作滚动条到底部：
 
-  + 切换聊天对象时；
-  + 未切换聊天对象，但滚动条已经处于底部，且有新消息时。
-+ 滚动条置底的方法：
+    *   切换聊天对象时；
+
+    *   未切换聊天对象，但滚动条已经处于底部，且有新消息时。
+
+*   滚动条置底的方法：
 
 ```js
 const el = document.getElementById('...')
@@ -318,7 +321,7 @@ const el = document.getElementById('...')
 el.scrollTop = el.scrollHeight
 ```
 
-+ 如何判断滚动条已在底部？参考上面 MDN 的解答，比较 `scrollHeight - (scrollTop + clientHeight)`与一个较小的阈值(考虑到三者的取值特性，通常为 1)。
+*   如何判断滚动条已在底部？参考上面 MDN 的解答，比较 `scrollHeight - (scrollTop + clientHeight)`与一个较小的阈值(考虑到三者的取值特性，通常为 1)。
 
 ```js
 if (scrollContainer.scrollHeight - scrollContainer.scrollTop - scrollContainer.clientHeight < 1) {
@@ -326,7 +329,7 @@ if (scrollContainer.scrollHeight - scrollContainer.scrollTop - scrollContainer.c
 }
 ```
 
-+ 因为涉及到 DOM 操作，需要使用 `nextTick()`保证获取到正确的元素。
+*   因为涉及到 DOM 操作，需要使用 `nextTick()`保证获取到正确的元素。
 
 ```ts
 nextTick(() => {
@@ -367,17 +370,13 @@ server.listen(port, () => {
 
 检查 socket 连接的请求分组。
 
-+ 预检请求（OPTIONS）：从请求头和响应头的匹配情况可以看出 CORS 应该是生效的，且状态码 204 代表预检通过。
+*   预检请求（OPTIONS）：从请求头和响应头的匹配情况可以看出 CORS 应该是生效的，且状态码 204 代表预检通过。
 
-<img src="README.assets/5R2L68GXRAI9[4JEKZ6BP{8.png" alt="img" style="zoom:80%;border: 1px solid #eee;" />
+<!---->
 
-+ 连接请求（GET）：`Origin`和 `Host`与上面的也对应，但连接失败，火狐浏览器的 console 明确指出是 CORS 配置的问题。
-
-<img src="README.assets/]1ALC]RS8@2YLJZ}}[Q801.png" alt="img" style="zoom:80%;border: 1px solid #eee;" />
+*   连接请求（GET）：`Origin`和 `Host`与上面的也对应，但连接失败，火狐浏览器的 console 明确指出是 CORS 配置的问题。
 
 查询官方文档后，其表示在浏览器中输入 Socket.IO 服务地址出现以下输出，就说明服务端连接是正常建立的，那么就应该是 CORS 的问题。
-
-<img src="README.assets/url.png" alt="img" style="zoom:80%;border: 1px solid #eee;" />
 
 从 StackOverflow 的[该问题](https://stackoverflow.com/questions/35713682/socket-io-gives-cors-error-even-if-i-allowed-cors-it-on-server)下找到答案：原本的服务端写法，传递给 Socket.IO 的服务器对象与最后监听的服务器对象不同。
 
@@ -403,7 +402,7 @@ const io = new Server({
 
 以往对于 Vue Router 的配置都是初始化时就添加所有路由，然后将鉴权的工作交由各组件的生命周期钩子(如 setup, beforeMount, beforeUpdate)或组件内路由守卫(如 beforeRouteUpdate)处理，而由于本项目使用动态路由鉴权，在地址栏导航、浏览器刷新的操作下 Vue Router 会丢失。
 
-这是由于 Vue Router 是专门创建**单页应用程序(SPA)**的，其状态存储于浏览器为该页分配的堆栈中，地址栏导航、浏览器刷新都会导致这些内存被垃圾回收程序**回收**，于是导致 Vue Router 的**丢失**。
+这是由于 Vue Router 是专门创建**单页应用程序(SPA)的，其状态存储于浏览器为该页分配的堆栈中，地址栏导航、浏览器刷新都会导致这些内存被垃圾回收程序**回收，于是导致 Vue Router 的**丢失**。
 
 ##### 解决方案
 
@@ -424,9 +423,7 @@ from: any, to: /404
 
 在本项目中，存在“上传商品图片”一需求，项目使用 element plus 的 upload 组件，在其提供的 `before-upload`钩子中，原本添加了 `{'content-type': 'multipart/form-data'}`这一头部，意在说明载荷的类型，但引发后端(express)报错：
 
-```
-Error: Multipart: Boundary not found
-```
+    Error: Multipart: Boundary not found
 
 查询后，发现是**重复添加**了上面的头部声明，估计是 el-upload 组件已经封装了该请求头。
 
@@ -538,3 +535,4 @@ flea-market // 前端根目录
 ├─ tsconfig.vite-config.json
 └─ vite.config.ts // 配置
 ```
+

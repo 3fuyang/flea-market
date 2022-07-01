@@ -29,7 +29,9 @@ const barStyle = {
               <div v-show="$route.path !== '/login'" class="doodle-wrapper-l">
                 <shivering-doodle />
               </div>
-              <router-view />
+              <suspense>
+                <router-view />
+              </suspense>
             </el-main>
             <el-footer v-if="!['/login', '/newchat'].includes($route.path)" class="footer">
               <p>

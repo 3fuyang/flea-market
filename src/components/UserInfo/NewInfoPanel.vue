@@ -16,27 +16,39 @@ const props = defineProps<{
   userID: string
 }>()
 
-// 用户可修改信息类型
-class EditableInfo {
+// 用户信息基类
+class BaseInfo {
   [index: string]: string | number
   nickName: string = ''
   selfIntro: string = ''
   college: string = ''
   gender: string = ''
-  birthday: number | string = 0
+}
+// 用户可修改信息类型
+class EditableInfo extends BaseInfo {
+  birthday: number = 0
 }
 // 用户总信息类型
-class UserInfo extends EditableInfo {
+class UserInfo extends BaseInfo {
   userID: string = ''
   sellerRate: number = 0
   avatar: string = ''
+  birthday: string = ''
 }
+
+// 用户只读信息model
 const userInfo = ref<UserInfo>(new UserInfo())
+
+// 修改后的信息，与表单绑定
+const newInfo = ref<EditableInfo>(new EditableInfo())
+
+// 表单ref对象
+const formRef = ref<FormInst | null>(null)
 
 // 调用接口：传入（用户ID） 返回（用户信息：头像URL、昵称、签名、学院、性别、生日）
 axios.get(`/api/getUserInfo/${props.userID}`)
   .then((res: any) => {
-    const data = res.data[0]
+    const data = res.data
     userInfo.value.userID = props.userID as string,
       userInfo.value.nickName = data.nickname,
       userInfo.value.selfIntro = data.biography,
@@ -49,45 +61,47 @@ axios.get(`/api/getUserInfo/${props.userID}`)
     copy()
   })
 
+// 将服务端返回的个人信息复制到编辑表单model对象上
 function copy() {
   for (let property in newInfo.value) {
     if (property === 'birthday') {
-      newInfo.value[property] = Date.parse(userInfo.value.birthday as string)
+      // 服务端返回的生日是格式化后的值，使用Date.parse转换为毫秒数(Number)再赋值给编辑表单生日字段
+      newInfo.value[property] = Date.parse(userInfo.value.birthday)
     } else {
+      // 其余字段直接复制
       newInfo.value[property] = userInfo.value[property]
     }
   }
 }
 
-// 修改后的信息，与表单绑定
-const newInfo = ref<EditableInfo>(new EditableInfo())
-
-// 表单ref对象
-const formRef = ref<FormInst | null>(null)
-
 // 表单校验规则
 const rules: FormRules = {
   nickName: {
+    type: 'string',
     key: 'nickName',
     required: true,
     message: '请输入昵称'
   },
   selfIntro: {
+    type: 'string',
     key: 'selfIntro',
     required: true,
     message: '请输入个性签名'
   },
   college: {
+    type: 'string',
     key: 'college',
     required: true,
     message: '请选择学院'
   },
   gender: {
+    type: 'string',
     key: 'gender',
     required: true,
     message: '请选择性别'
   },
   birthday: {
+    type: 'number',
     key: 'birthday',
     required: true,
     message: '请选择生日'
@@ -133,7 +147,7 @@ watch(newInfo, () => {
   for (let property in newInfo.value) {
     if (newInfo.value[property] !== userInfo.value[property]) {
       if (property === 'birthday') {
-        if (newInfo.value.birthday !== Date.parse(userInfo.value.birthday as string)) {
+        if (newInfo.value.birthday !== Date.parse(userInfo.value.birthday)) {
           edited.value = true
           return
         } else {
@@ -169,6 +183,12 @@ const infoItems: InfoItem[] = [
   }
 ]
 
+// 点击信息item，复制文本
+async function copyInfoItem(key: string) {
+  await navigator.clipboard.writeText(userInfo.value[key] as string)
+  message.success('文本复制成功。')
+}
+
 // 提交修改
 function confirmEdit() {
   if (edited.value) {
@@ -182,11 +202,27 @@ function confirmEdit() {
         formRef.value?.validate((errors) => {
           if (!errors) {
             // 调用接口：传入（用户ID，新用户信息） 返回（修改结果）
-            axios.post(`api/modifyUserInfo`, newInfo.value)
+            const birthdayStr = new Date(newInfo.value.birthday)
+            birthdayStr.setHours(birthdayStr.getHours() + 8)
+
+            const reqBodyOfInfo = {
+              nickName: newInfo.value.nickName,
+              selfIntro: newInfo.value.selfIntro,
+              college: newInfo.value.college,
+              gender: newInfo.value.gender,
+              birthday: birthdayStr.toISOString().slice(0, 10),
+              userID: props.userID
+            }
+
+            axios.post(`api/modifyUserInfo`, reqBodyOfInfo)
               .then(() => {
                 // 修改视图
                 for (let property in newInfo.value) {
-                  (userInfo.value as UserInfo)[property] = newInfo.value[property]
+                  if (property === 'birthday') {
+                    (userInfo.value as UserInfo)[property] = reqBodyOfInfo.birthday
+                  } else {
+                    (userInfo.value as UserInfo)[property] = newInfo.value[property]
+                  }
                 }
                 changingInfo.value = false
                 edited.value = false
@@ -337,7 +373,7 @@ const genderOptions: SelectOption[] = ['男', '女'].map(item => ({
               {{ item.label }}
             </span>
           </template>
-          <n-text class="item-value" depth="3">
+          <n-text class="item-value" depth="3" @click="copyInfoItem(item.key)">
             {{ userInfo[item.key] }}
           </n-text>
         </n-descriptions-item>
@@ -360,7 +396,7 @@ const genderOptions: SelectOption[] = ['男', '女'].map(item => ({
           <n-select v-model:value="newInfo.gender" placeholder="Gender" :options="genderOptions" />
         </n-form-item>
         <n-form-item label="生日" path="birthday">
-          <n-date-picker v-model:value="(newInfo.birthday as number)" type="date" clearable />
+          <n-date-picker v-model:value="newInfo.birthday" type="date" clearable />
         </n-form-item>
       </n-form>
     </template>
@@ -376,8 +412,10 @@ const genderOptions: SelectOption[] = ['男', '女'].map(item => ({
       </n-button>
     </div>
     <template #footer>
-      <n-text>顾客评分：</n-text>
-      <n-rate readonly :value="userInfo.sellerRate" />
+      <div class="footer-wrapper">
+        <n-text class="rate-label">顾客评分：</n-text>
+        <n-rate size="small" readonly :value="userInfo.sellerRate" />
+      </div>
     </template>
   </n-card>
 </template>
@@ -462,5 +500,17 @@ const genderOptions: SelectOption[] = ['男', '女'].map(item => ({
   to {
     margin-left: 0;
   }
+}
+
+.footer-wrapper {
+  justify-content: center;
+  display: flex;
+  align-items: center;
+}
+
+.rate-label {
+  font-size: 1.05rem;
+  line-height: 1em;
+  letter-spacing: 1px;
 }
 </style>

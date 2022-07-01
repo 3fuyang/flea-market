@@ -107,7 +107,7 @@ function jumpKeyWord(kwd: string): void {
 
 // 商品类型
 interface ServerSideGood {
-  good_id: string,
+  goodId: string,
   title: string,
   price: string,
   images: string
@@ -125,7 +125,7 @@ axios.get(`/api/getRecommendList`)
   .then(response => {
     response.data.forEach((item: ServerSideGood) => {
       goodsList.value.push({
-        id: item.good_id.toString(),
+        id: item.goodId.toString(),
         name: item.title,
         price: Number.parseFloat(item.price).toFixed(2),
         path: `http://106.15.78.201:8082/public/images/${item.images.split(';')[0]}`

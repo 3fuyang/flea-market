@@ -90,7 +90,9 @@
 		<el-col :span="4">
 			<n-message-provider :max="1">
 				<div class="seller-container">
-					<good-seller-panel v-if="goodInfo.sellerID" :sellerID="goodInfo.sellerID" />
+					<suspense>
+						<good-seller-panel v-if="goodInfo.sellerID" :sellerID="goodInfo.sellerID" />
+					</suspense>
 				</div>
 			</n-message-provider>
 		</el-col>
@@ -187,8 +189,8 @@ function getGoodInfo() {
 			axios.get(`/api/getGoods/${goodID.value}`)
 				.then(response => {
 					goodInfo.value.goodTitle = response.data.title
-					goodInfo.value.onshelfTime = response.data.onshelf_time.substr(0, 19).replace('T', ' '),
-						goodInfo.value.sellerID = response.data.seller_id,
+					goodInfo.value.onshelfTime = response.data.onshelfTime.substr(0, 19).replace('T', ' '),
+						goodInfo.value.sellerID = response.data.sellerId,
 						goodInfo.value.likes = response.data.likes
 					goodInfo.value.type = response.data.category
 					goodInfo.value.campus = response.data.campus

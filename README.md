@@ -1,6 +1,7 @@
 # TJ flea
+Fwio
 
-一个基于 `<span style="color: #42D392;">`Vue 和 `<span style="color: #CA3430;">`Express 的经典 `<span style="text-decoration: line-through">`土味的二手交易平台项目 `<span style="text-decoration: line-through">`屎山
+一个基于 <span style="color: #42D392;">Vue</span> 和 <span style="color: #CA3430;">Express</span> 的经典<span style="text-decoration: line-through">土味</span>的二手交易平台项目<span style="text-decoration: line-through">屎山</span>
 
 ## 技术栈
 

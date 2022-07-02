@@ -55,7 +55,7 @@ axios.get(`/api/getUserInfo/${props.userID}`)
       userInfo.value.college = data.college,
       userInfo.value.gender = data.gender,
       userInfo.value.birthday = data.birthday,
-      userInfo.value.avatar = `http://106.15.78.201:8082/public/avatars/${data.avatar}`,
+      userInfo.value.avatar = `http://127.0.0.1:8082/public/avatars/${data.avatar}`,
       userInfo.value.sellerRate = 4
 
     copy()
@@ -286,6 +286,8 @@ function openAvatarModal() {
     onPositiveClick: () => {
       // 上传图片
       uploadRef.value?.submit()
+
+      message.success('修改成功！')
     },
     onNegativeClick: () => {
       message.info('取消上传头像')

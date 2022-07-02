@@ -38,7 +38,7 @@
             </el-row>
           </el-col>
           <el-col :span="6">
-            <span class="price">￥{{ good.price }}</span><br />
+            <span class="price">￥{{ good.price.toFixed(2) }}</span><br />
             <div class="options-wrapper">
               <el-button plain color="#0099CC" class="button" @click="$emit('check-info', good.id)">查看详情</el-button>
               <br />
@@ -81,7 +81,7 @@ defineEmits<{
 interface GoodInfo {
   id: string
   name: string
-  price: string
+  price: number
   browsed: number
   likes: number
   image: string
@@ -96,12 +96,12 @@ if (props.goodsStatus === 'onShelf') {
     .then((res) => {
       res.data.forEach((item: any) => {
         goodsListView.value.push({
-          id: item.good_id,
+          id: item.goodId,
           name: item.title,
-          price: Number.parseFloat(item.price).toFixed(2),
+          price: Number.parseFloat(item.price),
           browsed: item.browsed,
           likes: item.likes,
-          image: `http://106.15.78.201:8082/public/images/${item.images.split(';')[0]}`
+          image: `http://127.0.0.1:8082/public/images/${item.images.split(';')[0]}`
         })
       })
     })
@@ -111,12 +111,12 @@ if (props.goodsStatus === 'onShelf') {
     .then((res) => {
       res.data.forEach((item: any) => {
         goodsListView.value.push({
-          id: item.good_id,
+          id: item.goodId,
           name: item.title,
-          price: Number.parseFloat(item.price).toFixed(2),
+          price: Number.parseFloat(item.price),
           browsed: item.browsed,
           likes: item.likes,
-          image: `http://106.15.78.201:8082/public/images/${item.images.split(';')[0]}`
+          image: `http://127.0.0.1:8082/public/images/${item.images.split(';')[0]}`
         })
       })
     })

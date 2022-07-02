@@ -91,7 +91,7 @@ axios.get(`/api/getCollection/${userID.value}`)
         id: item.collection_good_id,
         name: item.good_title,
         price: Number.parseFloat(item.good_price).toFixed(2),
-        path: `http://106.15.78.201:8082/public/images/${item.good_images.split(';')[0]}`
+        path: `http://127.0.0.1:8082/public/images/${item.good_images.split(';')[0]}`
       })
     })
     showData.value.length = 0

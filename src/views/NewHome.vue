@@ -38,10 +38,10 @@ const categories = [
 
 // 图片列表
 const imageList = [
-  { no: '1', path: "http://106.15.78.201:8082/public/home/1.jpg" },
-  { no: '2', path: "http://106.15.78.201:8082/public/home/2.png" },
-  { no: '3', path: "http://106.15.78.201:8082/public/home/3.jpg" },
-  { no: '4', path: "http://106.15.78.201:8082/public/home/4.png" }
+  { no: '1', path: "http://127.0.0.1:8082/public/home/1.jpg" },
+  { no: '2', path: "http://127.0.0.1:8082/public/home/2.png" },
+  { no: '3', path: "http://127.0.0.1:8082/public/home/3.jpg" },
+  { no: '4', path: "http://127.0.0.1:8082/public/home/4.png" }
 ]
 
 const campusList = [
@@ -128,7 +128,7 @@ axios.get(`/api/getRecommendList`)
         id: item.goodId.toString(),
         name: item.title,
         price: Number.parseFloat(item.price).toFixed(2),
-        path: `http://106.15.78.201:8082/public/images/${item.images.split(';')[0]}`
+        path: `http://127.0.0.1:8082/public/images/${item.images.split(';')[0]}`
       })
     })
   })
@@ -151,7 +151,7 @@ const avatarUrl = computed(() => {
   } else {
     name = 'avatar'
   }
-  return `http://106.15.78.201:8082/public/images/${name}.png`
+  return `http://127.0.0.1:8082/public/images/${name}.png`
 })
 // 点击头像
 function clickAvatar(): void {

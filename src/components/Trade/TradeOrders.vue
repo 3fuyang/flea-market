@@ -84,6 +84,8 @@ import { storeToRefs } from 'pinia'
 const userStore = useUserStore()
 const { userID } = storeToRefs(userStore)
 
+const router = useRouter()
+
 // 订单类型
 interface Order {
   buyerId: string
@@ -124,19 +126,19 @@ function rejectOrder(oid: string) {
 
 function contactBuyer(id: string) {
   // 传入（买家ID） 返回（买家昵称，头像）
-  axios.post(`/api/getBuyerAvatarAndName/${id}`)
+  axios.get(`/api/getBuyerAvatarAndName/${id}`)
     .then(res => {
-      const { nickname, avatar } = res.data[0]
-      const routeUrl = useRouter().resolve({
+      const { nickname, avatar } = res.data
+      const routeUrl = router.resolve({
         path: '/chat',
         query: {
           oponentID: id,
           oponentName: nickname,
-          avatar: `http://106.15.78.201:8082/public/avatars/${avatar}`
+          avatar: `http://127.0.0.1:8082/public/avatars/${avatar}`
         }
       })
       // 在新页面打开聊天窗口
-      window.open(routeUrl.href, '_blank')
+      router.push(routeUrl)
     })
 }
 
@@ -191,17 +193,17 @@ axios.get(`/api/getSoldOrders/${userID.value}`)
   .then(res => {
     res.data.forEach((item: any) => {
       orders.value.push({
-        buyerId: item.buyer,
-        buyerName: item.nickname,
-        orderId: new Array(12).join('0') + item.order_id,
-        goodId: item.good_id,
-        goodTitle: item.title,
-        image: `http://106.15.78.201:8082/public/images/${item.images.split(';')[0]}`,
-        time: item.generated_time.replace('T', ' '),
-        status: item.stat,
-        commentStars: item.rate,
-        comment: item.review,
-        reported: item.reported
+        buyerId: item.order_buyer,
+        buyerName: item.nickName,
+        orderId: new Array(12).join('0') + item.order_order_id,
+        goodId: item.order_good_id,
+        goodTitle: item.good_title,
+        image: `http://127.0.0.1:8082/public/images/${item.good_images.split(';')[0]}`,
+        time: item.order_generated_time.slice(0, 19).replace('T', ' '),
+        status: item.order_stat,
+        commentStars: item.order_rate,
+        comment: item.order_review,
+        reported: item.order_reported
       })
     })
   })  

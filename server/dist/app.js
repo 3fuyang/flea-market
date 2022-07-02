@@ -51,7 +51,7 @@ const server = app.listen(8082, () => {
 // 配置 Socket.io
 const io = new socket_io_1.Server({
     cors: {
-        origin: 'http://106.15.78.201:8084'
+        origin: 'http://127.0.0.1:8084'
     }
 }).listen(server);
 // WebSocket 连接桶

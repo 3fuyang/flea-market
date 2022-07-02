@@ -177,7 +177,7 @@ function contactSeller(sid: string) {
         query: {
           oponentID: sid,
           oponentName: res.data.nickname,
-          avatar: `http://106.15.78.201:8082/public/avatars/${res.data.avatar}`
+          avatar: `http://127.0.0.1:8082/public/avatars/${res.data.avatar}`
         }
       })
 

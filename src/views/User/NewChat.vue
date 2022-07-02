@@ -113,6 +113,7 @@ const oponentsView = computed(() => {
 // 挂载前，获取消息对象列表，并开启定时器
 onBeforeMount(() => {
   let newOponent = route.query
+
   getChatList(newOponent.oponentID as string, newOponent.oponentName as string, newOponent.avatar as string)
 })
 
@@ -137,7 +138,7 @@ function closeChat() {
 }
 
 // 获取聊天对象列表
-function getChatList(newOponentID: string, newOponentName: string, newOponentAvatar: string, newLatest: string = '') {
+function getChatList(newOponentID: string, newOponentName: string, newOponentAvatar: string, newLatest: string = '快和 TA 交流吧 ~~~') {
   // 调用接口：传入（用户ID，聊天对象ID） 返回（聊天对象列表：ID，名称）
   const newList: Oponent[] = []
   axios.get(`/api/getChatOponent/${userID.value}`)
@@ -146,17 +147,19 @@ function getChatList(newOponentID: string, newOponentName: string, newOponentAva
         newList.push({
           uid: item.userID,
           uname: item.nickname,
-          avatar: `http://106.15.78.201:8082/public/avatars/${item.avatar}`,
+          avatar: `http://127.0.0.1:8082/public/avatars/${item.avatar}`,
           latest: item.details
         })
       })
     })
     .then(() => {
       if (newList.length !== oponentsList.value.length) {
+        // 列表长度变化，刷新对象列表（考虑更为细粒度地侦听）
         oponentsList.value.length = 0
         oponentsList.value.push(...newList)
       }
       if (newOponentID) {
+        // 如果服务端返回的对方列表中已包含路由提供的对方用户，则将其移至首位
         let index = oponentsList.value.findIndex(item => item.uid === newOponentID)
         if (index >= 0) {
           oponentsList.value.splice(index, 1)
@@ -240,7 +243,7 @@ socket.on('deliver message', (msg) => {
         oponentsList.value.unshift({
           uid: oponentID,
           uname: res.data.nickname,
-          avatar: `http://106.15.78.201:8082/public/avatars/${res.data.avatar}`,
+          avatar: `http://127.0.0.1:8082/public/avatars/${res.data.avatar}`,
           latest: msg.details
         })
       })

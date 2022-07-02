@@ -79,11 +79,11 @@ axios.get(`/api/getTrack/${userID.value}`)
   .then((res) => {
     res.data.forEach((item: any) => {
       historyData.value.push({
-        id: item.good_id,
-        date: item.day_time.substr(0, 10),
-        price: Number.parseFloat(item.price).toFixed(2),
-        title: item.title,
-        image: `http://106.15.78.201:8082/public/images/${item.images.split(';')[0]}`
+        id: item.history_good_id,
+        date: item.history_day_time.substr(0, 10),
+        price: Number.parseFloat(item.good_price).toFixed(2),
+        title: item.good_title,
+        image: `http://106.15.78.201:8082/public/images/${item.good_images.split(';')[0]}`
       })
     })
   })

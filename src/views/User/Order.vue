@@ -86,17 +86,17 @@ axios.get(`/api/getOrders/${userID.value}`)
   .then(res => {
     res.data.forEach((item: any) => {
       orderList.value.push({
-        sellerId: item.seller_id,
-        orderId: new Array(12).join('0') + item.order_id,
-        goodId: item.good_id,
-        goodName: item.title,
-        image: `http://106.15.78.201:8082/public/images/${item.images.split(';')[0]}`,
-        time: item.generated_time.replace('T', ' '),
-        status: item.stat,
+        sellerId: item.good_seller_id,
+        orderId: new Array(12).join('0') + item.order_order_id,
+        goodId: item.order_good_id,
+        goodName: item.good_title,
+        image: `http://106.15.78.201:8082/public/images/${item.good_images.split(';')[0]}`,
+        time: item.order_generated_time.slice(0, 19).replace('T', ' '),
+        status: item.order_stat,
         commentStars: 1,
-        price: Number.parseFloat(item.price).toFixed(2),
-        comment: item.review,
-        reported: item.reported
+        price: Number.parseFloat(item.order_price).toFixed(2),
+        comment: item.order_review,
+        reported: item.order_reported
       })
     })
   })

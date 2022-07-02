@@ -70,14 +70,14 @@ axios.post(`/api/goodsToConfirm`, goodsID.value)
   .then((res: any) => {
     res.data.forEach((info: any) => {
       goodsInfo.value.push({
-        goodID: info.good_id,
-        sellerID: info.seller_id,
-        sellerName: info.nickname,
-        image: `http://106.15.78.201:8082/public/images/${info.images.split(';')[0]}`,
-        goodTitle: info.title,
-        price: Number.parseFloat(info.price).toFixed(2)
+        goodID: info.good_good_id,
+        sellerID: info.good_seller_id,
+        sellerName: info.user_nickname,
+        image: `http://106.15.78.201:8082/public/images/${info.good_images.split(';')[0]}`,
+        goodTitle: info.good_title,
+        price: Number.parseFloat(info.good_price).toFixed(2)
       })
-      totalPrice.value += info.price
+      totalPrice.value += Number.parseFloat(info.good_price)
     })
   })
 
@@ -88,8 +88,8 @@ const telNum = ref('')
 // 调用接口：传入（用户ID） 返回（用户昵称，绑定手机）
 axios.get(`/api/getBuyerInfo/${userID.value}`)
   .then(res => {
-    userName.value = res.data[0].real_name
-    telNum.value = res.data[0].telnum
+    userName.value = res.data.realName
+    telNum.value = res.data.telnum
   })
 
 const showQRModal = ref(false)

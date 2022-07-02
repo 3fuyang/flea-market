@@ -17,7 +17,7 @@ const message = useMessage()
 const userStore = useUserStore()
 const { userID } = storeToRefs(userStore)
 
-const socket = io('http://106.15.78.201:8082', {
+const socket = io('http://127.0.0.1:8082', {
   extraHeaders: {
     'userid': userID.value
   }
@@ -144,10 +144,10 @@ function getChatList(newOponentID: string, newOponentName: string, newOponentAva
     .then(res => {
       res.data.forEach((item: any) => {
         newList.push({
-          uid: item.user_id,
+          uid: item.userID,
           uname: item.nickname,
           avatar: `http://106.15.78.201:8082/public/avatars/${item.avatar}`,
-          latest: item.latest
+          latest: item.details
         })
       })
     })
@@ -192,8 +192,9 @@ function getMessage(oponentChanged = false) {
     .then((res) => {
       let isSelfA = a_user_id === userID.value
       res.data.forEach((item: any) => {
+        item.speaker = Number.parseInt(item.speaker)
         newMessage.push({
-          day_time: item.date_time.substr(0, 19).replace('T', ' '),
+          day_time: item.dateTime.substr(0, 19).replace('T', ' '),
           // 0 表示对方，1 表示该用户
           speaker: isSelfA ? (item.speaker === 0 ? 1 : 0) : (item.speaker === 1 ? 1 : 0),
           details: item.details

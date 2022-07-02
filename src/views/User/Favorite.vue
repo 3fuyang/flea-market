@@ -39,14 +39,7 @@
         <el-row>
           <template v-for="(goodItem) in showData" :key="goodItem.id">
             <favorite-card :good-i-d="goodItem.id" :src="goodItem.path" :price="goodItem.price" :title="goodItem.name"
-              :removable="true" />
-            <!-- <el-card :body-style="{ padding: '0px' }" style="width: 220px;height: 250px;margin: 0px 5px 10px 5px;" >
-          <el-image class="point" :src="goodItem.path" @click="jumpCard(goodItem.id)" fit="scale-down" />
-            <span style="display: inline-block;font-size: 13px;color: #808080;margin-top: 3px;">{{goodItem.name}}</span><br/>
-            <span style="display: inline-block;font-size: 18px;color: #FF9900;margin-top: 3px;">￥{{goodItem.price}}</span>
-            <el-icon class="point" style="font-size: 20px;color: #999999;font-weight: bold;margin-top: 5px;float: right;"
-            @click="deleteFavorite(goodItem.id)"><close/></el-icon>
-        </el-card> -->
+              :removable="true" @delete-gooditem="deleteFavorite"/>
           </template>
           <br />
         </el-row>
@@ -57,9 +50,8 @@
 
 <script setup lang="ts">
 import { useMessage, useDialog } from 'naive-ui'
-import { ArrowLeft, Search, Close } from "@element-plus/icons-vue"
+import { ArrowLeft, Search } from "@element-plus/icons-vue"
 import { ref } from 'vue'
-import { useRouter } from 'vue-router'
 import axios from 'axios'
 import { useUserStore } from '@/stores/user'
 import { storeToRefs } from 'pinia'
@@ -73,8 +65,6 @@ const dialog = useDialog()
 // store
 const userStore = useUserStore()
 const { userID } = storeToRefs(userStore)
-
-const router = useRouter()
 
 // 收藏夹类型
 interface Favorite {
@@ -98,25 +88,15 @@ axios.get(`/api/getCollection/${userID.value}`)
   .then((response) => {
     response.data.forEach((item: any) => {
       favoriteData.value.push({
-        id: item.good_id,
-        name: item.title,
-        price: Number.parseFloat(item.price).toFixed(2),
-        path: `http://106.15.78.201:8082/public/images/${item.images.split(';')[0]}`
+        id: item.collection_good_id,
+        name: item.good_title,
+        price: Number.parseFloat(item.good_price).toFixed(2),
+        path: `http://106.15.78.201:8082/public/images/${item.good_images.split(';')[0]}`
       })
     })
     showData.value.length = 0
     showData.value.push(...favoriteData.value)
   })
-
-// 点击卡片跳转商品详情页
-function jumpCard(itemID: string) {
-  router.push({
-    path: '/details',
-    query: {
-      gid: itemID,
-    }
-  })
-}
 
 // 搜索收藏
 function searchFavorite() {

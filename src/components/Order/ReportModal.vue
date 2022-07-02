@@ -9,19 +9,19 @@
             </span>
           </div>
           <span>
-            <el-tag v-if="props.reported" class="reported" type="warning" effect="light">
+            <el-tag v-if="props.reported !== '未举报'" class="reported" type="warning" effect="light">
               {{ reported === '待处理' ? '您的举报已收悉，工作人员将在三个工作日内给予回复。' : reply }}
             </el-tag>
           </span><br />
           <div class="modal-input">
             <el-input v-model="reasonView" placeholder="请输入举报理由。" :rows="6" maxlength="300" show-word-limit
-              :readonly="props.reported" type="textarea">
+              :readonly="props.reported !== '未举报'" type="textarea">
             </el-input>
           </div>
           <div class="modal-footer">
             <el-row>
               <el-col :span="12">
-                <el-button @click="reportOrder" type="primary" v-if="!props.reported">确定</el-button>
+                <el-button @click="reportOrder" type="primary" v-if="props.reported === '未举报'">确定</el-button>
               </el-col>
               <el-col :span="12">
                 <el-button @click="$emit('close', 'normal', props.currOrderId)">{{ reported === '待处理' ? '返回' : '关闭' }}

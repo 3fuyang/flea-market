@@ -1,13 +1,19 @@
 <script lang="ts" setup>
-import { NCard, NImage, NEllipsis } from 'naive-ui'
+import { NCard, NImage, NEllipsis, NIcon } from 'naive-ui'
 import { toRefs, type CSSProperties } from 'vue'
+import { CloseSharp } from '@vicons/ionicons5'
 
 const props = defineProps<{
-  goodID: string | number
+  goodID: string
   src: string
   title: string
   price: number | string
   removable: boolean
+}>()
+
+const emits = defineEmits<{
+  // 删除商品事件
+  (e: 'delete-gooditem', gid: string): void
 }>()
 
 const { src } = toRefs(props)
@@ -17,6 +23,7 @@ const contentStyle: CSSProperties = {
   display: 'flex',
   flexDirection: 'column'
 }
+
 </script>
 
 <template>
@@ -35,6 +42,9 @@ const contentStyle: CSSProperties = {
     <div class="price">
       ￥{{ props.price }}
     </div>
+    <n-icon v-if="$route.path === '/favorite'" class="close-tag" :size="18" color="#808080" @click="$emit('delete-gooditem', props.goodID)">
+      <close-sharp />
+    </n-icon>
   </n-card>
 </template>
 
@@ -44,6 +54,7 @@ $orange: #F90;
 
 .good-card {
   width: 13.75rem;
+  position: relative;
 }
 
 .image {
@@ -62,5 +73,12 @@ $orange: #F90;
   text-align: center;
   font-size: 1.125rem;
   color: $orange;
+}
+
+.close-tag {
+  position: absolute;
+  bottom: .2rem;
+  right: .2rem;
+  cursor: pointer;
 }
 </style>

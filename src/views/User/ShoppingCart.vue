@@ -113,10 +113,10 @@ axios.get(`/api/getCart/${userID.value}`)
   .then((response) => {
     response.data.forEach((item: any) => {
       tableData.value.push({
-        id: item.good_id,
-        name: item.title,
-        price: Number.parseFloat(item.price).toFixed(2),
-        path: `http://106.15.78.201:8082/public/images/${item.images.split(';')[0]}`
+        id: item.cart_good_id,
+        name: item.good_title,
+        price: Number.parseFloat(item.good_price).toFixed(2),
+        path: `http://106.15.78.201:8082/public/images/${item.good_images.split(';')[0]}`
       })
     })
   })
@@ -130,6 +130,7 @@ function jumpCard(itemID: string) {
     }
   })
 }
+
 // 当选中状态变化时，计算选中商品数与总金额
 function handleSelectionChange(selection: CartGood[]) {
   // 先清零
@@ -149,6 +150,7 @@ function handleSelectionChange(selection: CartGood[]) {
     cost.value = 0
   }
 }
+
 // 从购物车中删除商品
 function removeGoods(gid: string) {
   dialog.warning({
@@ -207,6 +209,7 @@ function removeSelectedGoods() {
     })
   }
 }
+
 // 结算
 function jumpToConfirm() {
   if (selectedData.value.length > 0) {

@@ -176,11 +176,12 @@ function contactSeller(sid: string) {
         path: '/chat',
         query: {
           oponentID: sid,
-          oponentName: res.data[0].nickname,
-          avatar: `http://106.15.78.201:8082/public/avatars/${res.data[0].avatar}`
+          oponentName: res.data.nickname,
+          avatar: `http://106.15.78.201:8082/public/avatars/${res.data.avatar}`
         }
       })
-      window.open(routeUrl.href, '_blank')
+
+      router.push(routeUrl)
     })
 }
 
@@ -316,6 +317,10 @@ function confirmReceipt(oid: string) {
 
 .GoodName {
   line-height: 100px;
+  width: 100%;
+  overflow-x: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
   font-size: 13px;
   color: #808080;
 }

@@ -205,7 +205,7 @@ function handleClickImage(gid: string) {
 }
 </script>
 
-<style scoped>
+<style scoped lang="scss">
 .seller-title {
   margin: 0;
   float: left;
@@ -260,10 +260,11 @@ function handleClickImage(gid: string) {
 
 .avatar {
   cursor: pointer;
-}
+  transition: transform .5s;
 
-.avatar:hover {
-  box-shadow: .1em 0em .2em #8ACEFF;
+  &:hover {
+    transform: rotate3d(0, 1, 0, 180deg);
+  }  
 }
 
 .score-row {

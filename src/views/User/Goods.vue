@@ -17,11 +17,11 @@
         <div class="tab-wrapper">
           <el-tabs v-model="currentTab" class="tabs" type="border-card" stretch>
             <el-tab-pane label="上架中" name="onShelf" lazy>
-              <GoodsListTable v-if="currentTab === 'onShelf'" :userId="userID" :goodsStatus="currentTab"
+              <NewGoodListTable v-if="currentTab === 'onShelf'" :userId="userID" :goodsStatus="currentTab"
                 @check-info="checkGoodInfo" />
             </el-tab-pane>
             <el-tab-pane label="已售出" name="soldOut" lazy>
-              <GoodsListTable v-if="currentTab === 'soldOut'" :userId="userID" :goodsStatus="currentTab"
+              <NewGoodListTable v-if="currentTab === 'soldOut'" :userId="userID" :goodsStatus="currentTab"
                 @check-info="checkGoodInfo" />
             </el-tab-pane>
             <el-tab-pane label="新添闲置" name="uploadGood" lazy>
@@ -48,6 +48,7 @@ import { useUserStore } from '@/stores/user'
 import { storeToRefs } from 'pinia'
 import PageTitle from '@/components/Public/PageTitle.vue'
 import { GiftCard20Regular } from '@vicons/fluent'
+import NewGoodListTable from '../../components/Goods/NewGoodListTable.vue'
 
 // store
 const userStore = useUserStore()

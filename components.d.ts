@@ -57,6 +57,7 @@ declare module '@vue/runtime-core' {
     InfoPanel: typeof import('./src/components/UserInfo/InfoPanel.vue')['default']
     LoginWidget: typeof import('./src/components/Login/LoginWidget.vue')['default']
     ModifyTelCard: typeof import('./src/components/Security/ModifyTelCard.vue')['default']
+    NewGoodListTable: typeof import('./src/components/Goods/NewGoodListTable.vue')['default']
     NewInfoPanel: typeof import('./src/components/UserInfo/NewInfoPanel.vue')['default']
     NewTopBar: typeof import('./src/components/NewTopBar.vue')['default']
     OrderListTable: typeof import('./src/components/Order/OrderListTable.vue')['default']

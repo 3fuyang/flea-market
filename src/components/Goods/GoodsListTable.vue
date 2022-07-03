@@ -159,13 +159,13 @@ function pullOffGood(goodId: string) {
 }
 </script>
 
-<style scoped>
+<style scoped lang="scss">
 .point {
   cursor: pointer;
 }
 
 .list-wrapper {
-  margin: 20px 15px;
+  margin: 20px 0;
 }
 
 .good-card {
@@ -174,11 +174,6 @@ function pullOffGood(goodId: string) {
   border: 1px solid #eee;
   background-color: #fafafa;
   margin: 20px 10px;
-  box-shadow: 1px 1px 1px rgba(27, 27, 27, 0.22);
-}
-
-.good-card:hover {
-  box-shadow: 1px 1px 2px rgba(97, 97, 97, 0.575);
 }
 
 .image {

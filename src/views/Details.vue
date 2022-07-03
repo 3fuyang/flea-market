@@ -1,6 +1,6 @@
 <template>
 	<el-row justify="center" class="root-container">
-		<el-col :span="10">
+		<el-col :span="17">
 			<div class="good-container">
 				<div class="left-flex-item">
 					<div class="big-image-container">
@@ -87,7 +87,7 @@
 				</div>
 			</div>
 		</el-col>
-		<el-col :span="4">
+		<el-col :span="7">
 			<n-message-provider :max="1">
 				<div class="seller-container">
 					<suspense>
@@ -372,26 +372,28 @@ const addToCart = () => {
 
 <style scoped>
 .root-container {
+	box-sizing: border-box;
+	width: 55.375rem;
 	margin: .8em 0 .4em 0;
 	overflow: auto;
-	width: 100%;
 	z-index: 1;
+	display: flex;
 }
 
 .good-container {
 	background-color: #fff;
 	border: .08em solid #e8e8e8;
 	border-right: none;
-	height: 51vh;
+	height: 22rem;
 	display: flex;
-	padding: 2vh;
+	padding: 1.25rem;
 }
 
 .seller-container {
 	background-color: #fff;
-	border: .08em solid hsl(212, 95%, 77%);
-	padding: 2vh;
-	height: 51vh;
+	border: .08em solid #EFEFEF;
+	padding: 1.25rem;
+	height: 22rem;
 }
 
 .left-flex-item {
@@ -599,7 +601,8 @@ const addToCart = () => {
 .bottom-box {
 	display: flex;
 	justify-content: center;
-	z-index: 5;
+	z-index: 1;
+	margin-bottom: 1rem;
 }
 
 .seller-comment-title {

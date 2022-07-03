@@ -4,7 +4,7 @@ import { toRefs, type CSSProperties } from 'vue'
 import { CloseSharp } from '@vicons/ionicons5'
 
 const props = defineProps<{
-  goodID: string
+  goodID: number | string
   src: string
   title: string
   price: number | string
@@ -13,7 +13,7 @@ const props = defineProps<{
 
 const emits = defineEmits<{
   // 删除商品事件
-  (e: 'delete-gooditem', gid: string): void
+  (e: 'delete-gooditem', gid: string | number): void
 }>()
 
 const { src } = toRefs(props)
@@ -42,7 +42,8 @@ const contentStyle: CSSProperties = {
     <div class="price">
       ￥{{ props.price }}
     </div>
-    <n-icon v-if="$route.path === '/favorite'" class="close-tag" :size="18" color="#808080" @click="$emit('delete-gooditem', props.goodID)">
+    <n-icon v-if="$route.path === '/favorite'" class="close-tag" :size="18" color="#808080"
+      @click="$emit('delete-gooditem', props.goodID)">
       <close-sharp />
     </n-icon>
   </n-card>

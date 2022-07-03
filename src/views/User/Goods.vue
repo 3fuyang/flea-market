@@ -15,12 +15,16 @@
   <div class="tab-wrapper">
     <el-tabs v-model="currentTab" class="tabs" type="border-card" stretch>
       <el-tab-pane label="上架中" name="onShelf" lazy>
-        <NewGoodListTable v-if="currentTab === 'onShelf'" :userId="userID" :goodsStatus="currentTab"
-          @check-info="checkGoodInfo" />
+        <keep-alive>
+          <NewGoodListTable v-if="currentTab === 'onShelf'" :userId="userID" :goodsStatus="currentTab"
+            @check-info="checkGoodInfo" />
+        </keep-alive>
       </el-tab-pane>
       <el-tab-pane label="已售出" name="soldOut" lazy>
-        <NewGoodListTable v-if="currentTab === 'soldOut'" :userId="userID" :goodsStatus="currentTab"
-          @check-info="checkGoodInfo" />
+        <keep-alive>
+          <NewGoodListTable v-if="currentTab === 'soldOut'" :userId="userID" :goodsStatus="currentTab"
+            @check-info="checkGoodInfo" />
+        </keep-alive>
       </el-tab-pane>
       <el-tab-pane label="新添闲置" name="uploadGood" lazy>
         <UploadGoodModal v-if="currentTab === 'uploadGood'" :userId="userID" />

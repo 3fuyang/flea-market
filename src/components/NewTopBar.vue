@@ -16,17 +16,34 @@ const dialog = useDialog()
 const router = useRouter()
 const route = useRoute()
 
-watch(route, () => {
-  loadingBar.start()
-  window.setTimeout(() => {
-    loadingBar.finish()
-  }, 0)
-})
-
 const userStore = useUserStore()
 const { identity } = storeToRefs(userStore)
 
 const activeKey = ref<string | null>(null)
+
+const routeNames = [
+  'home',
+  'info',
+  'login',
+  'security',
+  'shoppingcart',
+  'favorite',
+  'history',
+  'order',
+  'goods',
+  'trade',
+  'chat',
+  'report'
+]
+
+watch(route, () => {
+  loadingBar.start()
+  window.setTimeout(() => {
+    loadingBar.finish()
+
+    activeKey.value = routeNames.includes(route.name as string) ? route.name as string : 'home'
+  }, 0)
+})
 
 // 当前选项
 const currOptions = computed(() => {
@@ -53,7 +70,7 @@ const visitorOptions: MenuOption[] = [
         },
         { default: () => '首页' }
       ),
-    key: 'go-back-home'
+    key: 'home'
   },
   {
     label: () =>
@@ -66,7 +83,7 @@ const visitorOptions: MenuOption[] = [
         },
         { default: () => '登录/注册' }
       ),
-    key: 'go-login'
+    key: 'login'
   },
 ]
 
@@ -83,7 +100,7 @@ const memberOptions: MenuOption[] = [
         },
         { default: () => '首页' }
       ),
-    key: 'go-back-home'
+    key: 'home'
   },
   {
     label: '个人中心',
@@ -96,9 +113,6 @@ const memberOptions: MenuOption[] = [
             {
               to: {
                 name: 'info'
-              },
-              onClick: () => {
-                activeKey.value = 'info-center'
               }
             },
             { default: () => '用户信息' }
@@ -112,9 +126,6 @@ const memberOptions: MenuOption[] = [
             {
               to: {
                 name: 'security'
-              },
-              onClick: () => {
-                activeKey.value = 'info-center'
               }
             },
             { default: () => '安全中心' }
@@ -134,14 +145,11 @@ const memberOptions: MenuOption[] = [
             {
               to: {
                 name: 'shoppingcart'
-              },
-              onClick: () => {
-                activeKey.value = 'browse-management'
               }
             },
             { default: () => '购物车' }
           ),
-        key: 'shopping-cart'
+        key: 'shoppingcart'
       },
       {
         label: () =>
@@ -150,9 +158,6 @@ const memberOptions: MenuOption[] = [
             {
               to: {
                 name: 'favorite'
-              },
-              onClick: () => {
-                activeKey.value = 'browse-management'
               }
             },
             { default: () => '收藏夹' }
@@ -166,9 +171,6 @@ const memberOptions: MenuOption[] = [
             {
               to: {
                 name: 'history'
-              },
-              onClick: () => {
-                activeKey.value = 'browse-management'
               }
             },
             { default: () => '浏览记录' }
@@ -188,9 +190,6 @@ const memberOptions: MenuOption[] = [
             {
               to: {
                 name: 'order'
-              },
-              onClick: () => {
-                activeKey.value = 'my-bussiness'
               }
             },
             { default: () => '订单管理' }
@@ -204,9 +203,6 @@ const memberOptions: MenuOption[] = [
             {
               to: {
                 name: 'goods'
-              },
-              onClick: () => {
-                activeKey.value = 'my-bussiness'
               }
             },
             { default: () => '商品管理' }
@@ -220,9 +216,6 @@ const memberOptions: MenuOption[] = [
             {
               to: {
                 name: 'trade'
-              },
-              onClick: () => {
-                activeKey.value = 'my-bussiness'
               }
             },
             { default: () => '卖出闲置' }
@@ -236,9 +229,6 @@ const memberOptions: MenuOption[] = [
             {
               to: {
                 name: 'chat'
-              },
-              onClick: () => {
-                activeKey.value = 'my-bussiness'
               }
             },
             { default: () => '我的聊天' }
@@ -274,7 +264,7 @@ const adminOptions: MenuOption[] = [
         },
         { default: () => '首页' }
       ),
-    key: 'go-back-home'
+    key: 'home'
   },
   {
     label: () =>
@@ -287,7 +277,7 @@ const adminOptions: MenuOption[] = [
         },
         { default: () => '处理举报' }
       ),
-    key: 'go-report'
+    key: 'report'
   },
   {
     label: () =>

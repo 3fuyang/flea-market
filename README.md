@@ -1,15 +1,15 @@
 # TJ flea
+
 Fwio
 
-一个基于 <span style="color: #42D392;">Vue</span> 和 <span style="color: #CA3430;">Express</span> 的经典<span style="text-decoration: line-through">土味</span>的二手交易平台项目<span style="text-decoration: line-through">屎山</span>
+一个基于 `<span style="color: #42D392;">`Vue 和 `<span style="color: #CA3430;">`Express 的经典`<span style="text-decoration: line-through">`土味的二手交易平台项目`<span style="text-decoration: line-through">`屎山
 
 ## 技术栈
 
-*   前端：Vue 3 + TypeScript + Pinia + Element Plus + Naive UI
+* 前端：Vue 3 + TypeScript + Pinia + Element Plus + Naive UI
+* 后端：Express + MySQL + Socket.IO
 
-*   后端：Express + MySQL + Socket.IO
-
-Online Demo: <http://127.0.0.1:8084/>
+Online Demo: [http://106.15.78.201:8084/](http://106.15.78.201:8084/)
 
 ## Changelog
 
@@ -173,7 +173,7 @@ CommonJS 使用 `require`命令第一次加载脚本时，就会**执行整个�
     id: '...',	// 模块名
 	exports: { ... },	// 模块输出的各个接口
 	loaded: true,	// 该模块的脚本是否执行完毕
-	//...    
+	//...  
 }
 ```
 
@@ -287,33 +287,28 @@ app.get('/onShelfGoods/:user_id', (req, res) => {
 
 ##### 参考资料
 
-*   Element.scrollTop：一个元素的内容垂直滚动的像素数(一个**非整数**)，其值是这个元素的**内容顶部**到其视口可见内容（**的顶部**）的距离的度量。当一个元素的内容没有产生垂直方向的滚动条，那么它的 `scrollTop`值为 0。
+* Element.scrollTop：一个元素的内容垂直滚动的像素数(一个**非整数**)，其值是这个元素的**内容顶部**到其视口可见内容（**的顶部**）的距离的度量。当一个元素的内容没有产生垂直方向的滚动条，那么它的 `scrollTop`值为 0。
 
-    *   因为 `scrollTop`是三个属性中**唯一一个可写**的，所以要注意其赋值规范：
-
-    *   如果一个元素不能被滚动（例如，它没有溢出，或者这个元素有一个"\*\*non-scrollable"\*\*属性）， `scrollTop`将被设置为 `0`。
-
-    *   设置 `scrollTop`的值小于0，`scrollTop` 被设为 `0`
-
-    *   **如果设置了超出这个容器可滚动的值, `scrollTop` 会被设为最大值。**
+  * 因为 `scrollTop`是三个属性中**唯一一个可写**的，所以要注意其赋值规范：
+  * 如果一个元素不能被滚动（例如，它没有溢出，或者这个元素有一个"\*\*non-scrollable"\*\*属性）， `scrollTop`将被设置为 `0`。
+  * 设置 `scrollTop`的值小于0，`scrollTop` 被设为 `0`
+  * **如果设置了超出这个容器可滚动的值, `scrollTop` 会被设为最大值。**
 
 <!---->
 
-*   Element.scrollHeight：一个元素的**总高度**（**整数**），包括由于溢出而无法展示在网页的不可见部分。
+* Element.scrollHeight：一个元素的**总高度**（**整数**），包括由于溢出而无法展示在网页的不可见部分。
 
 ![img](README.assets/scrollheight.png)
 
-*   Element.clientHeight：只读属性，是一个**整数**，即元素视口可见内容的高度。
+* Element.clientHeight：只读属性，是一个**整数**，即元素视口可见内容的高度。
 
 ##### 解决方案
 
-*   在两种情况下，需要操作滚动条到底部：
+* 在两种情况下，需要操作滚动条到底部：
 
-    *   切换聊天对象时；
-
-    *   未切换聊天对象，但滚动条已经处于底部，且有新消息时。
-
-*   滚动条置底的方法：
+  * 切换聊天对象时；
+  * 未切换聊天对象，但滚动条已经处于底部，且有新消息时。
+* 滚动条置底的方法：
 
 ```js
 const el = document.getElementById('...')
@@ -322,7 +317,7 @@ const el = document.getElementById('...')
 el.scrollTop = el.scrollHeight
 ```
 
-*   如何判断滚动条已在底部？参考上面 MDN 的解答，比较 `scrollHeight - (scrollTop + clientHeight)`与一个较小的阈值(考虑到三者的取值特性，通常为 1)。
+* 如何判断滚动条已在底部？参考上面 MDN 的解答，比较 `scrollHeight - (scrollTop + clientHeight)`与一个较小的阈值(考虑到三者的取值特性，通常为 1)。
 
 ```js
 if (scrollContainer.scrollHeight - scrollContainer.scrollTop - scrollContainer.clientHeight < 1) {
@@ -330,7 +325,7 @@ if (scrollContainer.scrollHeight - scrollContainer.scrollTop - scrollContainer.c
 }
 ```
 
-*   因为涉及到 DOM 操作，需要使用 `nextTick()`保证获取到正确的元素。
+* 因为涉及到 DOM 操作，需要使用 `nextTick()`保证获取到正确的元素。
 
 ```ts
 nextTick(() => {
@@ -371,11 +366,11 @@ server.listen(port, () => {
 
 检查 socket 连接的请求分组。
 
-*   预检请求（OPTIONS）：从请求头和响应头的匹配情况可以看出 CORS 应该是生效的，且状态码 204 代表预检通过。
+* 预检请求（OPTIONS）：从请求头和响应头的匹配情况可以看出 CORS 应该是生效的，且状态码 204 代表预检通过。
 
 <!---->
 
-*   连接请求（GET）：`Origin`和 `Host`与上面的也对应，但连接失败，火狐浏览器的 console 明确指出是 CORS 配置的问题。
+* 连接请求（GET）：`Origin`和 `Host`与上面的也对应，但连接失败，火狐浏览器的 console 明确指出是 CORS 配置的问题。
 
 查询官方文档后，其表示在浏览器中输入 Socket.IO 服务地址出现以下输出，就说明服务端连接是正常建立的，那么就应该是 CORS 的问题。
 
@@ -536,4 +531,3 @@ flea-market // 前端根目录
 ├─ tsconfig.vite-config.json
 └─ vite.config.ts // 配置
 ```
-

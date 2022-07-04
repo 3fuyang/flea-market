@@ -181,9 +181,9 @@ const pagination = ref({
 const completed = ref(0)
 
 function banAccused(row: Report) {
-  let date = new Date()
+  const date = new Date()
   date.setHours(date.getHours() + 8)
-  let data = {
+  const data = {
     userID: row.accused,
     reply: replys.value[row.orderId],
     replyTime: date.toISOString().slice(0, 19).replace('T', ' '),
@@ -203,9 +203,9 @@ function banAccused(row: Report) {
 // 驳回举报
 function refuseReport(row: Report) {
   // 封装请求body
-  let date = new Date()
+  const date = new Date()
   date.setHours(date.getHours() + 8)
-  let data = {
+  const data = {
     reply: replys.value[row.orderId],
     replyTime: date.toISOString().slice(0, 19).replace('T', ' '),
     replyer: userID.value,
@@ -231,13 +231,13 @@ onBeforeMount(() => {
       res.data.forEach((item: any) => {
         reports.value.push({
           no: ++counter,
-          reporter: item.buyer,
-          accused: item.seller,
+          reporter: item.order_buyer,
+          accused: item.order_seller,
           orderId: item.order_id,
-          goodTitle: item.title,
-          tradeTime: item.report_time,
-          reason: item.reason,
-          state: item.stat,
+          goodTitle: item.good_title,
+          tradeTime: item.report_report_time,
+          reason: item.report_reason,
+          state: item.report_stat,
         })
       })
       reports.value.forEach((rowData: Report) => {

@@ -52,7 +52,6 @@ declare module '@vue/runtime-core' {
     GoodMediaObject: typeof import('./src/components/Confirm/GoodMediaObject.vue')['default']
     GoodSellerPanel: typeof import('./src/components/Goods/GoodSellerPanel.vue')['default']
     GoodsInfoModal: typeof import('./src/components/Goods/GoodsInfoModal.vue')['default']
-    GoodsListTable: typeof import('./src/components/Goods/GoodsListTable.vue')['default']
     HelloBar: typeof import('./src/components/Admin/HelloBar.vue')['default']
     InfoPanel: typeof import('./src/components/UserInfo/InfoPanel.vue')['default']
     LoginWidget: typeof import('./src/components/Login/LoginWidget.vue')['default']

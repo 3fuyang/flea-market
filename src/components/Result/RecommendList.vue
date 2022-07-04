@@ -42,7 +42,7 @@ onBeforeMount(() => {
           goodPrice: Number.parseFloat(item.price).toFixed(2),
           goodTitle: item.title
         })
-      })      
+      })
     })
 })
 

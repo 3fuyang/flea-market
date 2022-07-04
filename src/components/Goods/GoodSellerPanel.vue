@@ -264,7 +264,7 @@ function handleClickImage(gid: string) {
 
   &:hover {
     transform: rotate3d(0, 1, 0, 180deg);
-  }  
+  }
 }
 
 .score-row {

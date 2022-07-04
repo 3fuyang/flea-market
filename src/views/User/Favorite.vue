@@ -39,7 +39,7 @@
         <el-row>
           <template v-for="(goodItem) in showData" :key="goodItem.id">
             <favorite-card :good-i-d="goodItem.id" :src="goodItem.path" :price="goodItem.price" :title="goodItem.name"
-              :removable="true" @delete-gooditem="deleteFavorite"/>
+              :removable="true" @delete-gooditem="deleteFavorite" />
           </template>
           <br />
         </el-row>
@@ -120,7 +120,7 @@ function cancelSearch() {
 }
 
 // 取消收藏
-function deleteFavorite(gid: string) {
+function deleteFavorite(gid: string | number) {
   dialog.warning({
     title: '确认',
     content: '将从收藏夹中删除这件商品,是否继续操作?',

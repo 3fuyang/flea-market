@@ -26,8 +26,9 @@
                 </el-col>
                 <el-col :span="13">
                   <div style="text-align: center">
-                    <span
-                      style="display: inline-block;font-size: 13px;color: #808080;margin-top: 25px;">{{ scope.row.name }}</span>
+                    <span style="display: inline-block;font-size: 13px;color: #808080;margin-top: 25px;">{{
+                        scope.row.name
+                    }}</span>
                   </div>
                 </el-col>
               </el-row>
@@ -35,8 +36,9 @@
           </el-table-column>
           <el-table-column label="金额" width="200" align="center">
             <template #default="scope">
-              <span
-                style="display: inline-block;font-size: 18px;font-weight: bold;color: #FF9900;margin-top: 3px;">￥{{ scope.row.price }}</span>
+              <span style="display: inline-block;font-size: 18px;font-weight: bold;color: #FF9900;margin-top: 3px;">￥{{
+                  scope.row.price
+              }}</span>
             </template>
           </el-table-column>
           <el-table-column label="操作" show-overflow-tooltip align="center">
@@ -56,13 +58,16 @@
             <el-col :span="8">
               <span
                 style="display: inline-block;font-size: 14px;color: #808080;margin-top: 15px;">已选商品&nbsp;&nbsp;</span>
-              <span
-                style="display: inline-block;font-size: 20px;color: #FF9900;margin-top: 13px;font-weight: bold;">{{ selectedNum }}&nbsp;&nbsp;</span>
+              <span style="display: inline-block;font-size: 20px;color: #FF9900;margin-top: 13px;font-weight: bold;">{{
+                  selectedNum
+              }}&nbsp;&nbsp;</span>
               <span
                 style="display: inline-block;font-size: 14px;color: #808080;margin-top: 15px;">件&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
               <span style="display: inline-block;font-size: 14px;color: #808080;margin-top: 15px;">合计 : </span>
               <span
-                style="display: inline-block;font-size: 24px;color: #FF9900;margin-top: 13px;font-weight: bold;">&nbsp;&nbsp;{{ cost }}&nbsp;&nbsp;</span>
+                style="display: inline-block;font-size: 24px;color: #FF9900;margin-top: 13px;font-weight: bold;">&nbsp;&nbsp;{{
+                    cost
+                }}&nbsp;&nbsp;</span>
               <span style="display: inline-block;font-size: 14px;color: #808080;margin-top: 15px;">元</span>
             </el-col>
             <el-col :span="3">

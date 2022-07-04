@@ -101,6 +101,8 @@ const message = useMessage()
 
 const dialog = useDialog()
 
+const router = useRouter()
+
 const props = defineProps({
   userId: String, // 用户ID
 })
@@ -180,26 +182,26 @@ function nextStep() {
         negativeText: '取消',
         onPositiveClick: () => {
           // 调用接口-添加商品：传入（商品信息） 返回（商品ID）
-          let date = new Date()
+          const date = new Date()
           date.setHours(date.getHours() + 8)
-          const newGood = [
-            props.userId,
-            goodInfo.value.price,
-            goodInfo.value.type,
-            goodInfo.value.name,
-            goodInfo.value.title,
-            goodInfo.value.keywords,
-            goodInfo.value.campus,
-            goodInfo.value.intro,
-            goodInfo.value.detail,
-            imgServerName.value.join(';'),
-            date.toISOString().slice(0, 19).replace('T', ' ')
-          ]
+
+          const newGood = {
+            seller_id: props.userId,
+            price: goodInfo.value.price,
+            category: goodInfo.value.type,
+            good_name: goodInfo.value.name,
+            title: goodInfo.value.title,
+            keywords: goodInfo.value.keywords,
+            campus: goodInfo.value.campus,
+            intro: goodInfo.value.intro,
+            images: imgServerName.value.join(';'),
+            onshelf_time: date.toISOString().slice(0, 19).replace('T', ' ')
+          }
+
           axios.post('/api/addGood', newGood)
             .then(() => {
               message.success('上架成功')
               // 刷新当前页面
-              const router = useRouter()
               router.go(0)
             })
         },

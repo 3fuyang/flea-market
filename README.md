@@ -2,17 +2,19 @@
 
 Fwio
 
-一个基于 `<span style="color: #42D392;">`Vue 和 `<span style="color: #CA3430;">`Express 的经典`<span style="text-decoration: line-through">`土味的二手交易平台项目`<span style="text-decoration: line-through">`屎山
+一个基于 `<span style="color: #42D392;">`Vue 和 `<span style="color: #CA3430;">`Express 的经典 `<span style="text-decoration: line-through">`土味的二手交易平台项目 `<span style="text-decoration: line-through">`屎山
 
 ## 技术栈
 
 * 前端：Vue 3 + TypeScript + Pinia + Element Plus + Naive UI
 * 后端：Express + MySQL + Socket.IO
 
-Online Demo: [http://127.0.0.1:8084/](http://127.0.0.1:8084/)
+Online Demo: [http://106.15.78.201:8084/](http://106.15.78.201:8084/)
 
 ## Changelog
 
+> 2022/7/4 TypeORM 后端集成完毕，已经同步到生产模式。
+>
 > 2022/7/1 修复了编辑个人信息页面的日期选择校验bug，由于正在对接 TypeORM 后端，还未同步到生产模式。
 
 ## 运行方法

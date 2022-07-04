@@ -112,6 +112,8 @@ import axios from 'axios'
 const message = useMessage()
 const dialog = useDialog()
 
+const router = useRouter()
+
 const props = defineProps({
   goodId: String, // 商品ID
   show: Boolean,  // 组件渲染条件
@@ -122,14 +124,14 @@ const emits = defineEmits([
 ])
 // 商品信息类型
 interface goodInfo {
-  [index: string]: string
+  [index: string]: string | number
   title: string
   type: string
   name: string
   keywords: string
   campus: string
   intro: string
-  price: string
+  price: number
   detail: string
 }
 // 商品信息
@@ -140,12 +142,12 @@ const goodInfo = ref<goodInfo>({
   keywords: '',  // 关键词
   campus: '',  // 校区
   intro: '', // 简介(包含交易要求)
-  price: '',  // 价格
+  price: 0,  // 价格
   detail: '',  // 交易细节
 })
 // 商品原信息副本
 interface PreInfo extends goodInfo {
-  [index: string]: string
+  [index: string]: string | number
   images: string
 }
 const goodPreInfo = ref<PreInfo>({
@@ -155,7 +157,7 @@ const goodPreInfo = ref<PreInfo>({
   keywords: '',
   campus: '',
   intro: '',
-  price: '',
+  price: 0,
   detail: '',
   images: ''
 })  // 商品原信息副本
@@ -177,7 +179,7 @@ function getGoodInfo() {
       goodPreInfo.value.keywords = data.keywords
       goodPreInfo.value.campus = data.campus
       goodPreInfo.value.intro = data.intro
-      goodPreInfo.value.price = Number.parseFloat(data.price).toFixed(2)
+      goodPreInfo.value.price = Number.parseFloat(data.price)
       goodPreInfo.value.detail = data.detail
       goodPreInfo.value.images = data.images
 
@@ -264,7 +266,7 @@ function nextStep() {
         break
       }
     case 2:
-      if (Number.parseFloat(goodInfo.value.price) === 0) {
+      if (goodInfo.value.price === 0) {
         message.error('商品价格不能为零!')
         break
       } else if (goodInfo.value.detail === '') {
@@ -286,27 +288,23 @@ function nextStep() {
         positiveText: '确定',
         negativeText: '取消',
         onPositiveClick: () => {
-          // 调用接口-添加商品：传入（商品信息） 返回（商品ID）
-          let date = new Date()
-          date.setHours(date.getHours() + 8)
-          let modifiedGood = [
-            goodInfo.value.price,
-            goodInfo.value.type,
-            goodInfo.value.name,
-            goodInfo.value.title,
-            goodInfo.value.keywords,
-            goodInfo.value.campus,
-            goodInfo.value.intro,
-            goodInfo.value.detail,
-            imgServerName.value.join(';'),
-            props.goodId
-          ]
+          // 调用接口-修改商品信息：传入（商品信息） 返回（商品ID）
+          const modifiedGood = {
+            price: goodInfo.value.price,
+            category: goodInfo.value.type,
+            good_name: goodInfo.value.name,
+            title: goodInfo.value.title,
+            keywords: goodInfo.value.keywords,
+            campus: goodInfo.value.campus,
+            intro: goodInfo.value.intro,
+            images: imgServerName.value.join(';'),
+            goodID: props.goodId
+          }
           axios.post('/api/modifyGood', modifiedGood)
             .then(() => {
               emits('close')
               message.success('修改成功')
               // 刷新当前页面
-              const router = useRouter()
               router.go(0)
             })
         },

@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
-import { NButton, NPopover, NStatistic, NNumberAnimation, NImage, NIcon, NEmpty, NEllipsis, useMessage, useDialog } from 'naive-ui'
+import { NSpin, NButton, NPopover, NStatistic, NNumberAnimation, NImage, NIcon, NEmpty, NEllipsis, useMessage, useDialog } from 'naive-ui'
 import axios from 'axios'
 import { Eye12Regular, GlobeStar16Filled, TagSearch20Regular, Delete20Regular } from '@vicons/fluent'
 
@@ -9,6 +9,9 @@ const message = useMessage()
 const dialog = useDialog()
 
 const router = useRouter()
+
+// 异步加载标志
+const loading = ref(true)
 
 const props = defineProps({
   userId: String,
@@ -45,6 +48,10 @@ if (props.goodsStatus === 'onShelf') {
           likes: item.likes,
           image: `http://127.0.0.1:8082/public/images/${item.images.split(';')[0]}`
         })
+
+        window.setTimeout(() => {
+          loading.value = false
+        }, 500)
       })
     })
 } else if (props.goodsStatus === 'soldOut') {
@@ -61,6 +68,10 @@ if (props.goodsStatus === 'onShelf') {
           image: `http://127.0.0.1:8082/public/images/${item.images.split(';')[0]}`
         })
       })
+
+      window.setTimeout(() => {
+        loading.value = false
+      }, 500)
     })
 }
 
@@ -103,81 +114,108 @@ function pullOffGood(goodId: string) {
 
 <template>
   <div class="list-wrapper">
+    <!--加载中-->
+    <n-spin v-if="loading" stroke="#8ACADA">
+      <template #description>
+        <span class="spin-text">
+          我不知道你有多幸运。
+        </span>
+      </template>
+    </n-spin>
+
     <!--空内容-->
-    <n-empty v-if="goodsListView.length === 0" description="好像什么都看不到，只能说很神秘。" />
+    <n-empty v-else-if="goodsListView.length === 0" description="好像什么都看不到，只能说很神秘。" />
 
     <!--商品卡片-->
-    <div v-for="good of goodsListView" :key="good.id" class="good-card">
+    <template v-if="!loading">
+      <div v-for="good of goodsListView" :key="good.id" class="good-card">
 
-      <!--商品图片-->
-      <n-image class="good-image" lazy :src="good.image" />
+        <!--商品图片-->
+        <n-image class="good-image" lazy :src="good.image" @click="jumpToDetail(good.id)" />
 
-      <!--商品简要信息-->
-      <div class="mid-info">
-        <!--商品标题-->
-        <n-ellipsis :delay="500" class="good-name">&nbsp;&nbsp;{{ good.name }}</n-ellipsis>
-        <!--浏览数与收藏量-->
-        <div class="icon-box">
-          <div class="icon-unit">
-            <div class="icon-prop">
-              <n-popover :delay="200" trigger="hover" placement="bottom">
-                <template #trigger>
-                  <n-icon :size="38" color="#6F7C7E">
-                    <Eye12Regular />
-                  </n-icon>
-                </template>
-                浏览量
-              </n-popover>
+        <!--商品简要信息-->
+        <div class="mid-info">
+          <!--商品标题-->
+          <n-ellipsis :delay="500" class="good-name">&nbsp;&nbsp;{{ good.name }}</n-ellipsis>
+          <!--浏览数与收藏量-->
+          <div class="icon-box">
+            <div class="icon-unit">
+              <div class="icon-prop">
+                <n-popover :delay="200" trigger="hover" placement="bottom">
+                  <template #trigger>
+                    <n-icon :size="38" color="#6F7C7E">
+                      <Eye12Regular />
+                    </n-icon>
+                  </template>
+                  浏览量
+                </n-popover>
+              </div>
+              <n-statistic class="icon-number" tabular-nums>
+                <n-number-animation :from="999" :to="good.browsed" />
+              </n-statistic>
             </div>
-            <n-statistic class="icon-number" tabular-nums>
-              <n-number-animation :from="999" :to="good.browsed" />
-            </n-statistic>
-          </div>
-          <div class="icon-unit">
-            <div class="icon-prop">
-              <n-popover :duration="200" trigger="hover" placement="bottom">
-                <template #trigger>
-                  <n-icon :size="38" color="#F9A647">
-                    <GlobeStar16Filled />
-                  </n-icon>
-                </template>
-                收藏量
-              </n-popover>
+            <div class="icon-unit">
+              <div class="icon-prop">
+                <n-popover :duration="200" trigger="hover" placement="bottom">
+                  <template #trigger>
+                    <n-icon :size="38" color="#F9A647">
+                      <GlobeStar16Filled />
+                    </n-icon>
+                  </template>
+                  收藏量
+                </n-popover>
+              </div>
+              <n-statistic class="icon-number" tabular-nums>
+                <n-number-animation :from="999" :to="good.likes" />
+              </n-statistic>
             </div>
-            <n-statistic class="icon-number" tabular-nums>
-              <n-number-animation :from="999" :to="good.likes" />
-            </n-statistic>
           </div>
         </div>
-      </div>
 
-      <!--操作区域-->
-      <div class="operation-panel">
-        <span class="price">￥{{ good.price.toFixed(2) }}</span>
-        <n-button size="small" round color="#105AA0" @click="$emit('check-info', good.id)">
-          <template #icon>
-            <n-icon>
-              <TagSearch20Regular />
-            </n-icon>
-          </template>
-          查看详情
-        </n-button>
-        <n-button round color="#CAE0E5" size="small" text-color="#00558D">
-          <template #icon>
-            <n-icon>
-              <Delete20Regular />
-            </n-icon>
-          </template>
-          下架商品
-        </n-button>
+        <!--操作区域-->
+        <div class="operation-panel">
+          <span class="price">￥{{ good.price.toFixed(2) }}</span>
+          <n-button size="small" round color="#105AA0" @click="$emit('check-info', good.id)">
+            <template #icon>
+              <n-icon>
+                <TagSearch20Regular />
+              </n-icon>
+            </template>
+            查看详情
+          </n-button>
+          <n-button round color="#CAE0E5" size="small" text-color="#00558D" @click="pullOffGood(good.id)">
+            <template #icon>
+              <n-icon>
+                <Delete20Regular />
+              </n-icon>
+            </template>
+            下架商品
+          </n-button>
+        </div>
       </div>
-    </div>
+    </template>
   </div>
 </template>
 
 <style scoped lang="scss">
 .list-wrapper {
   padding: 1.25rem 0;
+}
+
+.spin-text {
+  color: #8ACADA;
+  letter-spacing: 1px;
+  animation: .6s in ease-out;
+}
+
+@keyframes in {
+  from {
+    margin-left: -10rem;
+  }
+
+  to {
+    margin-left: 0;
+  }
 }
 
 .good-card {
@@ -210,6 +248,7 @@ function pullOffGood(goodId: string) {
   alt: 'Goods Thumbnail';
   transition: border-color .4s ease-out;
   margin-right: .6rem;
+  cursor: pointer;
 
   &:hover {
     border-color: #CCC;

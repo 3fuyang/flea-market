@@ -54,7 +54,7 @@ const server = app.listen(8082, () => {
 // 配置 Socket.io
 const io = new Server({
   cors: {
-    origin: 'http://127.0.0.1:8084'
+    origin: 'http://106.15.78.201:8084'
   }
 }).listen(server)
 
@@ -62,7 +62,7 @@ const io = new Server({
 // as the server object I'm listening on.
 /* const io = new Server(app, {
   cors: {
-    origin: 'http://127.0.0.1:8084'
+    origin: 'http://106.15.78.201:8084'
     //origin: 'http://localhost:8090'
   }
 }) */

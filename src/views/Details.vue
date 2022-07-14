@@ -179,7 +179,8 @@ getGoodInfo()
 function getGoodInfo() {
 	axios.get(`/api/checkAvailable/${goodID.value}`)
 		.then(res => {
-			if (!res.data) {
+			console.log(typeof res.data)
+			if (res.data !== true) {
 				message.error('该商品已下架！')
 				router.back()
 			}
@@ -200,7 +201,7 @@ function getGoodInfo() {
 					// 清空图片数组
 					imageCollection.value.length = 0
 					// 获取新的图片数组
-					imageCollection.value.push(...goodInfo.value.images.map((name) => `http://127.0.0.1:8082/public/images/${name}`))
+					imageCollection.value.push(...goodInfo.value.images.map((name) => `http://106.15.78.201:8082/public/images/${name}`))
 					//console.log(imageCollection.value)
 					// 初始化当前展示大图为第一张图片
 					currImageIndex.value = 0

@@ -83,7 +83,7 @@ axios.get(`/api/getTrack/${userID.value}`)
         date: item.history_day_time.substr(0, 10),
         price: Number.parseFloat(item.good_price).toFixed(2),
         title: item.good_title,
-        image: `http://127.0.0.1:8082/public/images/${item.good_images.split(';')[0]}`
+        image: `http://106.15.78.201:8082/public/images/${item.good_images.split(';')[0]}`
       })
     })
   })

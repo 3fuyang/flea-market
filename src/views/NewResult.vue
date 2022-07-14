@@ -170,11 +170,13 @@ async function queryByKeywords() {
 }
 
 .recommend-wrapper {
+  z-index: 1;
   flex: 0 1 15%;
   padding: .3rem;
 }
 
 .result-wrapper {
+  z-index: 1;
   flex: 1 0 85%;
 }
 </style>

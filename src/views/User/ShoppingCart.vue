@@ -27,7 +27,7 @@
                 <el-col :span="13">
                   <div style="text-align: center">
                     <span style="display: inline-block;font-size: 13px;color: #808080;margin-top: 25px;">{{
-                        scope.row.name
+                    scope.row.name
                     }}</span>
                   </div>
                 </el-col>
@@ -37,7 +37,7 @@
           <el-table-column label="金额" width="200" align="center">
             <template #default="scope">
               <span style="display: inline-block;font-size: 18px;font-weight: bold;color: #FF9900;margin-top: 3px;">￥{{
-                  scope.row.price
+              scope.row.price
               }}</span>
             </template>
           </el-table-column>
@@ -59,14 +59,14 @@
               <span
                 style="display: inline-block;font-size: 14px;color: #808080;margin-top: 15px;">已选商品&nbsp;&nbsp;</span>
               <span style="display: inline-block;font-size: 20px;color: #FF9900;margin-top: 13px;font-weight: bold;">{{
-                  selectedNum
+              selectedNum
               }}&nbsp;&nbsp;</span>
               <span
                 style="display: inline-block;font-size: 14px;color: #808080;margin-top: 15px;">件&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
               <span style="display: inline-block;font-size: 14px;color: #808080;margin-top: 15px;">合计 : </span>
               <span
                 style="display: inline-block;font-size: 24px;color: #FF9900;margin-top: 13px;font-weight: bold;">&nbsp;&nbsp;{{
-                    cost
+                cost
                 }}&nbsp;&nbsp;</span>
               <span style="display: inline-block;font-size: 14px;color: #808080;margin-top: 15px;">元</span>
             </el-col>
@@ -121,7 +121,7 @@ axios.get(`/api/getCart/${userID.value}`)
         id: item.cart_good_id,
         name: item.good_title,
         price: Number.parseFloat(item.good_price).toFixed(2),
-        path: `http://127.0.0.1:8082/public/images/${item.good_images.split(';')[0]}`
+        path: `http://106.15.78.201:8082/public/images/${item.good_images.split(';')[0]}`
       })
     })
   })

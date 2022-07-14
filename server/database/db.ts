@@ -1,4 +1,4 @@
-import{ createConnection, type ConnectionConfig } from 'mysql'
+import { createConnection, type ConnectionConfig } from 'mysql'
 
 // 数据库根据实际情况配置
 const root: string = ''

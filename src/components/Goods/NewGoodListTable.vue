@@ -46,7 +46,7 @@ if (props.goodsStatus === 'onShelf') {
           price: Number.parseFloat(item.price),
           browsed: item.browsed,
           likes: item.likes,
-          image: `http://127.0.0.1:8082/public/images/${item.images.split(';')[0]}`
+          image: `http://106.15.78.201:8082/public/images/${item.images.split(';')[0]}`
         })
 
         window.setTimeout(() => {
@@ -65,7 +65,7 @@ if (props.goodsStatus === 'onShelf') {
           price: Number.parseFloat(item.price),
           browsed: item.browsed,
           likes: item.likes,
-          image: `http://127.0.0.1:8082/public/images/${item.images.split(';')[0]}`
+          image: `http://106.15.78.201:8082/public/images/${item.images.split(';')[0]}`
         })
       })
 

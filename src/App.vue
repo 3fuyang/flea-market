@@ -2,7 +2,7 @@
 import TopBar from './components/NewTopBar.vue'
 import BlossomDoodle from './components/Doodles/BlossomDoodle.vue'
 import ShiveringDoodle from './components/Doodles/ShiveringDoodle.vue'
-import { NNotificationProvider, NLoadingBarProvider, NMessageProvider, NDialogProvider } from 'naive-ui'
+import { NScrollbar, NNotificationProvider, NLoadingBarProvider, NMessageProvider, NDialogProvider } from 'naive-ui'
 
 const barStyle = {
   loading: {
@@ -12,33 +12,50 @@ const barStyle = {
 </script>
 
 <template>
-  <div id="app" class="app">
+  <div id="app">
     <n-message-provider :max="1">
       <n-dialog-provider>
         <n-notification-provider>
-          <el-container style="overflow-x: hidden;">
-            <el-header v-if="$route.path != '/login'" style="padding: 0;height: auto;">
+
+          <!--文档主体-->
+          <article class="container">
+            <!--顶部导航栏-->
+            <nav v-if="$route.path !== '/login'" class="nav-bar">
               <n-loading-bar-provider :loading-bar-style="barStyle">
                 <top-bar />
               </n-loading-bar-provider>
-            </el-header>
-            <el-main class="main provider">
+            </nav>
+
+            <!--中心内容-->
+            <main class="main">
+              <!--左侧花瓣-->
               <div v-show="$route.path !== '/login'" class="doodle-wrapper-r">
                 <blossom-doodle />
               </div>
+
+              <!--右侧叶片-->
               <div v-show="$route.path !== '/login'" class="doodle-wrapper-l">
                 <shivering-doodle />
               </div>
+
+              <!--RouterView-->
               <suspense>
                 <router-view />
               </suspense>
-            </el-main>
-            <el-footer v-if="!['/login', '/newchat'].includes($route.path)" class="footer">
+            </main>
+
+            <!--弹性区域-->
+            <div style="flex: 1;" />
+
+            <!--脚注-->
+            <footer v-if="!['/login', '/newchat'].includes($route.path)" class="footer">
               <p>
                 Copyright ©2022 同济大学校内二手交易平台
               </p>
-            </el-footer>
-          </el-container>
+            </footer>
+          </article>
+
+          <!--回到顶部-->
           <el-backtop v-if="$route.path != '/login'" :bottom="100" :right="40">
           </el-backtop>
         </n-notification-provider>
@@ -47,7 +64,7 @@ const barStyle = {
   </div>
 </template>
 
-<style>
+<style lang="scss">
 #app {
   font-family: Avenir, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
@@ -57,19 +74,45 @@ const barStyle = {
   /* 设置页面最小宽度，防止布局被浏览器的尺寸打乱。 */
   background-color: #F5F5F5;
   position: relative;
+  overflow: auto;
 }
 
+/* 滚动条整体 */
 ::-webkit-scrollbar {
-  width: 0 !important;
+  width: 8px !important;
+  height: 8px !important;
 }
 
-::-webkit-scrollbar {
-  width: 0 !important;
-  height: 0;
+/* 滚动条轨道 */
+::-webkit-scrollbar-track {
+  background-color: none;
+}
+
+/* 滚动条滑块 */
+::-webkit-scrollbar-thumb {
+  border-radius: 4px;
+  background-color: #BFBFBF;
+
+  &:hover {
+    background-color: #999;
+  }
 }
 </style>
 
-<style scoped>
+<style scoped lang="scss">
+.container {
+  width: 100%;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.nav-bar {
+  padding: 0;
+  /* auto 根据内容高度自动调整 */
+  height: auto;
+}
+
 .main {
   padding: 0;
   overflow: hidden;
@@ -78,9 +121,6 @@ const barStyle = {
   display: flex;
   flex-direction: column;
   align-items: center;
-}
-
-.provider {
   position: relative;
 }
 
@@ -104,10 +144,10 @@ const barStyle = {
   display: flex;
   justify-content: center;
   align-items: center;
-}
 
-.footer p {
-  margin: 0;
-  padding-top: 1.1em;
+  & p {
+    margin: 0;
+    padding-top: 1.1em;
+  }
 }
 </style>

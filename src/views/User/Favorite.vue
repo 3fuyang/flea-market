@@ -20,13 +20,17 @@
       <el-input v-model.trim="keyWord" placeholder="Search in collections." style="width: 250px;margin-right: 240px;"
         @keyup.enter="searchFavorite()">
         <template #prefix>
-          <el-icon :size="18" style="margin-top: 5px;">
-            <search />
-          </el-icon>
+          <div style="display: flex;justify-content: center;align-items: center;">
+            <el-icon :size="18" style="">
+              <search />
+            </el-icon>
+          </div>
         </template>
         <template #suffix>
-          <el-button plain type="primary" size="small" round style="margin-top: 4px;" @click="searchFavorite()">搜索
-          </el-button>
+          <div style="display: flex;justify-content: center;align-items: center;">
+            <el-button plain type="primary" size="small" round @click="searchFavorite()">搜索
+            </el-button>
+          </div>
         </template>
       </el-input>
     </div>
@@ -36,13 +40,13 @@
         <div v-if="showData.length === 0">
           <el-empty description="您暂时没有收藏！"></el-empty>
         </div>
-        <el-row>
+        <div style="display: flex;gap: .5em;flex-wrap: wrap;">
           <template v-for="(goodItem) in showData" :key="goodItem.id">
             <favorite-card :good-i-d="goodItem.id" :src="goodItem.path" :price="goodItem.price" :title="goodItem.name"
               :removable="true" @delete-gooditem="deleteFavorite" />
           </template>
           <br />
-        </el-row>
+        </div>
       </el-col>
     </el-row>
   </div>

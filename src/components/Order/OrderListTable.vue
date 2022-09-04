@@ -45,9 +45,9 @@
             <el-image class="Image" :src="order.image" />
           </el-col>
           <el-col :span="4">
-            <span class="GoodName">
+            <p class="GoodName">
               {{ order.goodName }}
-            </span>
+            </p>
           </el-col>
           <el-col :span="2">
             <span class="Quantity">×1</span>
@@ -316,6 +316,7 @@ function confirmReceipt(oid: string) {
 }
 
 .GoodName {
+  margin: 0;
   line-height: 100px;
   width: 100%;
   overflow-x: hidden;

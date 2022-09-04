@@ -71,7 +71,7 @@ const parseQuery = (route: RouteLocationNormalized) => {
     .then(res => {
       res.data && res.data.forEach((item: any) => {
         resultGoods.value.push({
-          goodID: item.good_id,
+          goodID: item.good_id || item.goodId,
           price: Number.parseFloat(item.price).toFixed(2),
           title: item.title,
           images: item.images.split(';')

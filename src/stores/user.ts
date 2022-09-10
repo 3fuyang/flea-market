@@ -1,6 +1,6 @@
 import { defineStore } from "pinia"
 
-// Options Style
+// Options Style instead of Setup style
 export const useUserStore = defineStore({
   id: 'user',
   state: () => ({

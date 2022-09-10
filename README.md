@@ -25,10 +25,10 @@ Online Demo: [http://106.15.78.201:8084/](http://106.15.78.201:8084/)
 
     # 进入后端根目录
     cd server
-
+    
     # 安装依赖
     npm install
-
+    
     # 运行后端
     # 直接运行ts
     ts-node(nodemon) app.ts
@@ -42,7 +42,7 @@ Online Demo: [http://106.15.78.201:8084/](http://106.15.78.201:8084/)
 
     # 进入项目根目录
     npm install
-
+    
     # 运行前端
     npm run dev
 
@@ -158,7 +158,7 @@ socket.on('deliver message', (msg) => {
 
 ##### 循环加载的问题
 
-为实现前端鉴权，本项目的 `@/router/index.ts`和 `@/store/user.ts`中出现了**模块循环加载**的情况（`<span style="text-decoration: line-through;">`现在没有了），但最终却能正常工作，下面对这种经典情景进行了考察。
+为实现前端鉴权，本项目的 `@/router/index.ts`和 `@/store/user.ts`中出现了**模块循环加载**的情况（<span style="text-decoration: line-through;">现在没有了</span>），但最终却能正常工作，下面对这种经典情景进行了考察。
 
 参考：[阮一峰 ES6 入门](https://www.bookstack.cn/read/es6-3rd/spilt.4.docs-module-loader.md)
 

@@ -28,7 +28,7 @@
         请扫描付款码，进行付款。
       </template>
       <template #body>
-        <img style="object-fit: scale-down;width: 60%;" src="/src/assets/payment.jpg" />
+        <img style="object-fit: scale-down;width: 60%;" src="/images/payment.jpg" />
       </template>
     </PayQRCode>
   </Teleport>

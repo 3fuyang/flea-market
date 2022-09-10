@@ -2,7 +2,7 @@
 import TopBar from './components/NewTopBar.vue'
 import BlossomDoodle from './components/Doodles/BlossomDoodle.vue'
 import ShiveringDoodle from './components/Doodles/ShiveringDoodle.vue'
-import { NScrollbar, NNotificationProvider, NLoadingBarProvider, NMessageProvider, NDialogProvider } from 'naive-ui'
+import { NNotificationProvider, NLoadingBarProvider, NMessageProvider, NDialogProvider } from 'naive-ui'
 
 const barStyle = {
   loading: {
@@ -39,9 +39,16 @@ const barStyle = {
               </div>
 
               <!--RouterView-->
-              <suspense>
-                <router-view />
-              </suspense>
+              <RouterView v-slot="{ Component }">
+                <template v-if="Component">
+                  <KeepAlive>
+                    <Suspense>
+                      <!-- main content -->
+                      <component :is="Component" />
+                    </Suspense>
+                  </KeepAlive>
+                </template>
+              </RouterView>
             </main>
 
             <!--弹性区域-->
@@ -56,8 +63,7 @@ const barStyle = {
           </article>
 
           <!--回到顶部-->
-          <el-backtop v-if="$route.path != '/login'" :bottom="100" :right="40">
-          </el-backtop>
+          <el-backtop v-if="$route.path != '/login'" :bottom="100" :right="40" />
         </n-notification-provider>
       </n-dialog-provider>
     </n-message-provider>
@@ -70,7 +76,7 @@ const barStyle = {
   -webkit-font-smoothing: antialiased;
   text-align: center;
   color: #2c3e50;
-  min-width: 1500px;
+  min-width: 1400px;
   /* 设置页面最小宽度，防止布局被浏览器的尺寸打乱。 */
   background-color: #F5F5F5;
   position: relative;
@@ -115,7 +121,6 @@ const barStyle = {
 
 .main {
   padding: 0;
-  overflow: hidden;
   min-height: 49em;
   width: 100%;
   display: flex;

@@ -61,7 +61,6 @@
 <script setup lang="ts">
 import { ref, watch } from 'vue'
 import { useMessage, useDialog, NAvatar } from 'naive-ui'
-import "@/assets/fonts/font.css"
 import axios from 'axios'
 
 const message = useMessage()
@@ -271,21 +270,17 @@ const changeInfoConfirm = () => {
   font-size: 40px;
   font-weight: 800;
   color: #262626;
-  font-family: "楷体";
 }
 
 .selfIntroduction {
-  font-family: "FZHeiBJW";
   margin-top: 15px;
 }
 
 .infoForm {
   padding: 5px 20px;
-  font-family: "FZHeiBJW";
 }
 
 .infoChange {
   padding: 5px 50px;
-  font-family: "FZHeiBJW";
 }
 </style>

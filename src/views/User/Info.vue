@@ -1,7 +1,7 @@
 <template>
   <div class="info">
     <el-row justify="center">
-      <NewInfoPanel v-if="identity === 'member'" :userID="userID" />
+      <new-info-panel v-if="identity === 'member'" :userID="userID" />
       <comment-list v-if="identity === 'member'" :userID="userID" />
     </el-row>
   </div>

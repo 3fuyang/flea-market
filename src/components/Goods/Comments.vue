@@ -41,7 +41,6 @@
 
 <script setup lang="ts">
 import { ref, computed } from 'vue'
-import '@/assets/fonts/font.css'
 
 defineProps({
   userID: String
@@ -130,7 +129,6 @@ commentList.value.push(...[
   margin-top: 1.5em;
   min-height: 120px;
   max-height: 130px;
-  font-family: 'FZHeiBJW';
   padding: 0px;
   overflow: auto;
 }
@@ -144,7 +142,6 @@ commentList.value.push(...[
 }
 
 .time {
-  font-family: '楷体';
   margin-top: 5px;
   height: 20px;
 }

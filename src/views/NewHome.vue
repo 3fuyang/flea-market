@@ -289,7 +289,7 @@ const adminButtons = [
 
   <!--流行关键词-->
   <el-container class="popular-wrapper">
-    <el-button v-for="item in popularKeywords" type="text" size="small" class="keywords" @click="jumpKeyWord(item)">
+    <el-button v-for="item in popularKeywords" text size="small" class="keywords" @click="jumpKeyWord(item)">
       {{ item }}
     </el-button>
   </el-container>
@@ -497,7 +497,7 @@ const adminButtons = [
 .winter-wrapper {
   width: 133px;
   height: 240px;
-  background-image: url('/src/assets/winter.jpg');
+  background-image: url('/images/winter.jpg');
   background-repeat: no-repeat;
   background-size: 100% 100%;
   display: flex;
@@ -564,7 +564,7 @@ const adminButtons = [
   max-height: 242px;
   align-items: space-evenly;
   justify-content: space-evenly;
-  background-image: url('/src/assets/profile.png');
+  background-image: url('/images/profile.png');
   background-repeat: no-repeat;
   background-size: 100% 100%;
   border-radius: .3em;
@@ -628,7 +628,7 @@ const adminButtons = [
   width: 130px;
   height: 240px;
   margin-left: 3px;
-  background-image: url('/src/assets/panel.png');
+  background-image: url('/images/panel.png');
   background-repeat: no-repeat;
   background-size: 100% 100%;
 }

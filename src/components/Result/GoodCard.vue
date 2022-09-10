@@ -92,7 +92,7 @@ function navigateDetails() {
   overflow: auto;
   box-sizing: border-box;
   border: 1px solid transparent;
-  width: 15em;
+  width: 13.5em;
   margin-right: .8em;
   margin-bottom: 1.5em;
 }

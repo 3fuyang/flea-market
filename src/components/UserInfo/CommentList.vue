@@ -55,7 +55,6 @@
 
 <script lang="ts" setup>
 import { ref, computed } from 'vue'
-import '@/assets/fonts/font.css'
 import PageTitle from '@/components/Public/PageTitle.vue'
 import { PersonChat16Regular } from '@vicons/fluent'
 
@@ -172,12 +171,10 @@ commentList.value = [
   margin-top: 30px;
   min-height: 120px;
   max-height: 130px;
-  font-family: 'FZHeiBJW';
   padding: 0px;
 }
 
 .time {
-  font-family: '楷体';
   margin-top: 5px;
   height: 20px;
 }

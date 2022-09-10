@@ -130,9 +130,8 @@ function clearHistory() {
 
 <style scoped lang="scss">
 .root {
-  width: 100%
+  margin: 0 4em;
 }
-
 .point {
   cursor: pointer;
 }

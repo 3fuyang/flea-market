@@ -118,6 +118,7 @@ import { useRouter, onBeforeRouteUpdate } from 'vue-router'
 import GoodSellerPanel from '../components/Goods/GoodSellerPanel.vue'
 import Comments from '../components/Goods/Comments.vue'
 import { StarFilled, Star, Shop } from "@element-plus/icons-vue"
+import { serverHost } from '@/data/host'
 import axios from 'axios'
 import { useUserStore } from '@/stores/user'
 import { storeToRefs } from 'pinia'
@@ -201,7 +202,7 @@ function getGoodInfo() {
 					// 清空图片数组
 					imageCollection.value.length = 0
 					// 获取新的图片数组
-					imageCollection.value.push(...goodInfo.value.images.map((name) => `http://106.15.78.201:8082/public/images/${name}`))
+					imageCollection.value.push(...goodInfo.value.images.map((name) => `http://${serverHost}:8082/public/images/${name}`))
 					//console.log(imageCollection.value)
 					// 初始化当前展示大图为第一张图片
 					currImageIndex.value = 0

@@ -20,6 +20,7 @@
 
 <script setup lang="ts">
 import axios from 'axios'
+import { serverHost } from '@/data/host'
 import { onBeforeMount, ref } from 'vue'
 import { useRouter } from 'vue-router'
 
@@ -38,7 +39,7 @@ onBeforeMount(() => {
       res.data.forEach((item: any) => {
         recommendList.value.push({
           goodID: item.good_id,
-          imageURL: `http://106.15.78.201:8082/public/images/${item.images.split(';')[0]}`,
+          imageURL: `http://${serverHost}:8082/public/images/${item.images.split(';')[0]}`,
           goodPrice: Number.parseFloat(item.price).toFixed(2),
           goodTitle: item.title
         })

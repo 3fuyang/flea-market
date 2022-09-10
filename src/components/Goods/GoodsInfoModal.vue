@@ -107,6 +107,7 @@ import { useRouter } from 'vue-router'
 import type { UploadFile, UploadInstance, UploadRawFile } from 'element-plus'
 import { useMessage, useDialog } from 'naive-ui'
 import { Close } from '@element-plus/icons-vue'
+import { serverHost } from '@/data/host'
 import axios from 'axios'
 
 const message = useMessage()
@@ -184,7 +185,7 @@ function getGoodInfo() {
       goodPreInfo.value.images = data.images
 
       imgLocalUrl.value.length = 0
-      imgLocalUrl.value.push(...data.images.split(';').map((name: string) => `http://106.15.78.201:8082/public/images/${name}`))
+      imgLocalUrl.value.push(...data.images.split(';').map((name: string) => `http://${serverHost}:8082/public/images/${name}`))
       imgServerName.value.length = 0
       imgServerName.value.push(...data.images.split(';'))
       for (let property in goodPreInfo.value) {

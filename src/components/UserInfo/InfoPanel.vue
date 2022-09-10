@@ -116,7 +116,7 @@ axios.get(`/api/getUserInfo/${props.userID}`)
       userInfo.value.college = data.college,
       userInfo.value.gender = data.gender,
       userInfo.value.birthday = data.birthday,
-      userInfo.value.avatar = `http://106.15.78.201:8082/public/avatars/${data.avatar}`,
+      userInfo.value.avatar = `http://${serverHost}:8082/public/avatars/${data.avatar}`,
       userInfo.value.sellerRate = 4
 
   })

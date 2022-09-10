@@ -41,12 +41,10 @@ const barStyle = {
               <!--RouterView-->
               <RouterView v-slot="{ Component }">
                 <template v-if="Component">
-                  <KeepAlive>
-                    <Suspense>
-                      <!-- main content -->
-                      <component :is="Component" />
-                    </Suspense>
-                  </KeepAlive>
+                  <Suspense>
+                    <!-- main content -->
+                    <component :is="Component" />
+                  </Suspense>
                 </template>
               </RouterView>
             </main>

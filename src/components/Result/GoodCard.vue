@@ -20,6 +20,7 @@
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
+import { serverHost } from '@/data/host'
 
 const props = defineProps<{
   goodID: string
@@ -36,7 +37,7 @@ const goodPrice = ref(props.price)
 const currImageIndex = ref(0)
 // 图片集合
 const imageCollection = ref<string[]>([])
-imageCollection.value.push(...props.images.map(item => `http://106.15.78.201:8082/public/images/${item}`))
+imageCollection.value.push(...props.images.map(item => `http://${serverHost}:8082/public/images/${item}`))
 // 展示大图的URL
 const currImageURL = computed(() => {
   return imageCollection.value[currImageIndex.value]

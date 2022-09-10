@@ -3,6 +3,7 @@ import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { NSpin, NButton, NPopover, NStatistic, NNumberAnimation, NImage, NIcon, NEmpty, NEllipsis, useMessage, useDialog } from 'naive-ui'
 import axios from 'axios'
+import { serverHost } from '@/data/host'
 import { Eye12Regular, GlobeStar16Filled, TagSearch20Regular, Delete20Regular } from '@vicons/fluent'
 
 const message = useMessage()
@@ -46,7 +47,7 @@ if (props.goodsStatus === 'onShelf') {
           price: Number.parseFloat(item.price),
           browsed: item.browsed,
           likes: item.likes,
-          image: `http://106.15.78.201:8082/public/images/${item.images.split(';')[0]}`
+          image: `http://${serverHost}:8082/public/images/${item.images.split(';')[0]}`
         })
 
         window.setTimeout(() => {
@@ -65,7 +66,7 @@ if (props.goodsStatus === 'onShelf') {
           price: Number.parseFloat(item.price),
           browsed: item.browsed,
           likes: item.likes,
-          image: `http://106.15.78.201:8082/public/images/${item.images.split(';')[0]}`
+          image: `http://${serverHost}:8082/public/images/${item.images.split(';')[0]}`
         })
       })
 

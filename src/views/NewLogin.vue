@@ -136,7 +136,7 @@ function handleCloseRetrieve() {
 }
 
 .root-wrapper {
-  background-image: url('../assets/lib.jpg');
+  background-image: url('/images/lib.jpg');
   background-image: no-repeat;
   background-size: 100% 100%;
   font-size: 1rem;

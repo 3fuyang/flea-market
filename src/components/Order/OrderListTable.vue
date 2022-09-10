@@ -118,6 +118,7 @@ import { useRouter } from 'vue-router'
 import { ref, computed } from 'vue'
 import { useMessage, useDialog } from 'naive-ui'
 import { Service, ChatDotRound, Edit, Wallet, CircleCheck } from '@element-plus/icons-vue'
+import { serverHost } from '@/data/host'
 import axios from 'axios'
 
 const message = useMessage()
@@ -177,7 +178,7 @@ function contactSeller(sid: string) {
         query: {
           oponentID: sid,
           oponentName: res.data.nickname,
-          avatar: `http://106.15.78.201:8082/public/avatars/${res.data.avatar}`
+          avatar: `http://${serverHost}:8082/public/avatars/${res.data.avatar}`
         }
       })
 

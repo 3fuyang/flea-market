@@ -6,6 +6,7 @@ import { BuildingSkyscraper20Regular, Building20Filled, BuildingMultiple20Filled
 import { useRouter, useRoute } from 'vue-router'
 import { computed, ref, onBeforeMount, nextTick, onBeforeUnmount } from 'vue'
 import axios from 'axios'
+import { serverHost } from '@/data/host'
 import { useUserStore } from '@/stores/user'
 import { storeToRefs } from 'pinia'
 import { VuemojiPicker, type EmojiClickEventDetail } from 'vuemoji-picker'
@@ -17,7 +18,7 @@ const message = useMessage()
 const userStore = useUserStore()
 const { userID } = storeToRefs(userStore)
 
-const socket = io('http://106.15.78.201:8082', {
+const socket = io('http://${serverHost}:8082', {
   extraHeaders: {
     'userid': userID.value
   }
@@ -147,7 +148,7 @@ function getChatList(newOponentID: string, newOponentName: string, newOponentAva
         newList.push({
           uid: item.userID,
           uname: item.nickname,
-          avatar: `http://106.15.78.201:8082/public/avatars/${item.avatar}`,
+          avatar: `http://${serverHost}:8082/public/avatars/${item.avatar}`,
           latest: item.details
         })
       })
@@ -243,7 +244,7 @@ socket.on('deliver message', (msg) => {
         oponentsList.value.unshift({
           uid: oponentID,
           uname: res.data.nickname,
-          avatar: `http://106.15.78.201:8082/public/avatars/${res.data.avatar}`,
+          avatar: `http://${serverHost}:8082/public/avatars/${res.data.avatar}`,
           latest: msg.details
         })
       })

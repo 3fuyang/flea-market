@@ -85,6 +85,7 @@
 
 <script lang="ts" setup>
 import { useMessage, useDialog } from "naive-ui"
+import { serverHost } from '@/data/host'
 import axios from 'axios'
 import { ref } from "vue"
 import { useRouter } from "vue-router"
@@ -121,7 +122,7 @@ axios.get(`/api/getCart/${userID.value}`)
         id: item.cart_good_id,
         name: item.good_title,
         price: Number.parseFloat(item.good_price).toFixed(2),
-        path: `http://106.15.78.201:8082/public/images/${item.good_images.split(';')[0]}`
+        path: `http://${serverHost}:8082/public/images/${item.good_images.split(';')[0]}`
       })
     })
   })

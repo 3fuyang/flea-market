@@ -76,6 +76,7 @@ import { ChatDotRound } from '@element-plus/icons-vue'
 import { useRouter } from 'vue-router'
 import { NTag, NButton, NPopover, NPagination, useDialog, NDescriptions, NDescriptionsItem, NRate, NEmpty, NGradientText } from 'naive-ui'
 import { Library } from '@vicons/ionicons5'
+import { serverHost } from '@/data/host'
 import axios from 'axios'
 import { useUserStore } from '@/stores/user'
 import { storeToRefs } from 'pinia'
@@ -134,7 +135,7 @@ function contactBuyer(id: string) {
         query: {
           oponentID: id,
           oponentName: nickname,
-          avatar: `http://106.15.78.201:8082/public/avatars/${avatar}`
+          avatar: `http://${serverHost}:8082/public/avatars/${avatar}`
         }
       })
       // 在新页面打开聊天窗口
@@ -198,7 +199,7 @@ axios.get(`/api/getSoldOrders/${userID.value}`)
         orderId: new Array(12).join('0') + item.order_order_id,
         goodId: item.order_good_id,
         goodTitle: item.good_title,
-        image: `http://106.15.78.201:8082/public/images/${item.good_images.split(';')[0]}`,
+        image: `http://${serverHost}:8082/public/images/${item.good_images.split(';')[0]}`,
         time: item.order_generated_time.slice(0, 19).replace('T', ' '),
         status: item.order_stat,
         commentStars: item.order_rate,

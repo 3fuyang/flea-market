@@ -290,9 +290,9 @@ const adminButtons = [
 
   <!--流行关键词-->
   <el-container class="popular-wrapper">
-    <el-button v-for="item in popularKeywords" text size="small" class="keywords" @click="jumpKeyWord(item)">
+    <span v-for="item in popularKeywords" size="small" class="keywords" @click="jumpKeyWord(item)">
       {{ item }}
-    </el-button>
+    </span>
   </el-container>
 
   <el-container class="menu-wrapper">
@@ -452,13 +452,16 @@ const adminButtons = [
 
 .popular-wrapper {
   height: 30px;
-  margin: 0px 33%;
+  width: 500px;
   margin-bottom: .6em;
   display: flex;
-  justify-content: center;
+  justify-content: space-around;
 }
 
 .keywords {
+  cursor: pointer;
+  display: block;
+  font-size: .9em;
   padding: 0;
   color: #3399CC;
 }

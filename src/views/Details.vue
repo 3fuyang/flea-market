@@ -113,7 +113,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted, onUpdated, ref } from 'vue'
+import { computed, onMounted, onUpdated, ref, onBeforeMount } from 'vue'
 import { useRouter, onBeforeRouteUpdate } from 'vue-router'
 import GoodSellerPanel from '../components/Goods/GoodSellerPanel.vue'
 import Comments from '../components/Goods/Comments.vue'
@@ -174,13 +174,13 @@ const imageCollection = ref<string[]>([])
 // 从queryString获取商品ID
 goodID.value = router.resolve(router.currentRoute.value).query.gid as string
 
-getGoodInfo()
+onBeforeMount(getGoodInfo)
 
 // 获取商品信息
 function getGoodInfo() {
 	axios.get(`/api/checkAvailable/${goodID.value}`)
 		.then(res => {
-			console.log(typeof res.data)
+			//console.log(typeof res.data)
 			if (res.data !== true) {
 				message.error('该商品已下架！')
 				router.back()
@@ -190,6 +190,7 @@ function getGoodInfo() {
 			// 调用接口：传入（商品ID）返回（商品详情：卖家ID、卖家昵称、商品标题、商品类型、上架时间、收藏数、商品图片URL、价格、地址、简介）
 			axios.get(`/api/getGoods/${goodID.value}`)
 				.then(response => {
+					console.log(response)
 					goodInfo.value.goodTitle = response.data.title
 					goodInfo.value.onshelfTime = response.data.onshelfTime.substr(0, 19).replace('T', ' '),
 						goodInfo.value.sellerID = response.data.sellerId,

@@ -184,7 +184,7 @@ function getTrends() {
     .then(res => {
       res.data.forEach((item: any) => {
         trendGoods.value.push({
-          goodID: item.good_id,
+          goodID: item.goodId,
           goodTitle: item.title,
           price: Number.parseFloat(item.price).toFixed(2),
           imgUrl: `http://${serverHost}:8082/public/images/${item.images.split(';')[0]}`

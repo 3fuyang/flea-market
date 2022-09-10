@@ -52,7 +52,6 @@ declare module '@vue/runtime-core' {
     GoodSellerPanel: typeof import('./src/components/Goods/GoodSellerPanel.vue')['default']
     GoodsInfoModal: typeof import('./src/components/Goods/GoodsInfoModal.vue')['default']
     HelloBar: typeof import('./src/components/Admin/HelloBar.vue')['default']
-    InfoPanel: typeof import('./src/components/UserInfo/InfoPanel.vue')['default']
     LoginWidget: typeof import('./src/components/Login/LoginWidget.vue')['default']
     ModifyTelCard: typeof import('./src/components/Security/ModifyTelCard.vue')['default']
     NewGoodListTable: typeof import('./src/components/Goods/NewGoodListTable.vue')['default']

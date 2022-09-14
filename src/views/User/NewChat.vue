@@ -18,7 +18,7 @@ const message = useMessage()
 const userStore = useUserStore()
 const { userID } = storeToRefs(userStore)
 
-const socket = io('http://${serverHost}:8082', {
+const socket = io(`http://${serverHost}:8082`, {
   extraHeaders: {
     'userid': userID.value
   }

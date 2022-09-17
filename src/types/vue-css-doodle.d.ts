@@ -1,1 +1,0 @@
-declare module '@luxdamore/vue-css-doodle'

@@ -8,13 +8,13 @@ function updateDoodle(e: Event) {
 
 <template>
   <css-doodle class="sunset-avenue" @click="updateDoodle">
-    :doodle { @grid: 1x35 / 100% 94vh; }
+    :doodle { @grid: 35x1 / 100% 94vh; }
     :container {
     background: #ffcabb;
     background: linear-gradient(to top, #ffcabb 50%, #de93b6 100%);
     background-repeat: no-repeat;
     }
-
+    
     position: relative;
     align-self: end;
     height: @rand(10%, 75%);
@@ -23,7 +23,7 @@ function updateDoodle(e: Event) {
     margin-left: @rand(0.1, 1)vw;
     z-index: 1;
     transform: scaleX(@rand(.8, 1.9));
-
+    
     ::before {
     content: "";
     position: absolute;
@@ -31,11 +31,10 @@ function updateDoodle(e: Event) {
     left: @rand(-20, 12)px;
     right: @rand(-20, 12)px;
     top: @rand(15, 55)%;
-    background: linear-gradient(to
-    top, #352864 0%, #4d4280 100%);
+    background: linear-gradient(to top, #352864 0%, #4d4280 100%);
     z-index: 3;
     }
-
+    
     ::after {
     content: "";
     position: absolute;

@@ -1,5 +1,4 @@
 <script lang="ts" setup>
-import 'css-doodle'
 
 // 点击更新doodle
 function update(e: Event) {

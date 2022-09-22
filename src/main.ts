@@ -1,7 +1,5 @@
 import { createApp } from 'vue'
 import App from './App.vue'
-
-import VueAxios from 'vue-axios'
 import axios from 'axios'
 
 import { createPinia } from 'pinia'
@@ -19,5 +17,11 @@ pinia.use(piniaPluginPersistedstate)
 app
   .use(pinia)
   .use(router)
-  .use(VueAxios, axios)
   .mount('#app')
+
+axios.interceptors.response.use((res) => res, (err) => {
+  if (err.response.status === 401) {
+
+    location.replace('/login')
+  }
+})

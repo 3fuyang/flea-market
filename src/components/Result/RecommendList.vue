@@ -38,7 +38,7 @@ onBeforeMount(() => {
     .then((res) => {
       res.data.forEach((item: any) => {
         recommendList.value.push({
-          goodID: item.good_id,
+          goodID: item.goodId,
           imageURL: `http://${serverHost}:8082/public/images/${item.images.split(';')[0]}`,
           goodPrice: Number.parseFloat(item.price).toFixed(2),
           goodTitle: item.title

@@ -190,7 +190,6 @@ function getGoodInfo() {
 			// 调用接口：传入（商品ID）返回（商品详情：卖家ID、卖家昵称、商品标题、商品类型、上架时间、收藏数、商品图片URL、价格、地址、简介）
 			axios.get(`/api/getGoods/${goodID.value}`)
 				.then(response => {
-					console.log(response)
 					goodInfo.value.goodTitle = response.data.title
 					goodInfo.value.onshelfTime = response.data.onshelfTime.substr(0, 19).replace('T', ' '),
 						goodInfo.value.sellerID = response.data.sellerId,

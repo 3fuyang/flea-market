@@ -7,6 +7,7 @@ import { ref, h } from 'vue'
 import { memberRoutes, adminRoutes, loginRoutes, endRoutes } from "@/router"
 import { useUserStore } from '@/stores/user'
 import { useRouter, type RouteRecordName } from 'vue-router'
+import axios from 'axios'
 
 const message = useMessage()
 
@@ -36,22 +37,31 @@ notification.create({
           size: 'tiny',
           secondary: true,
           onClick: () => {
-            message.success('用户登录成功！')
-            userStore.logIn('1951001')
-            // 删除登录路由
-            loginRoutes.forEach((route) => {
-              router.removeRoute(route.name as RouteRecordName)
-            })
-            // 添加普通会员路由
-            memberRoutes.forEach((route) => {
-              router.addRoute(route)
-            })
-            // 将endRoutes移至尾部
-            endRoutes.forEach((route) => {
-              router.addRoute(route)
-            })
-            router.push('/home')
-            notification.destroyAll()
+            const id_pwd = {
+              id: '1951001',
+              password: 'qwe12345'
+            }
+            axios.post('/api/userlogin', id_pwd)
+              .then(({ data }) => {
+                if (data) {
+                  message.success('用户登录成功！')
+                  userStore.logIn('1951001')
+                  // 删除登录路由
+                  loginRoutes.forEach((route) => {
+                    router.removeRoute(route.name as RouteRecordName)
+                  })
+                  // 添加普通会员路由
+                  memberRoutes.forEach((route) => {
+                    router.addRoute(route)
+                  })
+                  // 将endRoutes移至尾部
+                  endRoutes.forEach((route) => {
+                    router.addRoute(route)
+                  })
+                  router.push('/home')
+                  notification.destroyAll()
+                }
+              })
           }
         },
         {
@@ -65,21 +75,30 @@ notification.create({
           size: 'tiny',
           secondary: true,
           onClick: () => {
-            message.success('管理员登录成功！')
-            userStore.logIn('0001')
-            // 删除登录路由，添加管理员路由
-            loginRoutes.forEach((route) => {
-              router.removeRoute(route.name as RouteRecordName)
-            })
-            adminRoutes.forEach((route) => {
-              router.addRoute(route)
-            })
-            // 将endRoutes移至尾部
-            endRoutes.forEach((route) => {
-              router.addRoute(route)
-            })
-            router.push('/admin/report')
-            notification.destroyAll()
+            const id_pwd = {
+              id: '0001',
+              password: 'qwe12345'
+            }
+            axios.post('/api/adminlogin', id_pwd)
+              .then(({ data }) => {
+                if (data) {
+                  message.success('管理员登录成功！')
+                  userStore.logIn('0001')
+                  // 删除登录路由，添加管理员路由
+                  loginRoutes.forEach((route) => {
+                    router.removeRoute(route.name as RouteRecordName)
+                  })
+                  adminRoutes.forEach((route) => {
+                    router.addRoute(route)
+                  })
+                  // 将endRoutes移至尾部
+                  endRoutes.forEach((route) => {
+                    router.addRoute(route)
+                  })
+                  router.push('/admin/report')
+                  notification.destroyAll()
+                }
+              })
           }
         },
         {

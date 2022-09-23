@@ -38,13 +38,14 @@ onBeforeMount(() => {
     .then((res) => {
       res.data.forEach((item: any) => {
         recommendList.value.push({
-          goodID: item.goodId,
+          goodID: item.goodId || item.good_id,
           imageURL: `http://${serverHost}:8082/public/images/${item.images.split(';')[0]}`,
           goodPrice: Number.parseFloat(item.price).toFixed(2),
           goodTitle: item.title
         })
       })
     })
+  console.log(recommendList.value)
 })
 
 // 导航至详情页函数

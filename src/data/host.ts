@@ -1,1 +1,1 @@
-export const serverHost = '106.15.78.201'
+export const serverHost = '127.0.0.1'//'106.15.78.201'

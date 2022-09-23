@@ -114,7 +114,7 @@
 
 <script setup lang="ts">
 import { computed, onMounted, onUpdated, ref, onBeforeMount } from 'vue'
-import { useRouter, onBeforeRouteUpdate } from 'vue-router'
+import { useRouter, onBeforeRouteUpdate, useRoute } from 'vue-router'
 import GoodSellerPanel from '../components/Goods/GoodSellerPanel.vue'
 import Comments from '../components/Goods/Comments.vue'
 import { StarFilled, Star, Shop } from "@element-plus/icons-vue"
@@ -132,6 +132,7 @@ const { userID, identity } = storeToRefs(userStore)
 
 const goodID = ref('')	// 商品ID
 const router = useRouter()
+const route = useRoute()
 
 // 商品详情类型
 interface GoodInfo {
@@ -172,7 +173,7 @@ const currImageURL = computed(() => {
 const imageCollection = ref<string[]>([])
 
 // 从queryString获取商品ID
-goodID.value = router.resolve(router.currentRoute.value).query.gid as string
+goodID.value = route.query.gid as string
 
 onBeforeMount(getGoodInfo)
 

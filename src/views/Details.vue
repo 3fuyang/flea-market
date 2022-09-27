@@ -172,13 +172,27 @@ const currImageURL = computed(() => {
 // 底部盒子中的缩略图
 const imageCollection = ref<string[]>([])
 
+onBeforeMount(() => {
+	getGoodInfo()
+	initialize()
+})
+
 // 从queryString获取商品ID
 goodID.value = route.query.gid as string
 
-onBeforeMount(getGoodInfo)
-
 // 获取商品信息
 function getGoodInfo() {
+	if (identity.value === 'member') {
+		let date = new Date()
+		date.setHours(date.getHours() + 8)
+		// 调用接口，加入浏览记录：传入（用户ID，商品ID，当前时间） 返回（null）
+		axios.post('/api/addTrack', {
+			userID: userID.value,
+			goodID: goodID.value,
+			time: date.toISOString().slice(0, 19).replace('T', ' ')
+		})
+	}
+
 	axios.get(`/api/checkAvailable/${goodID.value}`)
 		.then(res => {
 			//console.log(typeof res.data)
@@ -268,19 +282,6 @@ function addImgEvent() {
 		})
 	}, 500)
 }
-
-if (identity.value === 'member') {
-	let date = new Date()
-	date.setHours(date.getHours() + 8)
-	// 调用接口，加入浏览记录：传入（用户ID，商品ID，当前时间） 返回（null）
-	axios.post('/api/addTrack', {
-		userID: userID.value,
-		goodID: goodID.value,
-		time: date.toISOString().slice(0, 19).replace('T', ' ')
-	})
-}
-
-initialize()
 
 onMounted(addImgEvent)
 

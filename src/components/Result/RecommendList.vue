@@ -5,13 +5,13 @@
     </p>
     <div class="recommend-card" v-for="item in recommendList">
       <div class="big-image-container">
-        <el-image :src="item.imageURL" lazy class="big-image" @click="navigateDetails(item.goodID)">
+        <el-image :src="item.imageURL" lazy class="big-image" @click="navigateDetails(item.goodId)">
         </el-image>
       </div>
       <p class="price-label">
         ￥{{ item.goodPrice }}
       </p>
-      <p class="good-title" @click="navigateDetails(item.goodID)">
+      <p class="good-title" @click="navigateDetails(item.goodId)">
         {{ item.goodTitle }}
       </p>
     </div>
@@ -26,7 +26,7 @@ import { useRouter } from 'vue-router'
 
 // 商品简要信息
 interface RecommendedItem {
-  goodID: string
+  goodId: string
   imageURL: string
   goodPrice: string
   goodTitle: string
@@ -38,14 +38,14 @@ onBeforeMount(() => {
     .then((res) => {
       res.data.forEach((item: any) => {
         recommendList.value.push({
-          goodID: item.goodId || item.good_id,
+          goodId: item.goodId,
           imageURL: `http://${serverHost}:8082/public/images/${item.images.split(';')[0]}`,
           goodPrice: Number.parseFloat(item.price).toFixed(2),
           goodTitle: item.title
         })
       })
     })
-  console.log(recommendList.value)
+  //console.log(recommendList.value)
 })
 
 // 导航至详情页函数

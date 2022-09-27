@@ -1,5 +1,6 @@
 import { createRouter, createWebHistory, type RouteRecordRaw, type RouteRecordName } from 'vue-router'
 import { useUserStore } from '@/stores/user'
+import axios from 'axios'
 
 const Home = () => import('../views/NewHome.vue')
 
@@ -188,6 +189,13 @@ router.beforeEach((to, from, next) => {
 	} else {
 		next()
 	}
+})
+
+axios.interceptors.response.use((res) => res, (err) => {
+  if (err.response.status === 401) {
+		window.localStorage.clear()
+    location.replace('/login')
+  }
 })
 
 export default router

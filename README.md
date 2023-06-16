@@ -2,14 +2,24 @@
 
 Fwio
 
-一个基于 `<span style="color: #42D392;">`Vue 和 `<span style="color: #CA3430;">`Express 的经典 `<span style="text-decoration: line-through">`土味的二手交易平台项目 `<span style="text-decoration: line-through">`屎山
+一个基于 `vue` 和 `express` 的经典土味二手交易平台<del>项目</del>屎山
 
 ## 技术栈
 
 * 前端：Vue 3 + TypeScript + Pinia + Element Plus + Naive UI
 * 后端：Express + MySQL + Socket.IO
 
-Online Demo: [http://106.15.78.201:8084/](http://106.15.78.201:8084/)
+Online Demo: <del>[http://106.15.78.201:8084/](http://106.15.78.201:8084/)</del>
+
+> **重要**
+> 
+> Sorry，由于作者遭受毕业设计的摧残，不得不重装了原来的服务器（悲），所以这个陈年屎山目前并没有部署。
+> 
+> 朋友，折返吧，指路 [awesome-tjsse-project](https://github.com/jwyjohn/awesome-tjsse-project)。
+> 
+> Best Wishes,
+> 
+> Fwio
 
 ## Changelog
 
